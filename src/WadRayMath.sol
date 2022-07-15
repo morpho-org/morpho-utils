@@ -31,4 +31,18 @@ library WadRayMath {
             z := div(add(mul(x, y), HALF_RAY), RAY)
         }
     }
+
+    function rayDiv(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        // Overflow if y == 0
+        // Overflow if (x * RAY + y / 2) > type(uint256).max
+        // <=> x * RAY > type(uint256).max - y / 2
+        // <=> x > (type(uint256).max - y / 2) / RAY
+        assembly {
+            if or(iszero(y), gt(x, div(sub(not(0), div(y, 2)), RAY))) {
+                revert(0, 0)
+            }
+
+            z := div(add(mul(x, RAY), div(y, 2)), y)
+        }
+    }
 }
