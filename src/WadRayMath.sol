@@ -45,4 +45,32 @@ library WadRayMath {
             z := div(add(mul(x, RAY), div(y, 2)), y)
         }
     }
+
+    function wadMul(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        // Let y > 0
+        // Overflow if (x * y + HALF_WAD) > type(uint256).max
+        // <=> x * y > type(uint256).max - HALF_WAD
+        // <=> x > type(uint256).max - HALF_WAD / y
+        assembly {
+            if and(y, gt(x, div(sub(not(0), HALF_WAD), y))) {
+                revert(0, 0)
+            }
+
+            z := div(add(mul(x, y), HALF_WAD), WAD)
+        }
+    }
+
+    function wadDiv(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        // Overflow if y == 0
+        // Overflow if (x * WAD + y / 2) > type(uint256).max
+        // <=> x * WAD > type(uint256).max - y / 2
+        // <=> x > (type(uint256).max - y / 2) / WAD
+        assembly {
+            if or(iszero(y), gt(x, div(sub(not(0), div(y, 2)), WAD))) {
+                revert(0, 0)
+            }
+
+            z := div(add(mul(x, WAD), div(y, 2)), y)
+        }
+    }
 }
