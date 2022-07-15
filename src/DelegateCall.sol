@@ -27,8 +27,7 @@ library DelegateCall {
                 // The easiest way to bubble the revert reason is using memory via assembly.
 
                 assembly {
-                    let returndata_size := mload(returndata)
-                    revert(add(32, returndata), returndata_size)
+                    revert(add(32, returndata), mload(returndata))
                 }
             } else revert LowLevelDelegateCallFailed();
         }
