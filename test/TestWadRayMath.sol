@@ -24,6 +24,22 @@ contract WadRayMathFunctions {
     function refRayDiv(uint256 x, uint256 y) public pure returns (uint256) {
         return RefWadRayMath.rayDiv(x, y);
     }
+
+    function wadMul(uint256 x, uint256 y) public pure returns (uint256) {
+        return WadRayMath.wadMul(x, y);
+    }
+
+    function refWadMul(uint256 x, uint256 y) public pure returns (uint256) {
+        return RefWadRayMath.wadMul(x, y);
+    }
+
+    function wadDiv(uint256 x, uint256 y) public pure returns (uint256) {
+        return WadRayMath.wadDiv(x, y);
+    }
+
+    function refWadDiv(uint256 x, uint256 y) public pure returns (uint256) {
+        return RefWadRayMath.wadDiv(x, y);
+    }
 }
 
 contract TestWadRayMath is Test {
@@ -49,6 +65,19 @@ contract TestWadRayMath is Test {
         assertEq(WadRayMath.rayDiv(x, y), RefWadRayMath.rayDiv(x, y));
     }
 
+    function testWadMul(uint128 _x, uint128 _y) public {
+        uint256 x = _x;
+        uint256 y = _y;
+        assertEq(WadRayMath.wadMul(x, y), RefWadRayMath.wadMul(x, y));
+    }
+
+    function testWadDiv(uint128 _x, uint128 _y) public {
+        vm.assume(_y > 0);
+        uint256 x = _x;
+        uint256 y = _y;
+        assertEq(WadRayMath.wadDiv(x, y), RefWadRayMath.wadDiv(x, y));
+    }
+
     function testGasRayMul() public view {
         math.rayMul(2 * RAY, RAY);
     }
@@ -63,5 +92,21 @@ contract TestWadRayMath is Test {
 
     function testGasRefRayDiv() public view {
         math.refRayDiv(10 * RAY, RAY);
+    }
+
+    function testGasWadMul() public view {
+        math.wadMul(2 * WAD, WAD);
+    }
+
+    function testGasRefWadMul() public view {
+        math.refWadMul(2 * WAD, WAD);
+    }
+
+    function testGasWadDiv() public view {
+        math.wadDiv(10 * WAD, WAD);
+    }
+
+    function testGasRefWadDiv() public view {
+        math.refWadDiv(10 * WAD, WAD);
     }
 }
