@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 /// @title WadRayMath.
 /// @author Morpho Labs.
 /// @custom:contact security@morpho.xyz
-/// @notice Library to conduct wad and ray manipulations inspired Aave's libraries.
+/// @notice Optimized version of Aave V3 math library WadRayMath to conduct wad and ray manipulations: https://github.com/aave/aave-v3-core/blob/master/contracts/protocol/libraries/math/WadRayMath.sol
 library WadRayMath {
     /// CONSTANTS ///
 
@@ -19,6 +19,10 @@ library WadRayMath {
 
     /// INTERNAL ///
 
+    /// @dev Multiplies two wad, rounding half up to the nearest wad.
+    /// @param x Wad.
+    /// @param y Wad.
+    /// @return z The result of x * y, in wad.
     function wadMul(uint256 x, uint256 y) internal pure returns (uint256 z) {
         // Let y > 0
         // Overflow if (x * y + HALF_WAD) > type(uint256).max
@@ -33,6 +37,10 @@ library WadRayMath {
         }
     }
 
+    /// @dev Divides two wad, rounding half up to the nearest wad.
+    /// @param x Wad.
+    /// @param y Wad.
+    /// @return z The result of x / y, in wad.
     function wadDiv(uint256 x, uint256 y) internal pure returns (uint256 z) {
         // Overflow if y == 0
         // Overflow if (x * WAD + y / 2) > type(uint256).max
@@ -47,6 +55,10 @@ library WadRayMath {
         }
     }
 
+    /// @dev Multiplies two ray, rounding half up to the nearest ray.
+    /// @param x Ray.
+    /// @param y Ray.
+    /// @return z The result of x * y, in ray.
     function rayMul(uint256 x, uint256 y) internal pure returns (uint256 z) {
         // Let y > 0
         // Overflow if (x * y + HALF_RAY) > type(uint256).max
@@ -61,6 +73,10 @@ library WadRayMath {
         }
     }
 
+    /// @dev Divides two ray, rounding half up to the nearest ray.
+    /// @param x Ray.
+    /// @param y Ray.
+    /// @return z The result of x / y, in ray.
     function rayDiv(uint256 x, uint256 y) internal pure returns (uint256 z) {
         // Overflow if y == 0
         // Overflow if (x * RAY + y / 2) > type(uint256).max
@@ -75,18 +91,26 @@ library WadRayMath {
         }
     }
 
+    /// @dev Casts ray down to wad.
+    /// @param x Ray.
+    /// @return y = x converted to wad, rounded half up to the nearest wad.
     function rayToWad(uint256 x) internal pure returns (uint256 y) {
         assembly {
             y := div(x, WAD_RAY_RATIO)
+            // If x % WAD_RAY_RATIO >= HALF_WAD_RAY_RATIO, round up.
             if iszero(lt(mod(x, WAD_RAY_RATIO), HALF_WAD_RAY_RATIO)) {
                 y := add(y, 1)
             }
         }
     }
 
+    /// @dev Converts wad up to ray.
+    /// @param x Wad.
+    /// @return y = x converted in ray.
     function wadToRay(uint256 x) internal pure returns (uint256 y) {
         assembly {
             y := mul(x, WAD_RAY_RATIO)
+            // Revert if y / WAD_RAY_RATIO != x
             if iszero(eq(div(y, WAD_RAY_RATIO), x)) {
                 revert(0, 0)
             }
