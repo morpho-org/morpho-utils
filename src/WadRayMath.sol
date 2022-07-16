@@ -16,34 +16,6 @@ library WadRayMath {
 
     /// INTERNAL ///
 
-    function rayMul(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        // Let y > 0
-        // Overflow if (x * y + HALF_RAY) > type(uint256).max
-        // <=> x * y > type(uint256).max - HALF_RAY
-        // <=> x > type(uint256).max - HALF_RAY / y
-        assembly {
-            if and(y, gt(x, div(sub(not(0), HALF_RAY), y))) {
-                revert(0, 0)
-            }
-
-            z := div(add(mul(x, y), HALF_RAY), RAY)
-        }
-    }
-
-    function rayDiv(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        // Overflow if y == 0
-        // Overflow if (x * RAY + y / 2) > type(uint256).max
-        // <=> x * RAY > type(uint256).max - y / 2
-        // <=> x > (type(uint256).max - y / 2) / RAY
-        assembly {
-            if or(iszero(y), gt(x, div(sub(not(0), div(y, 2)), RAY))) {
-                revert(0, 0)
-            }
-
-            z := div(add(mul(x, RAY), div(y, 2)), y)
-        }
-    }
-
     function wadMul(uint256 x, uint256 y) internal pure returns (uint256 z) {
         // Let y > 0
         // Overflow if (x * y + HALF_WAD) > type(uint256).max
@@ -69,6 +41,34 @@ library WadRayMath {
             }
 
             z := div(add(mul(x, WAD), div(y, 2)), y)
+        }
+    }
+
+    function rayMul(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        // Let y > 0
+        // Overflow if (x * y + HALF_RAY) > type(uint256).max
+        // <=> x * y > type(uint256).max - HALF_RAY
+        // <=> x > type(uint256).max - HALF_RAY / y
+        assembly {
+            if and(y, gt(x, div(sub(not(0), HALF_RAY), y))) {
+                revert(0, 0)
+            }
+
+            z := div(add(mul(x, y), HALF_RAY), RAY)
+        }
+    }
+
+    function rayDiv(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        // Overflow if y == 0
+        // Overflow if (x * RAY + y / 2) > type(uint256).max
+        // <=> x * RAY > type(uint256).max - y / 2
+        // <=> x > (type(uint256).max - y / 2) / RAY
+        assembly {
+            if or(iszero(y), gt(x, div(sub(not(0), div(y, 2)), RAY))) {
+                revert(0, 0)
+            }
+
+            z := div(add(mul(x, RAY), div(y, 2)), y)
         }
     }
 
