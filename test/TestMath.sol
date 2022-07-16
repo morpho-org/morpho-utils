@@ -3,15 +3,15 @@ pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
 import "src/Math.sol";
-import "./references/RefMath.sol";
+import "./references/MathRef.sol";
 
 contract TestMath is Test {
     function testMin(uint256 x, uint256 y) public {
-        assertEq(Math.min(x, y), RefMath.min(x, y));
+        assertEq(Math.min(x, y), MathRef.min(x, y));
     }
 
     function testMax(uint256 x, uint256 y) public {
-        assertEq(Math.max(x, y), RefMath.max(x, y));
+        assertEq(Math.max(x, y), MathRef.max(x, y));
     }
 
     function testGasMin() public pure {
@@ -19,9 +19,9 @@ contract TestMath is Test {
         Math.min(2, 1);
     }
 
-    function testGasRefMin() public pure {
-        RefMath.min(1, 2);
-        RefMath.min(2, 1);
+    function testGasMinRef() public pure {
+        MathRef.min(1, 2);
+        MathRef.min(2, 1);
     }
 
     function testGasMax() public pure {
@@ -29,8 +29,8 @@ contract TestMath is Test {
         Math.max(2, 1);
     }
 
-    function testGasRefMax() public pure {
-        RefMath.max(1, 2);
-        RefMath.max(2, 1);
+    function testGasMaxRef() public pure {
+        MathRef.max(1, 2);
+        MathRef.max(2, 1);
     }
 }
