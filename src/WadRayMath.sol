@@ -72,7 +72,7 @@ library WadRayMath {
         }
     }
 
-    function rayToWad(uint256 x) external pure returns (uint256 y) {
+    function rayToWad(uint256 x) internal pure returns (uint256 y) {
         assembly {
             y := div(x, WAD_RAY_RATIO)
             if iszero(lt(mod(x, WAD_RAY_RATIO), div(WAD_RAY_RATIO, 2))) {
@@ -81,7 +81,7 @@ library WadRayMath {
         }
     }
 
-    function wadToRay(uint256 x) external pure returns (uint256 y) {
+    function wadToRay(uint256 x) internal pure returns (uint256 y) {
         assembly {
             y := mul(x, WAD_RAY_RATIO)
             if iszero(eq(div(y, WAD_RAY_RATIO), x)) {

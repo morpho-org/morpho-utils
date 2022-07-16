@@ -46,7 +46,7 @@ contract WadRayMathFunctions {
     }
 
     function rayToWadRef(uint256 x) public pure returns (uint256) {
-        return WadRayMath.rayToWad(x);
+        return WadRayMathRef.rayToWad(x);
     }
 
     function wadToRay(uint256 x) public pure returns (uint256) {
@@ -54,7 +54,7 @@ contract WadRayMathFunctions {
     }
 
     function wadToRayRef(uint256 x) public pure returns (uint256) {
-        return WadRayMath.wadToRay(x);
+        return WadRayMathRef.wadToRay(x);
     }
 }
 
