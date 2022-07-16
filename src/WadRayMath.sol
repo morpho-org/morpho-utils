@@ -13,6 +13,9 @@ library WadRayMath {
     uint256 internal constant RAY = 1e27;
     uint256 internal constant HALF_RAY = 0.5e27;
     uint256 internal constant WAD_RAY_RATIO = 1e9;
+    uint256 internal constant HALF_WAD_RAY_RATIO = 0.5e9;
+    uint256 internal constant MAX_UINT256 = 2**256 - 1; // Not possible to use type(uint256).max in yul.
+    uint256 internal constant MAX_UINT256_MINUS_HALF_WAD = 2**256 - 1 - 0.5e18;
 
     /// INTERNAL ///
 
@@ -22,7 +25,7 @@ library WadRayMath {
         // <=> x * y > type(uint256).max - HALF_WAD
         // <=> x > type(uint256).max - HALF_WAD / y
         assembly {
-            if and(y, gt(x, div(sub(not(0), HALF_WAD), y))) {
+            if and(y, gt(x, div(MAX_UINT256_MINUS_HALF_WAD, y))) {
                 revert(0, 0)
             }
 
@@ -36,7 +39,7 @@ library WadRayMath {
         // <=> x * WAD > type(uint256).max - y / 2
         // <=> x > (type(uint256).max - y / 2) / WAD
         assembly {
-            if or(iszero(y), gt(x, div(sub(not(0), div(y, 2)), WAD))) {
+            if or(iszero(y), gt(x, div(sub(MAX_UINT256, div(y, 2)), WAD))) {
                 revert(0, 0)
             }
 
@@ -64,7 +67,7 @@ library WadRayMath {
         // <=> x * RAY > type(uint256).max - y / 2
         // <=> x > (type(uint256).max - y / 2) / RAY
         assembly {
-            if or(iszero(y), gt(x, div(sub(not(0), div(y, 2)), RAY))) {
+            if or(iszero(y), gt(x, div(sub(MAX_UINT256, div(y, 2)), RAY))) {
                 revert(0, 0)
             }
 
@@ -75,7 +78,7 @@ library WadRayMath {
     function rayToWad(uint256 x) internal pure returns (uint256 y) {
         assembly {
             y := div(x, WAD_RAY_RATIO)
-            if iszero(lt(mod(x, WAD_RAY_RATIO), div(WAD_RAY_RATIO, 2))) {
+            if iszero(lt(mod(x, WAD_RAY_RATIO), HALF_WAD_RAY_RATIO)) {
                 y := add(y, 1)
             }
         }
