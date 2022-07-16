@@ -10,10 +10,8 @@ library WadRayMath {
 
     uint256 internal constant WAD = 1e18;
     uint256 internal constant HALF_WAD = 0.5e18;
-
     uint256 internal constant RAY = 1e27;
     uint256 internal constant HALF_RAY = 0.5e27;
-
     uint256 internal constant WAD_RAY_RATIO = 1e9;
 
     /// INTERNAL ///
@@ -71,6 +69,24 @@ library WadRayMath {
             }
 
             z := div(add(mul(x, WAD), div(y, 2)), y)
+        }
+    }
+
+    function rayToWad(uint256 x) external pure returns (uint256 y) {
+        assembly {
+            y := div(x, WAD_RAY_RATIO)
+            if iszero(lt(mod(x, WAD_RAY_RATIO), div(WAD_RAY_RATIO, 2))) {
+                y := add(y, 1)
+            }
+        }
+    }
+
+    function wadToRay(uint256 x) external pure returns (uint256 y) {
+        assembly {
+            y := mul(x, WAD_RAY_RATIO)
+            if iszero(eq(div(y, WAD_RAY_RATIO), x)) {
+                revert(0, 0)
+            }
         }
     }
 }
