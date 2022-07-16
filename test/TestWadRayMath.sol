@@ -40,6 +40,22 @@ contract WadRayMathFunctions {
     function refWadDiv(uint256 x, uint256 y) public pure returns (uint256) {
         return RefWadRayMath.wadDiv(x, y);
     }
+
+    function rayToWad(uint256 x) public pure returns (uint256) {
+        return WadRayMath.rayToWad(x);
+    }
+
+    function refRayToWad(uint256 x) public pure returns (uint256) {
+        return WadRayMath.rayToWad(x);
+    }
+
+    function wadToRay(uint256 x) public pure returns (uint256) {
+        return WadRayMath.wadToRay(x);
+    }
+
+    function refWadToRay(uint256 x) public pure returns (uint256) {
+        return WadRayMath.wadToRay(x);
+    }
 }
 
 contract TestWadRayMath is Test {
@@ -51,6 +67,8 @@ contract TestWadRayMath is Test {
     function setUp() public {
         math = new WadRayMathFunctions();
     }
+
+    /// TESTS ///
 
     function testRayMul(uint128 _x, uint128 _y) public {
         uint256 x = _x;
@@ -77,6 +95,18 @@ contract TestWadRayMath is Test {
         uint256 y = _y;
         assertEq(WadRayMath.wadDiv(x, y), RefWadRayMath.wadDiv(x, y));
     }
+
+    function testRayToWad(uint128 _x) public {
+        uint256 x = _x;
+        assertEq(WadRayMath.rayToWad(x), RefWadRayMath.rayToWad(x));
+    }
+
+    function testWadToRay(uint128 _x) public {
+        uint256 x = _x;
+        assertEq(WadRayMath.wadToRay(x), RefWadRayMath.wadToRay(x));
+    }
+
+    /// GAS COMPARISONS ///
 
     function testGasRayMul() public view {
         math.rayMul(2 * RAY, RAY);
@@ -108,5 +138,21 @@ contract TestWadRayMath is Test {
 
     function testGasRefWadDiv() public view {
         math.refWadDiv(10 * WAD, WAD);
+    }
+
+    function testGasRayToWad() public view {
+        math.rayToWad(2 * RAY + 0.6e9);
+    }
+
+    function testGasRefRayToWad() public view {
+        math.refRayToWad(2 * RAY + 0.6e9);
+    }
+
+    function testGasWadToRay() public view {
+        math.wadToRay(2 * WAD);
+    }
+
+    function testGasRefWadToRay() public view {
+        math.refWadToRay(2 * WAD);
     }
 }
