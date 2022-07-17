@@ -7,65 +7,16 @@ import "forge-std/Vm.sol";
 import "src/WadRayMath.sol";
 import {WadRayMath as WadRayMathRef} from "@aave/core-v3/contracts/protocol/libraries/math/WadRayMath.sol";
 
-// Needed for gas report.
-contract WadRayMathFunctions {
-    function rayMul(uint256 x, uint256 y) public pure returns (uint256) {
-        return WadRayMath.rayMul(x, y);
-    }
-
-    function rayMulRef(uint256 x, uint256 y) public pure returns (uint256) {
-        return WadRayMathRef.rayMul(x, y);
-    }
-
-    function rayDiv(uint256 x, uint256 y) public pure returns (uint256) {
-        return WadRayMath.rayDiv(x, y);
-    }
-
-    function rayDivRef(uint256 x, uint256 y) public pure returns (uint256) {
-        return WadRayMathRef.rayDiv(x, y);
-    }
-
-    function wadMul(uint256 x, uint256 y) public pure returns (uint256) {
-        return WadRayMath.wadMul(x, y);
-    }
-
-    function wadMulRef(uint256 x, uint256 y) public pure returns (uint256) {
-        return WadRayMathRef.wadMul(x, y);
-    }
-
-    function wadDiv(uint256 x, uint256 y) public pure returns (uint256) {
-        return WadRayMath.wadDiv(x, y);
-    }
-
-    function wadDivRef(uint256 x, uint256 y) public pure returns (uint256) {
-        return WadRayMathRef.wadDiv(x, y);
-    }
-
-    function rayToWad(uint256 x) public pure returns (uint256) {
-        return WadRayMath.rayToWad(x);
-    }
-
-    function rayToWadRef(uint256 x) public pure returns (uint256) {
-        return WadRayMathRef.rayToWad(x);
-    }
-
-    function wadToRay(uint256 x) public pure returns (uint256) {
-        return WadRayMath.wadToRay(x);
-    }
-
-    function wadToRayRef(uint256 x) public pure returns (uint256) {
-        return WadRayMathRef.wadToRay(x);
-    }
-}
-
 contract TestWadRayMath is Test {
     uint256 internal constant WAD = 1e18;
     uint256 internal constant RAY = 1e27;
 
     WadRayMathFunctions math;
+    WadRayMathFunctionsRef mathRef;
 
     function setUp() public {
         math = new WadRayMathFunctions();
+        mathRef = new WadRayMathFunctionsRef();
     }
 
     /// TESTS ///
@@ -110,49 +61,85 @@ contract TestWadRayMath is Test {
 
     function testGasRayMul() public view {
         math.rayMul(2 * RAY, RAY);
-    }
-
-    function testGasRayMulRef() public view {
-        math.rayMulRef(2 * RAY, RAY);
+        mathRef.rayMul(2 * RAY, RAY);
     }
 
     function testGasRayDiv() public view {
         math.rayDiv(10 * RAY, RAY);
-    }
-
-    function testGasRayDivRef() public view {
-        math.rayDivRef(10 * RAY, RAY);
+        mathRef.rayDiv(10 * RAY, RAY);
     }
 
     function testGasWadMul() public view {
         math.wadMul(2 * WAD, WAD);
-    }
-
-    function testGasWadMulRef() public view {
-        math.wadMulRef(2 * WAD, WAD);
+        mathRef.wadMul(2 * WAD, WAD);
     }
 
     function testGasWadDiv() public view {
         math.wadDiv(10 * WAD, WAD);
-    }
-
-    function testGasWadDivRef() public view {
-        math.wadDivRef(10 * WAD, WAD);
+        mathRef.wadDiv(10 * WAD, WAD);
     }
 
     function testGasRayToWad() public view {
         math.rayToWad(2 * RAY + 0.6e9);
-    }
-
-    function testGasRayToWadRef() public view {
-        math.rayToWadRef(2 * RAY + 0.6e9);
+        mathRef.rayToWad(2 * RAY + 0.6e9);
     }
 
     function testGasWadToRay() public view {
         math.wadToRay(2 * WAD);
+        mathRef.wadToRay(2 * WAD);
+    }
+}
+
+/// Needed for gas report ///
+
+contract WadRayMathFunctions {
+    function rayMul(uint256 x, uint256 y) public pure returns (uint256) {
+        return WadRayMath.rayMul(x, y);
     }
 
-    function testGasWadToRayRef() public view {
-        math.wadToRayRef(2 * WAD);
+    function rayDiv(uint256 x, uint256 y) public pure returns (uint256) {
+        return WadRayMath.rayDiv(x, y);
+    }
+
+    function wadMul(uint256 x, uint256 y) public pure returns (uint256) {
+        return WadRayMath.wadMul(x, y);
+    }
+
+    function wadDiv(uint256 x, uint256 y) public pure returns (uint256) {
+        return WadRayMath.wadDiv(x, y);
+    }
+
+    function rayToWad(uint256 x) public pure returns (uint256) {
+        return WadRayMath.rayToWad(x);
+    }
+
+    function wadToRay(uint256 x) public pure returns (uint256) {
+        return WadRayMath.wadToRay(x);
+    }
+}
+
+contract WadRayMathFunctionsRef {
+    function rayMul(uint256 x, uint256 y) public pure returns (uint256) {
+        return WadRayMathRef.rayMul(x, y);
+    }
+
+    function rayDiv(uint256 x, uint256 y) public pure returns (uint256) {
+        return WadRayMathRef.rayDiv(x, y);
+    }
+
+    function wadMul(uint256 x, uint256 y) public pure returns (uint256) {
+        return WadRayMathRef.wadMul(x, y);
+    }
+
+    function wadDiv(uint256 x, uint256 y) public pure returns (uint256) {
+        return WadRayMathRef.wadDiv(x, y);
+    }
+
+    function rayToWad(uint256 x) public pure returns (uint256) {
+        return WadRayMathRef.rayToWad(x);
+    }
+
+    function wadToRay(uint256 x) public pure returns (uint256) {
+        return WadRayMathRef.wadToRay(x);
     }
 }
