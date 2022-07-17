@@ -25,4 +25,12 @@ library Math {
             }
         }
     }
+
+    function zeroFloorSub(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        assembly {
+            if gt(x, y) {
+                z := sub(x, y)
+            }
+        }
+    }
 }
