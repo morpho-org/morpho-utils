@@ -24,6 +24,10 @@ contract TestMath is Test {
         assertEq(math.max(x, y), mathRef.max(x, y));
     }
 
+    function testSafeSub(uint256 x, uint256 y) public {
+        assertEq(math.zeroFloorSub(x, y), mathRef.zeroFloorSub(x, y));
+    }
+
     // GAS COMPARISONS ///
 
     function testGasMin() public view {
@@ -39,6 +43,11 @@ contract TestMath is Test {
         mathRef.max(1, 2);
         mathRef.max(2, 1);
     }
+
+    function testSafeSub() public view {
+        math.zeroFloorSub(10, 11);
+        mathRef.zeroFloorSub(10, 11);
+    }
 }
 
 contract MathFunctions {
@@ -49,6 +58,10 @@ contract MathFunctions {
     function max(uint256 x, uint256 y) public pure returns (uint256) {
         return Math.max(x, y);
     }
+
+    function zeroFloorSub(uint256 x, uint256 y) public pure returns (uint256) {
+        return Math.zeroFloorSub(x, y);
+    }
 }
 
 contract MathFunctionsRef {
@@ -58,5 +71,9 @@ contract MathFunctionsRef {
 
     function max(uint256 x, uint256 y) public pure returns (uint256) {
         return MathRef.max(x, y);
+    }
+
+    function zeroFloorSub(uint256 x, uint256 y) public pure returns (uint256) {
+        return MathRef.zeroFloorSub(x, y);
     }
 }
