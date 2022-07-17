@@ -4,8 +4,8 @@ pragma solidity ^0.8.0;
 library Math {
     function min(uint256 x, uint256 y) internal pure returns (uint256 z) {
         assembly {
-            switch iszero(lt(x, y))
-            case 1 {
+            switch lt(x, y)
+            case 0 {
                 z := y
             }
             default {
@@ -16,8 +16,8 @@ library Math {
 
     function max(uint256 x, uint256 y) internal pure returns (uint256 z) {
         assembly {
-            switch iszero(gt(x, y))
-            case 1 {
+            switch gt(x, y)
+            case 0 {
                 z := y
             }
             default {
