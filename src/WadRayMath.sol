@@ -27,7 +27,7 @@ library WadRayMath {
         // Let y > 0
         // Overflow if (x * y + HALF_WAD) > type(uint256).max
         // <=> x * y > type(uint256).max - HALF_WAD
-        // <=> x > type(uint256).max - HALF_WAD / y
+        // <=> x > (type(uint256).max - HALF_WAD) / y
         assembly {
             if and(y, gt(x, div(MAX_UINT256_MINUS_HALF_WAD, y))) {
                 revert(0, 0)
@@ -63,7 +63,7 @@ library WadRayMath {
         // Let y > 0
         // Overflow if (x * y + HALF_RAY) > type(uint256).max
         // <=> x * y > type(uint256).max - HALF_RAY
-        // <=> x > type(uint256).max - HALF_RAY / y
+        // <=> x > (type(uint256).max - HALF_RAY) / y
         assembly {
             if and(y, gt(x, div(sub(not(0), HALF_RAY), y))) {
                 revert(0, 0)
