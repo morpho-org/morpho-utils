@@ -5,6 +5,34 @@ import "forge-std/Test.sol";
 import "src/Math.sol";
 import "./references/MathRef.sol";
 
+contract MathFunctions {
+    function min(uint256 x, uint256 y) public pure returns (uint256) {
+        return Math.min(x, y);
+    }
+
+    function max(uint256 x, uint256 y) public pure returns (uint256) {
+        return Math.max(x, y);
+    }
+
+    function zeroFloorSub(uint256 x, uint256 y) public pure returns (uint256) {
+        return Math.zeroFloorSub(x, y);
+    }
+}
+
+contract MathFunctionsRef {
+    function min(uint256 x, uint256 y) public pure returns (uint256) {
+        return MathRef.min(x, y);
+    }
+
+    function max(uint256 x, uint256 y) public pure returns (uint256) {
+        return MathRef.max(x, y);
+    }
+
+    function zeroFloorSub(uint256 x, uint256 y) public pure returns (uint256) {
+        return MathRef.zeroFloorSub(x, y);
+    }
+}
+
 contract TestMath is Test {
     MathFunctions math;
     MathFunctionsRef mathRef;
@@ -47,33 +75,5 @@ contract TestMath is Test {
     function testSafeSub() public view {
         math.zeroFloorSub(10, 11);
         mathRef.zeroFloorSub(10, 11);
-    }
-}
-
-contract MathFunctions {
-    function min(uint256 x, uint256 y) public pure returns (uint256) {
-        return Math.min(x, y);
-    }
-
-    function max(uint256 x, uint256 y) public pure returns (uint256) {
-        return Math.max(x, y);
-    }
-
-    function zeroFloorSub(uint256 x, uint256 y) public pure returns (uint256) {
-        return Math.zeroFloorSub(x, y);
-    }
-}
-
-contract MathFunctionsRef {
-    function min(uint256 x, uint256 y) public pure returns (uint256) {
-        return MathRef.min(x, y);
-    }
-
-    function max(uint256 x, uint256 y) public pure returns (uint256) {
-        return MathRef.max(x, y);
-    }
-
-    function zeroFloorSub(uint256 x, uint256 y) public pure returns (uint256) {
-        return MathRef.zeroFloorSub(x, y);
     }
 }
