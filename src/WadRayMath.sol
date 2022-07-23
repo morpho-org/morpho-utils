@@ -16,6 +16,7 @@ library WadRayMath {
     uint256 internal constant HALF_WAD_RAY_RATIO = 0.5e9;
     uint256 internal constant MAX_UINT256 = 2**256 - 1; // Not possible to use type(uint256).max in yul.
     uint256 internal constant MAX_UINT256_MINUS_HALF_WAD = 2**256 - 1 - 0.5e18;
+    uint256 internal constant MAX_UINT256_MINUS_HALF_RAY = 2**256 - 1 - 0.5e27;
 
     /// INTERNAL ///
 
@@ -65,7 +66,7 @@ library WadRayMath {
         // <=> x * y > type(uint256).max - HALF_RAY
         // <=> x > (type(uint256).max - HALF_RAY) / y
         assembly {
-            if and(iszero(iszero(y)), gt(x, div(sub(not(0), HALF_RAY), y))) {
+            if and(iszero(iszero(y)), gt(x, div(MAX_UINT256_MINUS_HALF_RAY, y))) {
                 revert(0, 0)
             }
 
