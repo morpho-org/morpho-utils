@@ -21,11 +21,11 @@ library PercentageMath {
     /// @return y The result of the multiplication.
     function percentMul(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
         // Let percentage > 0
-        // Overflow if x * percentage + HALF_PERCENTAGE_FACTOR >= type(uint256).max
-        // <=> x * percentage >= type(uint256).max - HALF_PERCENTAGE_FACTOR
-        // <=> x >= (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage
+        // Overflow if x * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
+        // <=> x * percentage > type(uint256).max - HALF_PERCENTAGE_FACTOR
+        // <=> x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage
         assembly {
-            if and(percentage, iszero(lt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, percentage)))) {
+            if and(iszero(iszero(percentage)), gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, percentage))) {
                 revert(0, 0)
             }
 
@@ -39,11 +39,11 @@ library PercentageMath {
     /// @return y The result of the division.
     function percentDiv(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
         // let percentage > 0
-        // Overflow if x * PERCENTAGE_FACTOR + halfPercentage >= type(uint256).max
-        // <=> x * PERCENTAGE_FACTOR >= type(uint256).max - halfPercentage
-        // <=> x >= type(uint256).max - halfPercentage / PERCENTAGE_FACTOR
+        // Overflow if x * PERCENTAGE_FACTOR + halfPercentage > type(uint256).max
+        // <=> x * PERCENTAGE_FACTOR > type(uint256).max - halfPercentage
+        // <=> x > type(uint256).max - halfPercentage / PERCENTAGE_FACTOR
         assembly {
-            if and(percentage, iszero(lt(x, div(sub(MAX_UINT256, div(percentage, 2)), PERCENTAGE_FACTOR)))) {
+            if and(iszero(iszero(percentage)), gt(x, div(sub(MAX_UINT256, div(percentage, 2)), PERCENTAGE_FACTOR))) {
                 revert(0, 0)
             }
 
