@@ -1,0 +1,21 @@
+name: ci
+
+on: [push]
+
+jobs:
+  tests:
+    name: Forge Testing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Foundry
+        uses: onbjerg/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install Dependencies
+        run: forge install
+
+      - name: Run Tests
+        run: forge test
