@@ -34,3 +34,6 @@ yarn-error.log*
 *.ansi
 *.html
 lcov.*
+
+# foundry
+.gas-snapshot
