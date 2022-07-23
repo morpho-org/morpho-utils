@@ -28,6 +28,11 @@ contract PercentageMathFunctionsRef {
 }
 
 contract TestPercentageMath is Test {
+    uint256 internal constant PERCENTAGE_FACTOR = 1e4;
+    uint256 internal constant HALF_PERCENTAGE_FACTOR = 0.5e4;
+    uint256 internal constant MAX_UINT256 = 2**256 - 1;
+    uint256 internal constant MAX_UINT256_MINUS_HALF_PERCENTAGE = 2**256 - 1 - 0.5e4;
+
     PercentageMathFunctions math;
     PercentageMathFunctionsRef mathRef;
 
@@ -38,16 +43,24 @@ contract TestPercentageMath is Test {
 
     /// TESTS ///
 
-    function testPercentMul(uint128 _x, uint128 _y) public {
-        uint256 x = _x;
-        uint256 y = _y;
+    function testPercentMul(uint256 x, uint256 y) public {
+        unchecked {
+            if (y > 0 && x > MAX_UINT256_MINUS_HALF_PERCENTAGE / y) {
+                vm.expectRevert();
+                PercentageMath.percentMul(x, y);
+            }
+        }
+
         assertEq(PercentageMath.percentMul(x, y), PercentageMathRef.percentMul(x, y));
     }
 
-    function testPercentDiv(uint128 _x, uint128 _y) public {
-        vm.assume(_y > 0);
-        uint256 x = _x;
-        uint256 y = _y;
+    function testPercentDiv(uint256 x, uint256 y) public {
+        unchecked {
+            if (y == 0 || x > (MAX_UINT256 - y / 2) / PERCENTAGE_FACTOR) {
+                vm.expectRevert();
+                PercentageMath.percentDiv(x, y);
+            }
+        }
         assertEq(PercentageMath.percentDiv(x, y), PercentageMathRef.percentDiv(x, y));
     }
 
