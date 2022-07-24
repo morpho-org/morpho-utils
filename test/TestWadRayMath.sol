@@ -156,7 +156,7 @@ contract TestWadRayMath is Test {
         mathRef.rayMul(2 * RAY, RAY);
     }
 
-    function testGasRayDiv() public {
+    function testGasRayDiv() public view {
         math.rayDiv(10 * RAY, RAY);
         mathRef.rayDiv(10 * RAY, RAY);
     }
