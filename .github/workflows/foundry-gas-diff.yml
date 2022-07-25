@@ -29,7 +29,7 @@ jobs:
         uses: Rubilmax/foundry-gas-diff@v3.7
         with:
           workflowId: foundry-gas-diff.yml
-          ignore: test/**/*
+          # ignore: test/**/*
         id: gas_diff
 
       - name: Add gas diff to sticky comment
