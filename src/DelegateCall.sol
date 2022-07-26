@@ -22,6 +22,8 @@ library DelegateCall {
     function functionDelegateCall(address _target, bytes memory _data) internal returns (bytes memory _returnData) {
  
         assembly {
+
+            _returnData := mload(0x40)
             // the bytes size is found at the bytes pointer memory address - the bytes data is found a slot further
             let result := delegatecall(gas(), _target, add(_data, 0x20), mload(_data), 0, 0)  
             let size := returndatasize()
