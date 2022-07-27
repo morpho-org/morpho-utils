@@ -32,9 +32,8 @@ library DelegateCall {
                 }
 
                 // An error is returned and can be logged.
-                let actualDataPtr := add(returnData, 0x20)
-                returndatacopy(actualDataPtr, 0, returndatasize())
-                revert(actualDataPtr, returndatasize())
+                returndatacopy(returnData, 0, returndatasize())
+                revert(returnData, returndatasize())
             }
 
             // Copy data size and then the returned data to memory.
