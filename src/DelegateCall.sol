@@ -32,16 +32,18 @@ library DelegateCall {
                 }
 
                 // An error is returned and can be logged.
-                returndatacopy(add(returnData, 0x20), 0, returndatasize())
-                revert(add(returnData, 0x20), returndatasize())
+                let actualDataPtr := add(returnData, 0x20)
+                returndatacopy(actualDataPtr, 0, returndatasize())
+                revert(actualDataPtr, returndatasize())
             }
 
             // Copy data size and then the returned data to memory.
             mstore(returnData, returndatasize())
-            returndatacopy(add(returnData, 0x20), 0, returndatasize())
+            let actualDataPtr := add(returnData, 0x20)
+            returndatacopy(actualDataPtr, 0, returndatasize())
 
             // Update the free memory pointer.
-            mstore(0x40, add(add(returnData, 0x20), returndatasize()))
+            mstore(0x40, add(actualDataPtr, returndatasize()))
         }
     }
 }
