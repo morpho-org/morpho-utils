@@ -24,21 +24,20 @@ library DelegateCall {
             returnData := mload(0x40)
             // The bytes size is found at the bytes pointer memory address - the bytes data is found a slot further.
             let result := delegatecall(gas(), _target, add(_data, 0x20), mload(_data), 0, 0)
-            let size := returndatasize()
 
-            mstore(returnData, size)
-            returndatacopy(add(returnData, 0x20), 0, size)
+            mstore(returnData, returndatasize())
+            returndatacopy(add(returnData, 0x20), 0, returndatasize())
 
             if iszero(result) {
-                if iszero(size) {
+                if iszero(returndatasize()) {
                     mstore(returnData, LowLevelDelegateCallFailedError)
                     revert(returnData, 4)
                 }
-                revert(add(returnData, 0x20), size)
+                revert(add(returnData, 0x20), returndatasize())
             }
 
             // Update the free memory pointer.
-            mstore(0x40, add(add(returnData, 0x20), size))
+            mstore(0x40, add(add(returnData, 0x20), returndatasize()))
         }
     }
 }
