@@ -11,6 +11,8 @@ library DelegateCall {
     /// @notice Thrown when a low delegate call has failed without error message.
     error LowLevelDelegateCallFailed();
 
+    // lolo
+
     /// INTERNAL ///
 
     /// @dev Performs a low-level delegate call to the `_target` contract.
