@@ -22,19 +22,20 @@ library DelegateCall {
     function functionDelegateCall(address _target, bytes memory _data) internal returns (bytes memory returnData) {
         assembly {
             returnData := mload(0x40)
+
             // The bytes size is found at the bytes pointer memory address - the bytes data is found a slot further.
-            let result := delegatecall(gas(), _target, add(_data, 0x20), mload(_data), 0, 0)
-
-            mstore(returnData, returndatasize())
-            returndatacopy(add(returnData, 0x20), 0, returndatasize())
-
-            if iszero(result) {
+            if iszero(delegatecall(gas(), _target, add(_data, 0x20), mload(_data), 0, 0)) {
                 if iszero(returndatasize()) {
                     mstore(returnData, LowLevelDelegateCallFailedError)
                     revert(returnData, 4)
                 }
+
+                returndatacopy(add(returnData, 0x20), 0, returndatasize())
                 revert(add(returnData, 0x20), returndatasize())
             }
+
+            mstore(returnData, returndatasize())
+            returndatacopy(add(returnData, 0x20), 0, returndatasize())
 
             // Update the free memory pointer.
             mstore(0x40, add(add(returnData, 0x20), returndatasize()))
