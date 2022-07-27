@@ -20,29 +20,25 @@ library DelegateCall {
     /// @param _data The data to pass to the function called on the target contract.
     /// @return _returnData The return data from the function called on the target contract.
     function functionDelegateCall(address _target, bytes memory _data) internal returns (bytes memory _returnData) {
- 
         assembly {
-
             _returnData := mload(0x40)
             // the bytes size is found at the bytes pointer memory address - the bytes data is found a slot further
-            let result := delegatecall(gas(), _target, add(_data, 0x20), mload(_data), 0, 0)  
+            let result := delegatecall(gas(), _target, add(_data, 0x20), mload(_data), 0, 0)
             let size := returndatasize()
-            
+
             mstore(_returnData, size)
             returndatacopy(add(_returnData, 0x20), 0, size)
 
-            if iszero(result){
-                if iszero(size){
-                        mstore(_returnData, LowLevelDelegateCallFailedError)
-                        revert(_returnData, 4)
-                    }
-                revert(add(_returnData, 0x20), size)
+            if iszero(result) {
+                if iszero(size) {
+                    mstore(_returnData, LowLevelDelegateCallFailedError)
+                    revert(_returnData, 4)
                 }
+                revert(add(_returnData, 0x20), size)
+            }
 
             //update the free memory pointer
-            mstore(0x40, add(add(_returnData, 0x20), size)) 
- 
+            mstore(0x40, add(add(_returnData, 0x20), size))
         }
-
     }
 }
