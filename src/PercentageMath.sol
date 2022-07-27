@@ -43,7 +43,9 @@ library PercentageMath {
         // <=> x * PERCENTAGE_FACTOR > type(uint256).max - halfPercentage
         // <=> x > type(uint256).max - halfPercentage / PERCENTAGE_FACTOR
         assembly {
-            if and(gt(percentage, 0), gt(x, div(sub(MAX_UINT256, div(percentage, 2)), PERCENTAGE_FACTOR))) {
+            if iszero(
+                and(gt(percentage, 0), iszero(gt(x, div(sub(MAX_UINT256, div(percentage, 2)), PERCENTAGE_FACTOR))))
+            ) {
                 revert(0, 0)
             }
 
