@@ -25,15 +25,18 @@ library DelegateCall {
 
             // The bytes size is found at the bytes pointer memory address - the bytes data is found a slot further.
             if iszero(delegatecall(gas(), _target, add(_data, 0x20), mload(_data), 0, 0)) {
+                // No error is returned, return the custom error.
                 if iszero(returndatasize()) {
                     mstore(returnData, LowLevelDelegateCallFailedError)
                     revert(returnData, 4)
                 }
 
+                // An error is returned and can be logged.
                 returndatacopy(add(returnData, 0x20), 0, returndatasize())
                 revert(add(returnData, 0x20), returndatasize())
             }
 
+            // Copy data size and then the returned data to memory.
             mstore(returnData, returndatasize())
             returndatacopy(add(returnData, 0x20), 0, returndatasize())
 
