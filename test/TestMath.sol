@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
+import "forge-std/Vm.sol";
 import "src/math/Math.sol";
 import "./references/MathRef.sol";
 
@@ -17,6 +18,10 @@ contract MathFunctions {
     function zeroFloorSub(uint256 x, uint256 y) public pure returns (uint256) {
         return Math.zeroFloorSub(x, y);
     }
+
+    function divUp(uint256 x, uint256 y) public pure returns (uint256) {
+        return Math.divUp(x, y);
+    }
 }
 
 contract MathFunctionsRef {
@@ -30,6 +35,10 @@ contract MathFunctionsRef {
 
     function zeroFloorSub(uint256 x, uint256 y) public pure returns (uint256) {
         return MathRef.zeroFloorSub(x, y);
+    }
+
+    function divUp(uint256 x, uint256 y) public pure returns (uint256) {
+        return MathRef.divUp(x, y);
     }
 }
 
@@ -56,6 +65,17 @@ contract TestMath is Test {
         assertEq(math.zeroFloorSub(x, y), mathRef.zeroFloorSub(x, y));
     }
 
+    function testDivUp(uint256 x, uint256 y) public {
+        unchecked {
+            if (y == 0 || (x + y < x) || (x + y < y)) {
+                vm.expectRevert();
+                Math.divUp(x, y);
+            }
+        }
+
+        assertEq(math.divUp(x, y), mathRef.divUp(x, y));
+    }
+
     // GAS COMPARISONS ///
 
     function testGasMin() public view {
@@ -72,8 +92,13 @@ contract TestMath is Test {
         mathRef.max(2, 1);
     }
 
-    function testSafeSub() public view {
+    function testGasSafeSub() public view {
         math.zeroFloorSub(10, 11);
         mathRef.zeroFloorSub(10, 11);
+    }
+
+    function testGasDivUp() public view {
+        math.divUp(20, 10);
+        mathRef.divUp(20, 10);
     }
 }

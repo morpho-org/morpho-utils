@@ -28,4 +28,16 @@ library Math {
             }
         }
     }
+
+    /// @dev Returns x / y rounded up.
+    function divUp(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        assembly {
+            // Revert if a + b < a or a + b < b
+            z := add(x, y)
+            if or(iszero(y), or(lt(z, y), lt(z, x))) {
+                revert(0, 0)
+            }
+            z := div(sub(z, 1), y)
+        }
+    }
 }
