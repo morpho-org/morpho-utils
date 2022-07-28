@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 /// @title Delegate Call Library.
-/// @author Morpho Labs - MEP.
+/// @author Morpho Labs.
 /// @custom:contact security@morpho.xyz
 /// @dev Low-level YUL delegate call library.
 library DelegateCall {
