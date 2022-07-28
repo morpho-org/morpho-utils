@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import "forge-std/console.sol";
 import "forge-std/Test.sol";
 import "forge-std/Vm.sol";
-import "src/PercentageMath.sol";
+import "src/math/PercentageMath.sol";
 import {PercentageMath as PercentageMathRef} from "@aave/core-v3/contracts/protocol/libraries/math/PercentageMath.sol";
 
 contract PercentageMathFunctions {
