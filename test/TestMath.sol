@@ -67,7 +67,7 @@ contract TestMath is Test {
 
     function testDivUp(uint256 x, uint256 y) public {
         unchecked {
-            if (y == 0 || (x + y < x) || (x + y < y)) {
+            if (y == 0 || (x + y < x)) {
                 vm.expectRevert();
                 Math.divUp(x, y);
             }
