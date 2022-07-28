@@ -1,1 +1,2 @@
 openzeppelin-contracts/=lib/openzeppelin-contracts/
+@aave/core-v3/=lib/aave-v3-core/
