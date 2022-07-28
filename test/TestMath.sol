@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
-import "src/Math.sol";
+import "src/math/Math.sol";
 import "./references/MathRef.sol";
 
 contract MathFunctions {

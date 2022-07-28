@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
-import "src/CompoundMath.sol";
+import "src/math/CompoundMath.sol";
 import "./references/CompoundMathRef.sol";
 
 contract TestCompoundMath is Test {

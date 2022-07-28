@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import "forge-std/console.sol";
 import "forge-std/Test.sol";
 import "forge-std/Vm.sol";
-import "src/WadRayMath.sol";
+import "src/math/WadRayMath.sol";
 import {WadRayMath as WadRayMathRef} from "@aave/core-v3/contracts/protocol/libraries/math/WadRayMath.sol";
 
 contract WadRayMathFunctions {
