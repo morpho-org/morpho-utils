@@ -28,8 +28,8 @@ library CompoundMath {
     function div(uint256 x, uint256 y) internal pure returns (uint256 z) {
         assembly {
             z := mul(x, SCALE)
-            // Revert when y = 0 or when both x > 0 and (x * SCALE) / x != SCALE
-            if or(iszero(y), iszero(or(iszero(x), eq(div(z, x), SCALE)))) {
+            // Revert if y = 0 or (x * SCALE) / SCALE < x
+            if or(iszero(y), lt(div(z, SCALE), x)) {
                 revert(0, 0)
             }
 
