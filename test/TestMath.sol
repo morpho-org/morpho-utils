@@ -65,17 +65,34 @@ contract TestMath is Test {
         assertEq(math.zeroFloorSub(x, y), mathRef.zeroFloorSub(x, y));
     }
 
-    function testDivUp(uint256 x, uint256 y) public {
-        unchecked {
-            if (y == 0) {
-                vm.expectRevert();
-                Math.divUp(x, y);
-            } else if (x + y < x) {
-                assertApproxEqAbs(math.divUp(x, y), x / y, 1);
-            } else {
-                assertEq(math.divUp(x, y), mathRef.divUp(x, y));
-            }
-        }
+    function testDivUpRevertWhenDivByZero(uint256 x) public {
+        vm.expectRevert();
+        Math.divUp(x, 0);
+    }
+
+    function testDivUpWhenNumSmaller(uint256 x, uint256 y) public {
+        vm.assume(x > 0);
+        vm.assume(x < y);
+        assertEq(math.divUp(x, y), 1);
+    }
+
+    function testDivUpWhenOperandsEqual(uint256 x) public {
+        vm.assume(x > 0);
+        assertEq(math.divUp(x, x), 1);
+    }
+
+    function testDivUpWhenNumLargerAndDivisible(uint256 x, uint256 y) public {
+        vm.assume(y > 0);
+        vm.assume(x > y);
+        vm.assume(x % y == 0);
+        assertEq(math.divUp(x, y), x / y);
+    }
+
+    function testDivUpWhenNumLargerAndNotDivisible(uint256 x, uint256 y) public {
+        vm.assume(y > 0);
+        vm.assume(x > y);
+        vm.assume(x % y != 0);
+        assertEq(math.divUp(x, y), x / y + 1);
     }
 
     // GAS COMPARISONS ///
