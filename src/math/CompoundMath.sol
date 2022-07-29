@@ -16,6 +16,7 @@ library CompoundMath {
     function mul(uint256 x, uint256 y) internal pure returns (uint256 z) {
         assembly {
             z := mul(x, y)
+            // Revert if x > 0 and (x * y) / x != x
             if iszero(or(iszero(x), eq(div(z, x), y))) {
                 revert(0, 0)
             }
@@ -27,6 +28,7 @@ library CompoundMath {
     function div(uint256 x, uint256 y) internal pure returns (uint256 z) {
         assembly {
             z := mul(x, SCALE)
+            // Revert if y > 0 or x > 0 and (x * SCALE) / x != SCALE
             if or(iszero(y), iszero(or(iszero(x), eq(div(z, x), SCALE)))) {
                 revert(0, 0)
             }
