@@ -32,12 +32,11 @@ library Math {
     /// @dev Returns x / y rounded up ((x + y - 1) / y).
     function divUp(uint256 x, uint256 y) internal pure returns (uint256 z) {
         assembly {
-            z := add(x, y)
-            // Revert if y = 0 or if x + y < x
-            if or(iszero(y), lt(z, x)) {
+            // Revert if y = 0
+            if iszero(y) {
                 revert(0, 0)
             }
-            z := div(sub(z, 1), y)
+            z := add(gt(mod(x, y), 0), div(x, y))
         }
     }
 }
