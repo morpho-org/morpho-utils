@@ -46,9 +46,15 @@ contract TestCompoundMath is Test {
 
     function testDivOverflow(uint256 x, uint256 y) public {
         unchecked {
-            vm.assume(y == 0 || (x != 0 && (x * SCALE) / x != SCALE));
+            vm.assume(x > 0 && (x * SCALE) / x != SCALE);
         }
 
+        vm.expectRevert();
+        CompoundMath.div(x, y);
+    }
+
+    function testDivByZero(uint256 x, uint256 y) public {
+        vm.assume(y == 0);
         vm.expectRevert();
         CompoundMath.div(x, y);
     }
