@@ -174,7 +174,7 @@ contract TestDelegateCall is Test {
         caller.delegateCall(Called.revertWithCustomError.selector);
     }
 
-function testMemoryUncorruptedWithRef() public{
+    function testMemoryUncorruptedWithRef() public{
         //This test makes sure that the delegateCall function of our library acts on the memory in the exact same way 
         //as a targetBehaviour function corresponding to the desired behavior.
         bytes memory memoryReturned;
