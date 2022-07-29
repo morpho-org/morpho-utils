@@ -21,24 +21,36 @@ contract TestCompoundMath is Test {
 
     function testMul(uint256 x, uint256 y) public {
         unchecked {
-            if (y > 0 && (x * y) / y != x) {
-                vm.expectRevert();
-                CompoundMath.mul(x, y);
-            }
+            vm.assume(y == 0 || (y > 0 && (x * y) / y == x));
         }
 
         assertEq(compoundMath.mul(x, y), compoundMathRef.mul(x, y));
     }
 
+    function testMulOverflow(uint256 x, uint256 y) public {
+        unchecked {
+            vm.assume(y > 0 && (x * y) / y != x);
+        }
+
+        vm.expectRevert();
+        CompoundMath.mul(x, y);
+    }
+
     function testDiv(uint256 x, uint256 y) public {
         unchecked {
-            if (y == 0 || (x != 0 && (x * SCALE) / x != SCALE)) {
-                vm.expectRevert();
-                CompoundMath.div(x, y);
-            }
+            vm.assume(y > 0 && (x > 0 && (x * SCALE) / x == SCALE));
         }
 
         assertEq(compoundMath.div(x, y), compoundMathRef.div(x, y));
+    }
+
+    function testDivOverflow(uint256 x, uint256 y) public {
+        unchecked {
+            vm.assume(y == 0 || (x != 0 && (x * SCALE) / x != SCALE));
+        }
+
+        vm.expectRevert();
+        CompoundMath.div(x, y);
     }
 
     /// GAS COMPARISONS ///
