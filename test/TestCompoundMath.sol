@@ -6,6 +6,7 @@ import "src/math/CompoundMath.sol";
 import "./references/CompoundMathRef.sol";
 
 contract TestCompoundMath is Test {
+    uint256 internal constant SCALE = 1e36;
     uint256 internal constant WAD = 1e18;
 
     CompoundMathFunctions compoundMath;
@@ -18,17 +19,25 @@ contract TestCompoundMath is Test {
 
     /// TESTS ///
 
-    function testMul(uint128 _x, uint128 _y) public {
-        uint256 x = _x;
-        uint256 y = _y;
+    function testMul(uint256 x, uint256 y) public {
+        unchecked {
+            if (y > 0 && (x * y) / y != x) {
+                vm.expectRevert();
+                CompoundMath.mul(x, y);
+            }
+        }
+
         assertEq(compoundMath.mul(x, y), compoundMathRef.mul(x, y));
     }
 
-    function testDiv(uint128 _x, uint128 _y) public {
-        vm.assume(_y > 0);
+    function testDiv(uint256 x, uint256 y) public {
+        unchecked {
+            if (y == 0 || (x != 0 && (x * SCALE) / x != SCALE)) {
+                vm.expectRevert();
+                CompoundMath.div(x, y);
+            }
+        }
 
-        uint256 x = _x;
-        uint256 y = _y;
         assertEq(compoundMath.div(x, y), compoundMathRef.div(x, y));
     }
 
