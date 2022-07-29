@@ -67,13 +67,15 @@ contract TestMath is Test {
 
     function testDivUp(uint256 x, uint256 y) public {
         unchecked {
-            if (y == 0 || (x + y < x)) {
+            if (y == 0) {
                 vm.expectRevert();
                 Math.divUp(x, y);
+            } else if (x + y < x) {
+                assertApproxEqAbs(math.divUp(x, y), x / y, 1);
+            } else {
+                assertEq(math.divUp(x, y), mathRef.divUp(x, y));
             }
         }
-
-        assertEq(math.divUp(x, y), mathRef.divUp(x, y));
     }
 
     // GAS COMPARISONS ///
