@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
+import "forge-std/Vm.sol";
 import "src/math/Math.sol";
 import "./references/MathRef.sol";
 
@@ -17,6 +18,10 @@ contract MathFunctions {
     function zeroFloorSub(uint256 x, uint256 y) public pure returns (uint256) {
         return Math.zeroFloorSub(x, y);
     }
+
+    function divUp(uint256 x, uint256 y) public pure returns (uint256) {
+        return Math.divUp(x, y);
+    }
 }
 
 contract MathFunctionsRef {
@@ -30,6 +35,10 @@ contract MathFunctionsRef {
 
     function zeroFloorSub(uint256 x, uint256 y) public pure returns (uint256) {
         return MathRef.zeroFloorSub(x, y);
+    }
+
+    function divUp(uint256 x, uint256 y) public pure returns (uint256) {
+        return MathRef.divUp(x, y);
     }
 }
 
@@ -56,6 +65,36 @@ contract TestMath is Test {
         assertEq(math.zeroFloorSub(x, y), mathRef.zeroFloorSub(x, y));
     }
 
+    function testDivUpRevertWhenDivByZero(uint256 x) public {
+        vm.expectRevert();
+        Math.divUp(x, 0);
+    }
+
+    function testDivUpWhenNumSmaller(uint256 x, uint256 y) public {
+        vm.assume(x > 0);
+        vm.assume(x < y);
+        assertEq(math.divUp(x, y), 1);
+    }
+
+    function testDivUpWhenOperandsEqual(uint256 x) public {
+        vm.assume(x > 0);
+        assertEq(math.divUp(x, x), 1);
+    }
+
+    function testDivUpWhenNumLargerAndDivisible(uint256 x, uint256 y) public {
+        vm.assume(y > 0);
+        vm.assume(x > y);
+        vm.assume(x % y == 0);
+        assertEq(math.divUp(x, y), x / y);
+    }
+
+    function testDivUpWhenNumLargerAndNotDivisible(uint256 x, uint256 y) public {
+        vm.assume(y > 0);
+        vm.assume(x > y);
+        vm.assume(x % y != 0);
+        assertEq(math.divUp(x, y), x / y + 1);
+    }
+
     // GAS COMPARISONS ///
 
     function testGasMin() public view {
@@ -72,8 +111,13 @@ contract TestMath is Test {
         mathRef.max(2, 1);
     }
 
-    function testSafeSub() public view {
+    function testGasSafeSub() public view {
         math.zeroFloorSub(10, 11);
         mathRef.zeroFloorSub(10, 11);
+    }
+
+    function testGasDivUp() public view {
+        math.divUp(20, 10);
+        mathRef.divUp(20, 10);
     }
 }

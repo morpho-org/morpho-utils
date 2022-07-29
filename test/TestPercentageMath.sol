@@ -60,6 +60,7 @@ contract TestPercentageMath is Test {
                 PercentageMath.percentDiv(x, y);
             }
         }
+
         assertEq(PercentageMath.percentDiv(x, y), PercentageMathRef.percentDiv(x, y));
     }
 
