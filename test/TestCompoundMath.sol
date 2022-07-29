@@ -6,6 +6,7 @@ import "src/math/CompoundMath.sol";
 import "./references/CompoundMathRef.sol";
 
 contract TestCompoundMath is Test {
+    uint256 internal constant SCALE = 1e36;
     uint256 internal constant WAD = 1e18;
 
     CompoundMathFunctions compoundMath;
@@ -18,18 +19,44 @@ contract TestCompoundMath is Test {
 
     /// TESTS ///
 
-    function testMul(uint128 _x, uint128 _y) public {
-        uint256 x = _x;
-        uint256 y = _y;
+    function testMul(uint256 x, uint256 y) public {
+        unchecked {
+            vm.assume(y == 0 || (y > 0 && (x * y) / y == x));
+        }
+
         assertEq(compoundMath.mul(x, y), compoundMathRef.mul(x, y));
     }
 
-    function testDiv(uint128 _x, uint128 _y) public {
-        vm.assume(_y > 0);
+    function testMulOverflow(uint256 x, uint256 y) public {
+        unchecked {
+            vm.assume(y > 0 && (x * y) / y != x);
+        }
 
-        uint256 x = _x;
-        uint256 y = _y;
+        vm.expectRevert();
+        CompoundMath.mul(x, y);
+    }
+
+    function testDiv(uint256 x, uint256 y) public {
+        unchecked {
+            vm.assume(y > 0 && (x > 0 && (x * SCALE) / x == SCALE));
+        }
+
         assertEq(compoundMath.div(x, y), compoundMathRef.div(x, y));
+    }
+
+    function testDivOverflow(uint256 x, uint256 y) public {
+        unchecked {
+            vm.assume(x > 0 && (x * SCALE) / x != SCALE);
+        }
+
+        vm.expectRevert();
+        CompoundMath.div(x, y);
+    }
+
+    function testDivByZero(uint256 x, uint256 y) public {
+        vm.assume(y == 0);
+        vm.expectRevert();
+        CompoundMath.div(x, y);
     }
 
     /// GAS COMPARISONS ///

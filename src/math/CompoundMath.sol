@@ -15,13 +15,25 @@ library CompoundMath {
 
     function mul(uint256 x, uint256 y) internal pure returns (uint256 z) {
         assembly {
-            z := div(mul(x, y), WAD)
+            z := mul(x, y)
+            // Revert if x > 0 and (x * y) / x != x
+            if iszero(or(iszero(x), eq(div(z, x), y))) {
+                revert(0, 0)
+            }
+
+            z := div(z, WAD)
         }
     }
 
     function div(uint256 x, uint256 y) internal pure returns (uint256 z) {
         assembly {
-            z := div(div(mul(x, SCALE), WAD), y)
+            z := mul(x, SCALE)
+            // Revert when y = 0 or when both x > 0 and (x * SCALE) / x != SCALE
+            if or(iszero(y), iszero(or(iszero(x), eq(div(z, x), SCALE)))) {
+                revert(0, 0)
+            }
+
+            z := div(div(z, y), WAD)
         }
     }
 }
