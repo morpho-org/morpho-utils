@@ -43,25 +43,36 @@ contract TestPercentageMath is Test {
     /// TESTS ///
 
     function testPercentMul(uint256 x, uint256 y) public {
-        unchecked {
-            if (y > 0 && x > MAX_UINT256_MINUS_HALF_PERCENTAGE / y) {
-                vm.expectRevert();
-                PercentageMath.percentMul(x, y);
-            }
-        }
+        vm.assume(y == 0 || (y > 0 && x <= MAX_UINT256_MINUS_HALF_PERCENTAGE / y));
 
         assertEq(PercentageMath.percentMul(x, y), PercentageMathRef.percentMul(x, y));
     }
 
+    function testPercentMulOverflow(uint256 x, uint256 y) public {
+        vm.assume(y > 0 && x > MAX_UINT256_MINUS_HALF_PERCENTAGE / y);
+
+        vm.expectRevert();
+        PercentageMath.percentMul(x, y);
+    }
+
     function testPercentDiv(uint256 x, uint256 y) public {
-        unchecked {
-            if (y == 0 || x > (MAX_UINT256 - y / 2) / PERCENTAGE_FACTOR) {
-                vm.expectRevert();
-                PercentageMath.percentDiv(x, y);
-            }
-        }
+        vm.assume(y > 0 && x <= (MAX_UINT256 - y / 2) / PERCENTAGE_FACTOR);
 
         assertEq(PercentageMath.percentDiv(x, y), PercentageMathRef.percentDiv(x, y));
+    }
+
+    function testPercentDivOverflow(uint256 x, uint256 y) public {
+        vm.assume(x > (MAX_UINT256 - y / 2) / PERCENTAGE_FACTOR);
+
+        vm.expectRevert();
+        PercentageMath.percentDiv(x, y);
+    }
+
+    function testPercentDivByZero(uint256 x, uint256 y) public {
+        vm.assume(y == 0);
+
+        vm.expectRevert();
+        PercentageMath.percentDiv(x, y);
     }
 
     /// GAS COMPARISONS ///
