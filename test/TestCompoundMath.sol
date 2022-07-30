@@ -5,6 +5,26 @@ import "forge-std/Test.sol";
 import "src/math/CompoundMath.sol";
 import "./references/CompoundMathRef.sol";
 
+contract CompoundMathFunctions {
+    function mul(uint256 x, uint256 y) public pure returns (uint256) {
+        return CompoundMath.mul(x, y);
+    }
+
+    function div(uint256 x, uint256 y) public pure returns (uint256) {
+        return CompoundMath.div(x, y);
+    }
+}
+
+contract CompoundMathFunctionsRef {
+    function mul(uint256 x, uint256 y) public pure returns (uint256) {
+        return CompoundMathRef.mul(x, y);
+    }
+
+    function div(uint256 x, uint256 y) public pure returns (uint256) {
+        return CompoundMathRef.div(x, y);
+    }
+}
+
 contract TestCompoundMath is Test {
     uint256 internal constant SCALE = 1e36;
     uint256 internal constant WAD = 1e18;
@@ -24,7 +44,7 @@ contract TestCompoundMath is Test {
             vm.assume(y == 0 || (y > 0 && (x * y) / y == x));
         }
 
-        assertEq(compoundMath.mul(x, y), compoundMathRef.mul(x, y));
+        assertEq(CompoundMath.mul(x, y), CompoundMathRef.mul(x, y));
     }
 
     function testMulOverflow(uint256 x, uint256 y) public {
@@ -41,7 +61,7 @@ contract TestCompoundMath is Test {
             vm.assume(y > 0 && (x > 0 && (x * SCALE) / x == SCALE));
         }
 
-        assertEq(compoundMath.div(x, y), compoundMathRef.div(x, y));
+        assertEq(CompoundMath.div(x, y), CompoundMathRef.div(x, y));
     }
 
     function testDivOverflow(uint256 x, uint256 y) public {
@@ -67,27 +87,7 @@ contract TestCompoundMath is Test {
     }
 
     function testGasDiv() public view {
-        compoundMath.div(10 * WAD, WAD);
-        compoundMathRef.div(10 * WAD, WAD);
-    }
-}
-
-contract CompoundMathFunctions {
-    function mul(uint256 x, uint256 y) public pure returns (uint256) {
-        return CompoundMath.mul(x, y);
-    }
-
-    function div(uint256 x, uint256 y) public pure returns (uint256) {
-        return CompoundMath.div(x, y);
-    }
-}
-
-contract CompoundMathFunctionsRef {
-    function mul(uint256 x, uint256 y) public pure returns (uint256) {
-        return CompoundMathRef.mul(x, y);
-    }
-
-    function div(uint256 x, uint256 y) public pure returns (uint256) {
-        return CompoundMathRef.div(x, y);
+        compoundMath.div(2 * WAD, WAD);
+        compoundMathRef.div(2 * WAD, WAD);
     }
 }

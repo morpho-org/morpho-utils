@@ -54,15 +54,15 @@ contract TestMath is Test {
     /// TESTS ///
 
     function testMin(uint256 x, uint256 y) public {
-        assertEq(math.min(x, y), mathRef.min(x, y));
+        assertEq(Math.min(x, y), MathRef.min(x, y));
     }
 
     function testMax(uint256 x, uint256 y) public {
-        assertEq(math.max(x, y), mathRef.max(x, y));
+        assertEq(Math.max(x, y), MathRef.max(x, y));
     }
 
     function testSafeSub(uint256 x, uint256 y) public {
-        assertEq(math.zeroFloorSub(x, y), mathRef.zeroFloorSub(x, y));
+        assertEq(Math.zeroFloorSub(x, y), MathRef.zeroFloorSub(x, y));
     }
 
     function testDivUpRevertWhenDivByZero(uint256 x) public {
@@ -73,26 +73,26 @@ contract TestMath is Test {
     function testDivUpWhenNumSmaller(uint256 x, uint256 y) public {
         vm.assume(x > 0);
         vm.assume(x < y);
-        assertEq(math.divUp(x, y), 1);
+        assertEq(Math.divUp(x, y), 1);
     }
 
     function testDivUpWhenOperandsEqual(uint256 x) public {
         vm.assume(x > 0);
-        assertEq(math.divUp(x, x), 1);
+        assertEq(Math.divUp(x, x), 1);
     }
 
     function testDivUpWhenNumLargerAndDivisible(uint256 x, uint256 y) public {
         vm.assume(y > 0);
         vm.assume(x > y);
         vm.assume(x % y == 0);
-        assertEq(math.divUp(x, y), x / y);
+        assertEq(Math.divUp(x, y), x / y);
     }
 
     function testDivUpWhenNumLargerAndNotDivisible(uint256 x, uint256 y) public {
         vm.assume(y > 0);
         vm.assume(x > y);
         vm.assume(x % y != 0);
-        assertEq(math.divUp(x, y), x / y + 1);
+        assertEq(Math.divUp(x, y), x / y + 1);
     }
 
     // GAS COMPARISONS ///

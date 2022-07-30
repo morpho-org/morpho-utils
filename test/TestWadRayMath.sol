@@ -60,14 +60,14 @@ contract WadRayMathFunctionsRef {
 
 contract TestWadRayMath is Test {
     uint256 public constant WAD = 1e18;
-    uint256 public constant HALF_WAD = 0.5e18;
+    uint256 public constant HALF_WAD = WAD / 2;
     uint256 public constant RAY = 1e27;
-    uint256 public constant HALF_RAY = 0.5e27;
+    uint256 public constant HALF_RAY = RAY / 2;
     uint256 public constant WAD_RAY_RATIO = 1e9;
-    uint256 public constant HALF_WAD_RAY_RATIO = 0.5e9;
+    uint256 public constant HALF_WAD_RAY_RATIO = WAD_RAY_RATIO / 2;
     uint256 public constant MAX_UINT256 = 2**256 - 1; // Not possible to use type(uint256).max in yul.
-    uint256 public constant MAX_UINT256_MINUS_HALF_WAD = 2**256 - 1 - 0.5e18;
-    uint256 public constant MAX_UINT256_MINUS_HALF_RAY = 2**256 - 1 - 0.5e27;
+    uint256 public constant MAX_UINT256_MINUS_HALF_WAD = MAX_UINT256 - HALF_WAD;
+    uint256 public constant MAX_UINT256_MINUS_HALF_RAY = MAX_UINT256 - HALF_RAY;
 
     WadRayMathFunctions math;
     WadRayMathFunctionsRef mathRef;
