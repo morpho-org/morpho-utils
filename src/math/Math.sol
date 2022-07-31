@@ -17,9 +17,7 @@ library Math {
     /// @dev Returns max(x - y, 0).
     function zeroFloorSub(uint256 x, uint256 y) internal pure returns (uint256 z) {
         assembly {
-            if gt(x, y) {
-                z := sub(x, y)
-            }
+            z := mul(gt(x, y), sub(x, y))
         }
     }
 
