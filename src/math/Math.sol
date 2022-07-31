@@ -4,13 +4,13 @@ pragma solidity ^0.8.0;
 library Math {
     function min(uint256 x, uint256 y) internal pure returns (uint256 z) {
         assembly {
-            z := add(mul(x, lt(x,y)),mul(y, iszero(lt(x,y))))
+            z := add(mul(x, lt(x, y)), mul(y, iszero(lt(x, y))))
         }
     }
 
     function max(uint256 x, uint256 y) internal pure returns (uint256 z) {
         assembly {
-            z := add(mul(x, gt(x,y)), mul(y, iszero(gt(x,y))))
+            z := add(mul(x, gt(x, y)), mul(y, iszero(gt(x, y))))
         }
     }
 
