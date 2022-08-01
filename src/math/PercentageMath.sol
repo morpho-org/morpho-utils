@@ -25,7 +25,7 @@ library PercentageMath {
         // <=> x * percentage > type(uint256).max - HALF_PERCENTAGE_FACTOR
         // <=> x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage
         assembly {
-            if iszero(iszero(mul(percentage, gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, percentage))))) {
+            if mul(percentage, gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, percentage))) {
                 revert(0, 0)
             }
 
