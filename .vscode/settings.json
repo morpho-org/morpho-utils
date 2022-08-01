@@ -1,6 +1,9 @@
 {
 	"editor.formatOnSave": true,
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"[solidity]": {
+		"editor.defaultFormatter": null
+	},
 	"solidity.formatter": "prettier",
 	"solidity.packageDefaultDependenciesContractsDirectory": "src",
 	"solidity.packageDefaultDependenciesDirectory": "lib",

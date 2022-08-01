@@ -60,14 +60,13 @@ contract WadRayMathFunctionsRef {
 
 contract TestWadRayMath is Test {
     uint256 public constant WAD = 1e18;
-    uint256 public constant HALF_WAD = 0.5e18;
+    uint256 public constant HALF_WAD = WAD / 2;
     uint256 public constant RAY = 1e27;
-    uint256 public constant HALF_RAY = 0.5e27;
+    uint256 public constant HALF_RAY = RAY / 2;
     uint256 public constant WAD_RAY_RATIO = 1e9;
-    uint256 public constant HALF_WAD_RAY_RATIO = 0.5e9;
-    uint256 public constant MAX_UINT256 = 2**256 - 1; // Not possible to use type(uint256).max in yul.
-    uint256 public constant MAX_UINT256_MINUS_HALF_WAD = 2**256 - 1 - 0.5e18;
-    uint256 public constant MAX_UINT256_MINUS_HALF_RAY = 2**256 - 1 - 0.5e27;
+    uint256 public constant HALF_WAD_RAY_RATIO = WAD_RAY_RATIO / 2;
+    uint256 public constant MAX_UINT256_MINUS_HALF_WAD = type(uint256).max - HALF_WAD;
+    uint256 public constant MAX_UINT256_MINUS_HALF_RAY = type(uint256).max - HALF_RAY;
 
     WadRayMathFunctions math;
     WadRayMathFunctionsRef mathRef;
@@ -80,47 +79,69 @@ contract TestWadRayMath is Test {
     /// TESTS ///
 
     function testWadMul(uint256 x, uint256 y) public {
-        unchecked {
-            if (y > 0 && x > MAX_UINT256_MINUS_HALF_WAD / y) {
-                vm.expectRevert();
-                WadRayMath.wadMul(x, y);
-            }
-        }
+        vm.assume(y == 0 || x <= MAX_UINT256_MINUS_HALF_WAD / y);
 
         assertEq(WadRayMath.wadMul(x, y), WadRayMathRef.wadMul(x, y));
     }
 
+    function testWadMulOverflow(uint256 x, uint256 y) public {
+        vm.assume(y > 0 && x > MAX_UINT256_MINUS_HALF_WAD / y);
+
+        vm.expectRevert();
+        WadRayMath.wadMul(x, y);
+    }
+
     function testWadDiv(uint256 x, uint256 y) public {
-        unchecked {
-            if (y == 0 || x > (type(uint256).max - y / 2) / WAD) {
-                vm.expectRevert();
-                WadRayMath.wadDiv(x, y);
-            }
-        }
+        vm.assume(y > 0 && x <= (type(uint256).max - y / 2) / WAD);
 
         assertEq(WadRayMath.wadDiv(x, y), WadRayMathRef.wadDiv(x, y));
     }
 
+    function testWadDivOverflow(uint256 x, uint256 y) public {
+        vm.assume(x > (type(uint256).max - y / 2) / WAD);
+
+        vm.expectRevert();
+        WadRayMath.wadDiv(x, y);
+    }
+
+    function testWadDivByZero(uint256 x, uint256 y) public {
+        vm.assume(y == 0);
+
+        vm.expectRevert();
+        WadRayMath.wadDiv(x, y);
+    }
+
     function testRayMul(uint256 x, uint256 y) public {
-        unchecked {
-            if (y > 0 && x > MAX_UINT256_MINUS_HALF_RAY / y) {
-                vm.expectRevert();
-                WadRayMath.rayMul(x, y);
-            }
-        }
+        vm.assume(y == 0 || x <= MAX_UINT256_MINUS_HALF_RAY / y);
 
         assertEq(WadRayMath.rayMul(x, y), WadRayMathRef.rayMul(x, y));
     }
 
+    function testRayMulOverflow(uint256 x, uint256 y) public {
+        vm.assume(y > 0 && x > MAX_UINT256_MINUS_HALF_RAY / y);
+
+        vm.expectRevert();
+        WadRayMath.rayMul(x, y);
+    }
+
     function testRayDiv(uint256 x, uint256 y) public {
-        unchecked {
-            if (y == 0 || x > (type(uint256).max - y / 2) / RAY) {
-                vm.expectRevert();
-                WadRayMath.rayDiv(x, y);
-            }
-        }
+        vm.assume(y > 0 && x <= (type(uint256).max - y / 2) / RAY);
 
         assertEq(WadRayMath.rayDiv(x, y), WadRayMathRef.rayDiv(x, y));
+    }
+
+    function testRayDivOverflow(uint256 x, uint256 y) public {
+        vm.assume(x > (type(uint256).max - y / 2) / RAY);
+
+        vm.expectRevert();
+        WadRayMath.rayDiv(x, y);
+    }
+
+    function testRayDivByZero(uint256 x, uint256 y) public {
+        vm.assume(y == 0);
+
+        vm.expectRevert();
+        WadRayMath.rayDiv(x, y);
     }
 
     function testRayToWad(uint256 x) public {
@@ -129,13 +150,19 @@ contract TestWadRayMath is Test {
 
     function testWadToRay(uint256 x) public {
         unchecked {
-            if ((x * WAD_RAY_RATIO) / WAD_RAY_RATIO != x) {
-                vm.expectRevert();
-                WadRayMath.wadToRay(x);
-            }
+            vm.assume((x * WAD_RAY_RATIO) / WAD_RAY_RATIO == x);
         }
 
         assertEq(WadRayMath.wadToRay(x), WadRayMathRef.wadToRay(x));
+    }
+
+    function testWadToRayOverflow(uint256 x) public {
+        unchecked {
+            vm.assume((x * WAD_RAY_RATIO) / WAD_RAY_RATIO != x);
+        }
+
+        vm.expectRevert();
+        WadRayMath.wadToRay(x);
     }
 
     /// GAS COMPARISONS ///
