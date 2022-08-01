@@ -67,8 +67,8 @@ library PercentageMath {
         uint256 y,
         uint256 percentage
     ) internal pure returns (uint256) {
-        if (percentage > PercentageMath.PERCENTAGE_FACTOR) revert PercentageTooHigh();
+        if (percentage > PERCENTAGE_FACTOR) revert PercentageTooHigh();
 
-        return percentMul(x, PercentageMath.PERCENTAGE_FACTOR - percentage) + percentMul(y, percentage);
+        return percentMul(x, PERCENTAGE_FACTOR - percentage) + percentMul(y, percentage);
     }
 }
