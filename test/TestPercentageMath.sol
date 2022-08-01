@@ -25,6 +25,8 @@ contract PercentageMathFunctions {
 }
 
 contract PercentageMathFunctionsRef {
+    error PercentageTooHigh();
+
     function percentMul(uint256 x, uint256 y) public pure returns (uint256) {
         return PercentageMathRef.percentMul(x, y);
     }
@@ -38,6 +40,8 @@ contract PercentageMathFunctionsRef {
         uint256 y,
         uint256 percentage
     ) public pure returns (uint256) {
+        if (percentage > PercentageMath.PERCENTAGE_FACTOR) revert PercentageTooHigh();
+
         return
             PercentageMathRef.percentMul(x, PercentageMathRef.PERCENTAGE_FACTOR - percentage) +
             PercentageMathRef.percentMul(y, percentage);
@@ -98,7 +102,6 @@ contract TestPercentageMath is Test {
         uint16 percentage
     ) public {
         vm.assume(percentage <= PERCENTAGE_FACTOR);
-
         vm.assume(
             percentage < PercentageMathRef.PERCENTAGE_FACTOR &&
                 x <= MAX_UINT256_MINUS_HALF_PERCENTAGE / (PercentageMathRef.PERCENTAGE_FACTOR - percentage)
