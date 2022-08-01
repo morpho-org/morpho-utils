@@ -103,14 +103,13 @@ contract TestPercentageMath is Test {
     ) public {
         vm.assume(percentage <= PERCENTAGE_FACTOR);
         vm.assume(
-            percentage < PercentageMathRef.PERCENTAGE_FACTOR &&
-                x <= MAX_UINT256_MINUS_HALF_PERCENTAGE / (PercentageMathRef.PERCENTAGE_FACTOR - percentage)
+            percentage < PERCENTAGE_FACTOR && x <= MAX_UINT256_MINUS_HALF_PERCENTAGE / (PERCENTAGE_FACTOR - percentage)
         );
         vm.assume(percentage > 0 && y <= MAX_UINT256_MINUS_HALF_PERCENTAGE / percentage);
 
         assertEq(
             PercentageMath.percentAvg(x, y, percentage),
-            PercentageMathRef.percentMul(x, PercentageMathRef.PERCENTAGE_FACTOR - percentage) +
+            PercentageMathRef.percentMul(x, PERCENTAGE_FACTOR - percentage) +
                 PercentageMathRef.percentMul(y, percentage)
         );
     }

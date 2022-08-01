@@ -57,12 +57,12 @@ library PercentageMath {
         }
     }
 
-    /// @notice Executes a percent average, given an interval [x, y] and a percent p: x * (1 - p) + y * p
+    /// @notice Executes a weighted average, given an interval [x, y] and a percent p: x * (1 - p) + y * p
     /// @param x The value at the start of the interval (included).
     /// @param y The value at the end of the interval (included).
     /// @param percentage The percentage of the interval to be calculated.
     /// @return the average of x and y, weighted by percentage.
-    function percentAvg(
+    function weightedAvg(
         uint256 x,
         uint256 y,
         uint256 percentage
