@@ -41,7 +41,7 @@ contract TestCompoundMath is Test {
 
     function testMul(uint256 x, uint256 y) public {
         unchecked {
-            vm.assume(y == 0 || (y > 0 && (x * y) / y == x));
+            vm.assume(y == 0 || (x * y) / y == x);
         }
 
         assertEq(CompoundMath.mul(x, y), CompoundMathRef.mul(x, y));

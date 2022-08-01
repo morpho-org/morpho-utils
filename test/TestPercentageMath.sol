@@ -43,7 +43,7 @@ contract TestPercentageMath is Test {
     /// TESTS ///
 
     function testPercentMul(uint256 x, uint256 y) public {
-        vm.assume(y == 0 || (y > 0 && x <= MAX_UINT256_MINUS_HALF_PERCENTAGE / y));
+        vm.assume(y == 0 || x <= MAX_UINT256_MINUS_HALF_PERCENTAGE / y);
 
         assertEq(PercentageMath.percentMul(x, y), PercentageMathRef.percentMul(x, y));
     }
