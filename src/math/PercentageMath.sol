@@ -13,6 +13,11 @@ library PercentageMath {
     uint256 internal constant MAX_UINT256 = 2**256 - 1;
     uint256 internal constant MAX_UINT256_MINUS_HALF_PERCENTAGE = 2**256 - 1 - 0.5e4;
 
+    /// ERRORS ///
+
+    // Thrown when percentage is above 100%.
+    error PercentageTooHigh();
+
     /// INTERNAL ///
 
     /// @notice Executes a percentage multiplication.
@@ -50,5 +55,20 @@ library PercentageMath {
 
             y := div(add(mul(x, PERCENTAGE_FACTOR), y), percentage)
         }
+    }
+
+    /// @notice Executes a percent average, given an interval [x, y] and a percent p: x * (1 - p) + y * p
+    /// @param x The value the start of the interval (included).
+    /// @param y The value the end of the interval (included).
+    /// @param percentage The percentage of the interval to be calculated.
+    /// @return the average of x and y, weighted by percentage.
+    function percentAvg(
+        uint256 x,
+        uint256 y,
+        uint256 percentage
+    ) internal pure returns (uint256) {
+        if (percentage > PercentageMath.PERCENTAGE_FACTOR) revert PercentageTooHigh();
+
+        return percentMul(x, PercentageMath.PERCENTAGE_FACTOR - percentage) + percentMul(y, percentage);
     }
 }
