@@ -107,11 +107,7 @@ contract TestPercentageMath is Test {
         if (percentage < PERCENTAGE_FACTOR)
             vm.assume(x <= MAX_UINT256_MINUS_HALF_PERCENTAGE / (PERCENTAGE_FACTOR - percentage));
 
-        assertEq(
-            PercentageMath.weightedAvg(x, y, percentage),
-            PercentageMathRef.percentMul(x, PERCENTAGE_FACTOR - percentage) +
-                PercentageMathRef.percentMul(y, percentage)
-        );
+        assertEq(PercentageMath.weightedAvg(x, y, percentage), mathRef.weightedAvg(x, y, percentage));
     }
 
     function testWeightedAvgRevertWhenPercentageTooHigh(
