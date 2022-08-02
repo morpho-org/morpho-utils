@@ -8,6 +8,7 @@ pragma solidity ^0.8.0;
 library CompoundMath {
     /// CONSTANTS ///
 
+    uint256 internal constant MAX_UINT256 = 2**256 - 1;
     uint256 public constant SCALE = 1e36;
     uint256 public constant WAD = 1e18;
 
@@ -15,13 +16,13 @@ library CompoundMath {
 
     function mul(uint256 x, uint256 y) internal pure returns (uint256 z) {
         assembly {
-            z := mul(x, y)
-            // Revert if x > 0 and (x * y) / x != x
-            if iszero(or(iszero(x), eq(div(z, x), y))) {
+            // Revert if x * y > type(uint256).max
+            // <=> y > 0 and x > type(uint256).max / y
+            if mul(y, gt(x, div(MAX_UINT256, y))) {
                 revert(0, 0)
             }
 
-            z := div(z, WAD)
+            z := div(mul(x, y), WAD)
         }
     }
 
@@ -29,7 +30,7 @@ library CompoundMath {
         assembly {
             z := mul(x, SCALE)
             // Revert if y = 0 or (x * SCALE) / SCALE < x
-            if or(iszero(y), lt(div(z, SCALE), x)) {
+            if iszero(mul(y, iszero(lt(div(z, SCALE), x)))) {
                 revert(0, 0)
             }
 
