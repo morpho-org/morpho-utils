@@ -14,15 +14,37 @@ contract PercentageMathFunctions {
     function percentDiv(uint256 x, uint256 y) public pure returns (uint256) {
         return PercentageMath.percentDiv(x, y);
     }
+
+    function weightedAvg(
+        uint256 x,
+        uint256 y,
+        uint256 percentage
+    ) public pure returns (uint256) {
+        return PercentageMath.weightedAvg(x, y, percentage);
+    }
 }
 
 contract PercentageMathFunctionsRef {
+    error PercentageTooHigh();
+
     function percentMul(uint256 x, uint256 y) public pure returns (uint256) {
         return PercentageMathRef.percentMul(x, y);
     }
 
     function percentDiv(uint256 x, uint256 y) public pure returns (uint256) {
         return PercentageMathRef.percentDiv(x, y);
+    }
+
+    function weightedAvg(
+        uint256 x,
+        uint256 y,
+        uint256 percentage
+    ) public pure returns (uint256) {
+        if (percentage > PercentageMath.PERCENTAGE_FACTOR) revert PercentageTooHigh();
+
+        return
+            PercentageMathRef.percentMul(x, PercentageMathRef.PERCENTAGE_FACTOR - percentage) +
+            PercentageMathRef.percentMul(y, percentage);
     }
 }
 
@@ -75,6 +97,30 @@ contract TestPercentageMath is Test {
         PercentageMath.percentDiv(x, y);
     }
 
+    function testWeightedAvg(
+        uint256 x,
+        uint256 y,
+        uint16 percentage
+    ) public {
+        vm.assume(percentage <= PERCENTAGE_FACTOR);
+        if (percentage > 0) vm.assume(y <= MAX_UINT256_MINUS_HALF_PERCENTAGE / percentage);
+        if (percentage < PERCENTAGE_FACTOR)
+            vm.assume(x <= MAX_UINT256_MINUS_HALF_PERCENTAGE / (PERCENTAGE_FACTOR - percentage));
+
+        assertEq(PercentageMath.weightedAvg(x, y, percentage), mathRef.weightedAvg(x, y, percentage));
+    }
+
+    function testWeightedAvgRevertWhenPercentageTooHigh(
+        uint256 x,
+        uint256 y,
+        uint256 percentage
+    ) public {
+        vm.assume(percentage > PERCENTAGE_FACTOR);
+
+        vm.expectRevert(abi.encodeWithSignature("PercentageTooHigh()"));
+        PercentageMath.weightedAvg(x, y, percentage);
+    }
+
     /// GAS COMPARISONS ///
 
     function testGasPercentageMul() public view {
@@ -85,5 +131,10 @@ contract TestPercentageMath is Test {
     function testGasPercentageDiv() public view {
         math.percentDiv(1 ether, 1_000);
         mathRef.percentDiv(1 ether, 1_000);
+    }
+
+    function testGasPercentageAvg() public view {
+        math.weightedAvg(1 ether, 2 ether, 5_000);
+        mathRef.weightedAvg(1 ether, 2 ether, 5_000);
     }
 }
