@@ -11,6 +11,7 @@ library CompoundMath {
     uint256 internal constant MAX_UINT256 = 2**256 - 1;
     uint256 public constant SCALE = 1e36;
     uint256 public constant WAD = 1e18;
+    uint256 public constant MAX_UINT256_DIV_SCALE = 115792089237316195423570985008687907853269; // (2**256 - 1) / 1e36
 
     /// INTERNAL ///
 
@@ -30,7 +31,7 @@ library CompoundMath {
         assembly {
             // Revert if x * SCALE > type(uint256).max or y == 0
             // <=> x > type(uint256).max / SCALE or y == 0
-            if iszero(mul(y, iszero(gt(x, div(MAX_UINT256, SCALE))))) {
+            if iszero(mul(y, iszero(gt(x, MAX_UINT256_DIV_SCALE)))) {
                 revert(0, 0)
             }
 
