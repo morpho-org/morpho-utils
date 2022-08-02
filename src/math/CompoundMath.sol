@@ -28,13 +28,13 @@ library CompoundMath {
 
     function div(uint256 x, uint256 y) internal pure returns (uint256 z) {
         assembly {
-            z := mul(x, SCALE)
-            // Revert if y = 0 or (x * SCALE) / SCALE < x
-            if iszero(mul(y, iszero(lt(div(z, SCALE), x)))) {
+            // Revert if x * SCALE > type(uint256).max or y == 0
+            // <=> x > type(uint256).max / SCALE or y == 0
+            if iszero(mul(y, iszero(gt(x, div(MAX_UINT256, SCALE))))) {
                 revert(0, 0)
             }
 
-            z := div(div(z, y), WAD)
+            z := div(div(mul(x, SCALE), y), WAD)
         }
     }
 }
