@@ -70,27 +70,25 @@ contract TestMath is Test {
         Math.divUp(x, 0);
     }
 
-    function testDivUpWhenNumSmaller(uint256 x, uint256 y) public {
+    function testDivUpNumSmaller(uint256 x, uint256 y) public {
         vm.assume(x > 0);
         vm.assume(x < y);
         assertEq(Math.divUp(x, y), 1);
     }
 
-    function testDivUpWhenOperandsEqual(uint256 x) public {
+    function testDivUpEqual(uint256 x) public {
         vm.assume(x > 0);
         assertEq(Math.divUp(x, x), 1);
     }
 
-    function testDivUpWhenNumLargerAndDivisible(uint256 x, uint256 y) public {
+    function testDivUpNumDivisible(uint256 x, uint256 y) public {
         vm.assume(y > 0);
-        vm.assume(x > y);
         vm.assume(x % y == 0);
         assertEq(Math.divUp(x, y), x / y);
     }
 
-    function testDivUpWhenNumLargerAndNotDivisible(uint256 x, uint256 y) public {
+    function testDivUpNumNotDivisible(uint256 x, uint256 y) public {
         vm.assume(y > 0);
-        vm.assume(x > y);
         vm.assume(x % y != 0);
         assertEq(Math.divUp(x, y), x / y + 1);
     }
