@@ -58,7 +58,7 @@ contract TestCompoundMath is Test {
 
     function testDiv(uint256 x, uint256 y) public {
         unchecked {
-            vm.assume(y > 0 && (x > 0 && (x * SCALE) / x == SCALE));
+            vm.assume(y > 0 && (x == 0 || (x * SCALE) / x == SCALE));
         }
 
         assertEq(CompoundMath.div(x, y), CompoundMathRef.div(x, y));
