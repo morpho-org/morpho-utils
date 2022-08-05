@@ -13,11 +13,6 @@ library PercentageMath {
     uint256 internal constant MAX_UINT256 = 2**256 - 1;
     uint256 internal constant MAX_UINT256_MINUS_HALF_PERCENTAGE = 2**256 - 1 - 0.5e4;
 
-    /// ERRORS ///
-
-    // Thrown when percentage is above 100%.
-    error PercentageTooHigh();
-
     /// INTERNAL ///
 
     /// @notice Executes a percentage addition.
@@ -33,8 +28,6 @@ library PercentageMath {
     /// @param percentage The percentage of the value to be subtracted.
     /// @return The result of the subtraction.
     function percentSub(uint256 x, uint256 percentage) internal pure returns (uint256) {
-        if (percentage > PERCENTAGE_FACTOR) revert PercentageTooHigh();
-
         return percentMul(x, PERCENTAGE_FACTOR - percentage);
     }
 
@@ -85,8 +78,6 @@ library PercentageMath {
         uint256 y,
         uint256 percentage
     ) internal pure returns (uint256) {
-        if (percentage > PERCENTAGE_FACTOR) revert PercentageTooHigh();
-
         return percentMul(x, PERCENTAGE_FACTOR - percentage) + percentMul(y, percentage);
     }
 }
