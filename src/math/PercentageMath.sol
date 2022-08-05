@@ -20,6 +20,24 @@ library PercentageMath {
 
     /// INTERNAL ///
 
+    /// @notice Executes a percentage addition.
+    /// @param x The value of which the percentage needs to be added.
+    /// @param percentage The percentage of the value to be added.
+    /// @return The result of the addition.
+    function percentAdd(uint256 x, uint256 percentage) internal pure returns (uint256) {
+        return percentMul(x, PERCENTAGE_FACTOR + percentage);
+    }
+
+    /// @notice Executes a percentage subtraction.
+    /// @param x The value of which the percentage needs to be subtracted.
+    /// @param percentage The percentage of the value to be subtracted.
+    /// @return The result of the subtraction.
+    function percentSub(uint256 x, uint256 percentage) internal pure returns (uint256) {
+        if (percentage > PERCENTAGE_FACTOR) revert PercentageTooHigh();
+
+        return percentMul(x, PERCENTAGE_FACTOR - percentage);
+    }
+
     /// @notice Executes a percentage multiplication.
     /// @param x The value of which the percentage needs to be calculated.
     /// @param percentage The percentage of the value to be calculated.
