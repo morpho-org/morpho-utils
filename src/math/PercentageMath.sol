@@ -53,7 +53,7 @@ library PercentageMath {
                 revert(0, 0)
             }
 
-            y := div(add(mul(x, PERCENTAGE_FACTOR), y), percentage)
+            y := div(add(mul(PERCENTAGE_FACTOR, x), y), percentage)
         }
     }
 

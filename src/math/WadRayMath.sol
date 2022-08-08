@@ -53,7 +53,7 @@ library WadRayMath {
                 revert(0, 0)
             }
 
-            z := div(add(mul(x, WAD), z), y)
+            z := div(add(mul(WAD, x), z), y)
         }
     }
 
@@ -90,7 +90,7 @@ library WadRayMath {
                 revert(0, 0)
             }
 
-            z := div(add(mul(x, RAY), z), y)
+            z := div(add(mul(RAY, x), z), y)
         }
     }
 
@@ -109,7 +109,7 @@ library WadRayMath {
     /// @return y = x converted in ray.
     function wadToRay(uint256 x) internal pure returns (uint256 y) {
         assembly {
-            y := mul(x, WAD_RAY_RATIO)
+            y := mul(WAD_RAY_RATIO, x)
             // Revert if y / WAD_RAY_RATIO != x
             if iszero(eq(div(y, WAD_RAY_RATIO), x)) {
                 revert(0, 0)

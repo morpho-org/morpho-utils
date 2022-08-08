@@ -34,7 +34,7 @@ library CompoundMath {
                 revert(0, 0)
             }
 
-            z := div(div(mul(x, SCALE), y), WAD)
+            z := div(div(mul(SCALE, x), y), WAD)
         }
     }
 }
