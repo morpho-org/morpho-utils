@@ -27,7 +27,7 @@ contract Caller {
         bytes32 ptr;
         assembly{
             ptr := mload(0x40)
-            //We write a slot in the memory before the call 
+            // We write a slot in the memory before the call.
             mstore(ptr, 0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb)
             mstore(0x40, add(ptr, 0x20))
         }
@@ -36,11 +36,11 @@ contract Caller {
         
         assembly{
             ptr := mload(0x40)
-            //We write a slot in the memory after the call
+            // We write a slot in the memory after the call.
             mstore(ptr, 0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)
             mstore(0x40, add(ptr, 0x20))
         }
-        //We store the memory in allMem
+        // We store the memory in allMem.
         assembly{
             ptr := mload(0x40)
             allMem := 0x00
@@ -175,8 +175,8 @@ contract TestDelegateCall is Test {
     }
 
     function testMemoryUncorruptedWithRef() public{
-        //This test makes sure that the delegateCall function of our library acts on the memory in the exact same way 
-        //as a targetBehaviour function corresponding to the desired behavior.
+        // This test makes sure that the delegateCall function of our library acts on the memory in the exact same way 
+        // as a targetBehaviour function corresponding to the desired behavior.
         bytes memory memoryReturned;
         bytes32 pointerReturned;
         bytes memory memoryReturnedRef;
