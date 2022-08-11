@@ -25,7 +25,7 @@ library PercentageMath {
         // <=> percentage > type(uint256).max - PERCENTAGE_FACTOR or x * (PERCENTAGE_FACTOR + percentage) > type(uint256).max - HALF_PERCENTAGE_FACTOR
         // <=> percentage > type(uint256).max - PERCENTAGE_FACTOR or x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR + percentage)
         assembly {
-            y := add(percentage, PERCENTAGE_FACTOR) // Temporary assīgnement to save gas.
+            y := add(percentage, PERCENTAGE_FACTOR) // Temporary assignement to save gas.
 
             if mul(
                 y,
@@ -52,7 +52,7 @@ library PercentageMath {
         // <=> x * (PERCENTAGE_FACTOR - percentage) > type(uint256).max - HALF_PERCENTAGE_FACTOR
         // <=> x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
         assembly {
-            y := sub(PERCENTAGE_FACTOR, percentage) // Temporary assīgnement to save gas.
+            y := sub(PERCENTAGE_FACTOR, percentage) // Temporary assignement to save gas.
 
             if mul(y, or(gt(percentage, PERCENTAGE_FACTOR), gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, y)))) {
                 revert(0, 0)
@@ -90,7 +90,7 @@ library PercentageMath {
         // <=> x * PERCENTAGE_FACTOR > type(uint256).max - halfPercentage
         // <=> x > type(uint256).max - halfPercentage / PERCENTAGE_FACTOR
         assembly {
-            y := div(percentage, 2) // Temporary assīgnement to save gas.
+            y := div(percentage, 2) // Temporary assignement to save gas.
 
             if iszero(mul(percentage, iszero(gt(x, div(sub(MAX_UINT256, y), PERCENTAGE_FACTOR))))) {
                 revert(0, 0)
