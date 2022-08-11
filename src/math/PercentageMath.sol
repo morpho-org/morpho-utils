@@ -125,8 +125,7 @@ library PercentageMath {
         assembly {
             let sub_ := sub(PERCENTAGE_FACTOR, percentage)
             let x1 := div(add(mul(x, sub_), HALF_PERCENTAGE_FACTOR), PERCENTAGE_FACTOR)
-            let x2 := div(add(mul(y, percentage), HALF_PERCENTAGE_FACTOR), PERCENTAGE_FACTOR)
-            let sum := add(x1, x2)
+            z := add(x1, div(add(mul(y, percentage), HALF_PERCENTAGE_FACTOR), PERCENTAGE_FACTOR))
 
             if or(
                 or(
@@ -136,12 +135,10 @@ library PercentageMath {
                     ),
                     mul(percentage, gt(y, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, percentage)))
                 ),
-                lt(sum, x1)
+                lt(z, x1)
             ) {
                 revert(0, 0)
             }
-
-            z := add(x1, x2)
         }
     }
 }
