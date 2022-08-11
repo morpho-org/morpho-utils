@@ -26,6 +26,7 @@ library PercentageMath {
         // <=> percentage > type(uint256).max - PERCENTAGE_FACTOR or x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR + percentage)
         assembly {
             y := add(percentage, PERCENTAGE_FACTOR)
+
             if mul(y, or(gt(percentage, sub(MAX_UINT256, PERCENTAGE_FACTOR)), gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, y)))) {
                 revert(0, 0)
             }
@@ -37,9 +38,22 @@ library PercentageMath {
     /// @notice Executes a percentage subtraction.
     /// @param x The value of which the percentage needs to be subtracted.
     /// @param percentage The percentage of the value to be subtracted.
-    /// @return The result of the subtraction.
-    function percentSub(uint256 x, uint256 percentage) internal pure returns (uint256) {
-        return percentMul(x, PERCENTAGE_FACTOR - percentage);
+    /// @return y The result of the subtraction.
+    function percentSub(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
+        // Let percentage > 0
+        // Underflow if percentage > PERCENTAGE_FACTOR
+        // Overflow if x * (PERCENTAGE_FACTOR - percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
+        // <=> x * (PERCENTAGE_FACTOR - percentage) > type(uint256).max - HALF_PERCENTAGE_FACTOR
+        // <=> x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
+        assembly {
+            y := sub(PERCENTAGE_FACTOR, percentage)
+
+            if mul(y, or(gt(percentage, PERCENTAGE_FACTOR), gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, y)))) {
+                revert(0, 0)
+            }
+
+            y := div(add(mul(x, y), HALF_PERCENTAGE_FACTOR), PERCENTAGE_FACTOR)
+        }
     }
 
     /// @notice Executes a percentage multiplication.
