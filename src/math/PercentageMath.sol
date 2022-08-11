@@ -18,9 +18,19 @@ library PercentageMath {
     /// @notice Executes a percentage addition.
     /// @param x The value of which the percentage needs to be added.
     /// @param percentage The percentage of the value to be added.
-    /// @return The result of the addition.
-    function percentAdd(uint256 x, uint256 percentage) internal pure returns (uint256) {
-        return percentMul(x, PERCENTAGE_FACTOR + percentage);
+    /// @return y The result of the addition.
+    function percentAdd(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
+        // Let percentage > 0
+        // Overflow if PERCENTAGE_FACTOR + percentage > type(uint256).max or x * (PERCENTAGE_FACTOR + percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
+        // <=> percentage > type(uint256).max - PERCENTAGE_FACTOR or x * (PERCENTAGE_FACTOR + percentage) > type(uint256).max - HALF_PERCENTAGE_FACTOR
+        // <=> percentage > type(uint256).max - PERCENTAGE_FACTOR or x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR + percentage)
+        assembly {
+            if mul(percentage, or(gt(percentage, sub(MAX_UINT256, PERCENTAGE_FACTOR)), gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, percentage)))) {
+                revert(0, 0)
+            }
+
+            y := div(add(mul(x, add(percentage, PERCENTAGE_FACTOR)), HALF_PERCENTAGE_FACTOR), PERCENTAGE_FACTOR)
+        }
     }
 
     /// @notice Executes a percentage subtraction.

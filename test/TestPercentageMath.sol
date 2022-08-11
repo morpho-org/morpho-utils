@@ -92,7 +92,7 @@ contract TestPercentageMath is Test {
     function testPercentAddOverflow(uint256 x, uint256 y) public {
         vm.assume(y > MAX_UINT256 - PERCENTAGE_FACTOR);
 
-        vm.expectRevert(stdError.arithmeticError);
+        vm.expectRevert();
         PercentageMath.percentAdd(x, y);
     }
 
