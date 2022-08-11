@@ -98,12 +98,35 @@ library PercentageMath {
     /// @param x The value at the start of the interval (included).
     /// @param y The value at the end of the interval (included).
     /// @param percentage The percentage of the interval to be calculated.
-    /// @return The average of x and y, weighted by percentage.
+    /// @return z The average of x and y, weighted by percentage.
     function weightedAvg(
         uint256 x,
         uint256 y,
         uint256 percentage
-    ) internal pure returns (uint256) {
-        return percentMul(x, PERCENTAGE_FACTOR - percentage) + percentMul(y, percentage);
+    ) internal pure returns (uint256 z) {
+        // Let percentage > 0
+        // Underflow if percentage > PERCENTAGE_FACTOR
+        //
+        // Overflow if x1 = x * (PERCENTAGE_FACTOR - percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
+        // <=> x * (PERCENTAGE_FACTOR - percentage) > type(uint256).max - HALF_PERCENTAGE_FACTOR
+        // <=> x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
+        //
+        // Overflow if x2 = y * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
+        // <=> y * percentage > type(uint256).max - HALF_PERCENTAGE_FACTOR
+        // <=> y > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage
+        //
+        // Overflow if x1 + x2 > type(uint256).max
+        assembly {
+            let sub_ := sub(PERCENTAGE_FACTOR, percentage)
+            let x1 := div(add(mul(x, sub_), HALF_PERCENTAGE_FACTOR), PERCENTAGE_FACTOR)
+            let x2 := div(add(mul(y, percentage), HALF_PERCENTAGE_FACTOR), PERCENTAGE_FACTOR)
+            let sum := add(x1, x2)
+
+            if or(or(mul(sub_, or(gt(percentage, PERCENTAGE_FACTOR), gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, sub_)))), mul(percentage, gt(y, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, percentage)))), lt(sum, x1)) {
+                revert(0, 0)
+            }
+
+            z := add(x1, x2)
+        }
     }
 }
