@@ -72,7 +72,7 @@ library PercentageMath {
     /// @param x The value at the start of the interval (included).
     /// @param y The value at the end of the interval (included).
     /// @param percentage The percentage of the interval to be calculated.
-    /// @return the average of x and y, weighted by percentage.
+    /// @return The average of x and y, weighted by percentage.
     function weightedAvg(
         uint256 x,
         uint256 y,

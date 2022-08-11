@@ -170,14 +170,13 @@ contract TestPercentageMath is Test {
         );
     }
 
-    function testWeightedAvgUnderflow(
+    function testFailWeightedAvgUnderflow(
         uint256 x,
         uint256 y,
         uint256 percentage
     ) public {
         vm.assume(percentage > PERCENTAGE_FACTOR);
 
-        vm.expectRevert(stdError.arithmeticError);
         PercentageMath.weightedAvg(x, y, percentage);
     }
 
