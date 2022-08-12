@@ -45,15 +45,15 @@ library PercentageMath {
     /// @param percentage The percentage of the value to subtract.
     /// @return y The result of the subtraction.
     function percentSub(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
-        // Let percentage > 0
-        // Underflow if percentage > PERCENTAGE_FACTOR
-        // Overflow if x * (PERCENTAGE_FACTOR - percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
-        // <=> x * (PERCENTAGE_FACTOR - percentage) > type(uint256).max - HALF_PERCENTAGE_FACTOR
-        // <=> x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
+        // Should revert if
+        // percentage > PERCENTAGE_FACTOR
+        // or x * (PERCENTAGE_FACTOR - percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
+        // <=> percentage > PERCENTAGE_FACTOR
+        // or ((PERCENTAGE_FACTOR - percentage) > 0 and x > type(uint256).max - HALF_PERCENTAGE_FACTOR / (PERCENTAGE_FACTOR - percentage))
         assembly {
-            y := sub(PERCENTAGE_FACTOR, percentage) // Temporary assignement to save gas.
+            y := sub(PERCENTAGE_FACTOR, percentage) // Temporary assignment to save gas.
 
-            if mul(y, or(gt(percentage, PERCENTAGE_FACTOR), gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, y)))) {
+            if or(gt(percentage, PERCENTAGE_FACTOR), and(y, gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, y)))) {
                 revert(0, 0)
             }
 
