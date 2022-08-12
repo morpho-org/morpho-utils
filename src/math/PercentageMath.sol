@@ -109,35 +109,31 @@ library PercentageMath {
         uint256 y,
         uint256 percentage
     ) internal pure returns (uint256 z) {
-        // Let percentage > 0
-        // Underflow if percentage > PERCENTAGE_FACTOR
-        //
-        // Overflow if x1 = x * (PERCENTAGE_FACTOR - percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
-        // <=> x * (PERCENTAGE_FACTOR - percentage) > type(uint256).max - HALF_PERCENTAGE_FACTOR
-        // <=> x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
-        //
-        // Overflow if x2 = y * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
+        // Should revert if
+        // percentage > PERCENTAGE_FACTOR
+        // or
+        // x1 = x * (PERCENTAGE_FACTOR - percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
+        // <=> (PERCENTAGE_FACTOR - percentage) > 0 and x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
+        // or
+        // x2 = y * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
         // <=> y * percentage > type(uint256).max - HALF_PERCENTAGE_FACTOR
-        // <=> y > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage
+        // <=> percentage > 0 and y > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage
         //
-        // Overflow if x1 + x2 > type(uint256).max
+        // Note: x1 / PERCENTAGE_FACTOR + x2 / PERCENTAGE_FACTOR < max(x,y) <= type(uint256).max
         assembly {
-            let sub_ := sub(PERCENTAGE_FACTOR, percentage)
-            let x1 := div(add(mul(x, sub_), HALF_PERCENTAGE_FACTOR), PERCENTAGE_FACTOR)
-            z := add(x1, div(add(mul(y, percentage), HALF_PERCENTAGE_FACTOR), PERCENTAGE_FACTOR))
+            z := sub(PERCENTAGE_FACTOR, percentage) // Temporary assignment to save gas.
 
             if or(
-                or(
-                    mul(
-                        sub_,
-                        or(gt(percentage, PERCENTAGE_FACTOR), gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, sub_)))
-                    ),
-                    mul(percentage, gt(y, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, percentage)))
-                ),
-                lt(z, x1)
+                or(gt(percentage, PERCENTAGE_FACTOR), mul(z, gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, z)))),
+                mul(percentage, gt(y, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, percentage)))
             ) {
                 revert(0, 0)
             }
+
+            z := add(
+                div(add(mul(x, z), HALF_PERCENTAGE_FACTOR), PERCENTAGE_FACTOR),
+                div(add(mul(y, percentage), HALF_PERCENTAGE_FACTOR), PERCENTAGE_FACTOR)
+            )
         }
     }
 }
