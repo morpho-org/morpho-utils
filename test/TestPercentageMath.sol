@@ -82,18 +82,21 @@ contract TestPercentageMath is Test {
         assertEq(PercentageMath.percentAdd(x, 0), x);
     }
 
-    function testPercentAdd(uint256 x, uint256 y) public {
-        vm.assume(y <= MAX_UINT256 - PERCENTAGE_FACTOR);
-        vm.assume(x <= MAX_UINT256 / (PERCENTAGE_FACTOR + y));
+    function testPercentAdd(uint256 x, uint256 p) public {
+        vm.assume(p <= MAX_UINT256 - PERCENTAGE_FACTOR);
+        vm.assume(x <= MAX_UINT256 / (PERCENTAGE_FACTOR + p));
 
-        assertApproxEqAbs(PercentageMath.percentAdd(x, y), (x * (PERCENTAGE_FACTOR + y)) / PERCENTAGE_FACTOR, 1);
+        assertEq(
+            PercentageMath.percentAdd(x, p),
+            (x * (PERCENTAGE_FACTOR + p) + HALF_PERCENTAGE_FACTOR) / PERCENTAGE_FACTOR
+        );
     }
 
-    function testPercentAddOverflow(uint256 x, uint256 y) public {
-        vm.assume(y > MAX_UINT256 - PERCENTAGE_FACTOR);
+    function testPercentAddOverflow(uint256 x, uint256 p) public {
+        vm.assume(p > MAX_UINT256 - PERCENTAGE_FACTOR);
 
         vm.expectRevert();
-        PercentageMath.percentAdd(x, y);
+        PercentageMath.percentAdd(x, p);
     }
 
     function testPercentSubZero(uint256 x) public {
@@ -106,51 +109,52 @@ contract TestPercentageMath is Test {
         assertEq(PercentageMath.percentSub(x, PERCENTAGE_FACTOR), 0);
     }
 
-    function testPercentSub(uint256 x, uint256 y) public {
-        vm.assume(y <= PERCENTAGE_FACTOR);
-        vm.assume(x <= MAX_UINT256 / (PERCENTAGE_FACTOR - y));
+    function testPercentSub(uint256 x, uint256 p) public {
+        vm.assume(p <= PERCENTAGE_FACTOR);
+        vm.assume(x <= MAX_UINT256 / (PERCENTAGE_FACTOR - p));
 
-        assertApproxEqAbs(PercentageMath.percentSub(x, y), (x * (PERCENTAGE_FACTOR - y)) / PERCENTAGE_FACTOR, 1);
+        assertEq(
+            PercentageMath.percentSub(x, p),
+            (x * (PERCENTAGE_FACTOR - p) + HALF_PERCENTAGE_FACTOR) / PERCENTAGE_FACTOR
+        );
     }
 
-    function testPercentSubUnderflow(uint256 x, uint256 y) public {
-        vm.assume(y > PERCENTAGE_FACTOR);
+    function testPercentSubUnderflow(uint256 x, uint256 p) public {
+        vm.assume(p > PERCENTAGE_FACTOR);
 
         vm.expectRevert();
-        PercentageMath.percentSub(x, y);
+        PercentageMath.percentSub(x, p);
     }
 
-    function testPercentMul(uint256 x, uint256 y) public {
-        vm.assume(y == 0 || x <= MAX_UINT256_MINUS_HALF_PERCENTAGE / y);
+    function testPercentMul(uint256 x, uint256 p) public {
+        vm.assume(p == 0 || x <= MAX_UINT256_MINUS_HALF_PERCENTAGE / p);
 
-        assertEq(PercentageMath.percentMul(x, y), PercentageMathRef.percentMul(x, y));
+        assertEq(PercentageMath.percentMul(x, p), PercentageMathRef.percentMul(x, p));
     }
 
-    function testPercentMulOverflow(uint256 x, uint256 y) public {
-        vm.assume(y > 0 && x > MAX_UINT256_MINUS_HALF_PERCENTAGE / y);
+    function testPercentMulOverflow(uint256 x, uint256 p) public {
+        vm.assume(p > 0 && x > MAX_UINT256_MINUS_HALF_PERCENTAGE / p);
 
         vm.expectRevert();
-        PercentageMath.percentMul(x, y);
+        PercentageMath.percentMul(x, p);
     }
 
-    function testPercentDiv(uint256 x, uint256 y) public {
-        vm.assume(y > 0 && x <= (MAX_UINT256 - y / 2) / PERCENTAGE_FACTOR);
+    function testPercentDiv(uint256 x, uint256 p) public {
+        vm.assume(p > 0 && x <= (MAX_UINT256 - p / 2) / PERCENTAGE_FACTOR);
 
-        assertEq(PercentageMath.percentDiv(x, y), PercentageMathRef.percentDiv(x, y));
+        assertEq(PercentageMath.percentDiv(x, p), PercentageMathRef.percentDiv(x, p));
     }
 
-    function testPercentDivOverflow(uint256 x, uint256 y) public {
-        vm.assume(x > (MAX_UINT256 - y / 2) / PERCENTAGE_FACTOR);
+    function testPercentDivOverflow(uint256 x, uint256 p) public {
+        vm.assume(x > (MAX_UINT256 - p / 2) / PERCENTAGE_FACTOR);
 
         vm.expectRevert();
-        PercentageMath.percentDiv(x, y);
+        PercentageMath.percentDiv(x, p);
     }
 
-    function testPercentDivByZero(uint256 x, uint256 y) public {
-        vm.assume(y == 0);
-
+    function testPercentDivByZero(uint256 x) public {
         vm.expectRevert();
-        PercentageMath.percentDiv(x, y);
+        PercentageMath.percentDiv(x, 0);
     }
 
     function testWeightedAvg(
@@ -159,15 +163,33 @@ contract TestPercentageMath is Test {
         uint16 percentage
     ) public {
         vm.assume(percentage <= PERCENTAGE_FACTOR);
-        if (percentage > 0) vm.assume(y <= MAX_UINT256_MINUS_HALF_PERCENTAGE / percentage);
-        if (percentage < PERCENTAGE_FACTOR)
-            vm.assume(x <= MAX_UINT256_MINUS_HALF_PERCENTAGE / (PERCENTAGE_FACTOR - percentage));
-
-        assertApproxEqAbs(
-            PercentageMath.weightedAvg(x, y, percentage),
-            ((x * (PERCENTAGE_FACTOR - percentage)) + (y * percentage)) / PERCENTAGE_FACTOR,
-            1
+        // prettier-ignore
+        vm.assume(
+            (percentage == 0 || y <= MAX_UINT256_MINUS_HALF_PERCENTAGE / percentage) &&
+            (PERCENTAGE_FACTOR - percentage == 0 || x <= MAX_UINT256_MINUS_HALF_PERCENTAGE / (PERCENTAGE_FACTOR - percentage))
         );
+
+        assertEq(
+            PercentageMath.weightedAvg(x, y, percentage),
+            // prettier-ignore
+            ((x * (PERCENTAGE_FACTOR - percentage) + HALF_PERCENTAGE_FACTOR) / PERCENTAGE_FACTOR) +
+            ((y * percentage)                      + HALF_PERCENTAGE_FACTOR) / PERCENTAGE_FACTOR
+        );
+    }
+
+    function testFailWeightedAvgOverflow(
+        uint256 x,
+        uint256 y,
+        uint256 percentage
+    ) public {
+        vm.assume(percentage <= PERCENTAGE_FACTOR);
+        // prettier-ignore
+        vm.assume(
+            (percentage > 0 && y > MAX_UINT256_MINUS_HALF_PERCENTAGE / percentage) ||
+            (PERCENTAGE_FACTOR - percentage > 0 && x > (MAX_UINT256_MINUS_HALF_PERCENTAGE / (PERCENTAGE_FACTOR - percentage)))
+        );
+
+        PercentageMath.weightedAvg(x, y, percentage);
     }
 
     function testFailWeightedAvgUnderflow(
