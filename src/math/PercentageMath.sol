@@ -20,19 +20,18 @@ library PercentageMath {
     /// @param percentage The percentage of the value to add.
     /// @return y The result of the addition.
     function percentAdd(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
-        // Let percentage > 0
-        // Overflow if PERCENTAGE_FACTOR + percentage > type(uint256).max or x * (PERCENTAGE_FACTOR + percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
-        // <=> percentage > type(uint256).max - PERCENTAGE_FACTOR or x * (PERCENTAGE_FACTOR + percentage) > type(uint256).max - HALF_PERCENTAGE_FACTOR
-        // <=> percentage > type(uint256).max - PERCENTAGE_FACTOR or x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR + percentage)
+        // Should revert if
+        // PERCENTAGE_FACTOR + percentage > type(uint256).max
+        // or x * (PERCENTAGE_FACTOR + percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
+        // <=> percentage > type(uint256).max - PERCENTAGE_FACTOR
+        // or x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR + percentage)
+        // Note: PERCENTAGE_FACTOR + percentage >= PERCENTAGE_FACTOR > 0
         assembly {
-            y := add(percentage, PERCENTAGE_FACTOR) // Temporary assignement to save gas.
+            y := add(PERCENTAGE_FACTOR, percentage) // Temporary assignment to save gas.
 
-            if mul(
-                y,
-                or(
-                    gt(percentage, sub(MAX_UINT256, PERCENTAGE_FACTOR)),
-                    gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, y))
-                )
+            if or(
+                gt(percentage, sub(MAX_UINT256, PERCENTAGE_FACTOR)),
+                gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, y))
             ) {
                 revert(0, 0)
             }
