@@ -66,10 +66,9 @@ library PercentageMath {
     /// @param percentage The percentage of the value to multiply.
     /// @return y The result of the multiplication.
     function percentMul(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
-        // Let percentage > 0
-        // Overflow if x * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
-        // <=> x * percentage > type(uint256).max - HALF_PERCENTAGE_FACTOR
-        // <=> x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage
+        // Should revert if
+        // x * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
+        // <=> percentage > 0 and x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage
         assembly {
             if mul(percentage, gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, percentage))) {
                 revert(0, 0)
@@ -84,12 +83,13 @@ library PercentageMath {
     /// @param percentage The percentage of the value to divide.
     /// @return y The result of the division.
     function percentDiv(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
-        // let percentage > 0
-        // Overflow if x * PERCENTAGE_FACTOR + halfPercentage > type(uint256).max
-        // <=> x * PERCENTAGE_FACTOR > type(uint256).max - halfPercentage
-        // <=> x > type(uint256).max - halfPercentage / PERCENTAGE_FACTOR
+        // Should revert if
+        // percentage == 0
+        // or x * PERCENTAGE_FACTOR + percentage / 2 > type(uint256).max
+        // <=> percentage == 0
+        // or x > (type(uint256).max - percentage / 2) / PERCENTAGE_FACTOR
         assembly {
-            y := div(percentage, 2) // Temporary assignement to save gas.
+            y := div(percentage, 2) // Temporary assignment to save gas.
 
             if iszero(mul(percentage, iszero(gt(x, div(sub(MAX_UINT256, y), PERCENTAGE_FACTOR))))) {
                 revert(0, 0)
