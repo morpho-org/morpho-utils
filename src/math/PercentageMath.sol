@@ -20,7 +20,7 @@ library PercentageMath {
     /// @param percentage The percentage of the value to add.
     /// @return y The result of the addition.
     function percentAdd(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
-        // Should revert if
+        // Must revert if
         // PERCENTAGE_FACTOR + percentage > type(uint256).max
         // or x * (PERCENTAGE_FACTOR + percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
         // <=> percentage > type(uint256).max - PERCENTAGE_FACTOR
@@ -45,7 +45,7 @@ library PercentageMath {
     /// @param percentage The percentage of the value to subtract.
     /// @return y The result of the subtraction.
     function percentSub(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
-        // Should revert if
+        // Must revert if
         // percentage > PERCENTAGE_FACTOR
         // or x * (PERCENTAGE_FACTOR - percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
         // <=> percentage > PERCENTAGE_FACTOR
@@ -66,7 +66,7 @@ library PercentageMath {
     /// @param percentage The percentage of the value to multiply.
     /// @return y The result of the multiplication.
     function percentMul(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
-        // Should revert if
+        // Must revert if
         // x * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
         // <=> percentage > 0 and x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage
         assembly {
@@ -83,7 +83,7 @@ library PercentageMath {
     /// @param percentage The percentage of the value to divide.
     /// @return y The result of the division.
     function percentDiv(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
-        // Should revert if
+        // Must revert if
         // percentage == 0
         // or x * PERCENTAGE_FACTOR + percentage / 2 > type(uint256).max
         // <=> percentage == 0
@@ -109,7 +109,7 @@ library PercentageMath {
         uint256 y,
         uint256 percentage
     ) internal pure returns (uint256 z) {
-        // Should revert if
+        // Must revert if
         // percentage > PERCENTAGE_FACTOR
         // or
         // x1 = x * (PERCENTAGE_FACTOR - percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
