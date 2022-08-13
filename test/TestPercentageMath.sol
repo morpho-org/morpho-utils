@@ -126,6 +126,14 @@ contract TestPercentageMath is Test {
         PercentageMath.percentSub(x, p);
     }
 
+    function testPercentSubOverflow(uint256 x, uint256 p) public {
+        vm.assume(p <= PERCENTAGE_FACTOR);
+        vm.assume(x > MAX_UINT256 / (PERCENTAGE_FACTOR - p));
+
+        vm.expectRevert();
+        PercentageMath.percentSub(x, p);
+    }
+
     function testPercentMul(uint256 x, uint256 p) public {
         vm.assume(p == 0 || x <= MAX_UINT256_MINUS_HALF_PERCENTAGE / p);
 

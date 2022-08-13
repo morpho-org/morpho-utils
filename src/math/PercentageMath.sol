@@ -53,7 +53,7 @@ library PercentageMath {
         assembly {
             y := sub(PERCENTAGE_FACTOR, percentage) // Temporary assignment to save gas.
 
-            if or(gt(percentage, PERCENTAGE_FACTOR), and(y, gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, y)))) {
+            if or(gt(percentage, PERCENTAGE_FACTOR), mul(y, gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, y)))) {
                 revert(0, 0)
             }
 
