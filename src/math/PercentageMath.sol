@@ -49,7 +49,7 @@ library PercentageMath {
         // percentage > PERCENTAGE_FACTOR
         // or x * (PERCENTAGE_FACTOR - percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
         // <=> percentage > PERCENTAGE_FACTOR
-        // or ((PERCENTAGE_FACTOR - percentage) > 0 and x > type(uint256).max - HALF_PERCENTAGE_FACTOR / (PERCENTAGE_FACTOR - percentage))
+        // or ((PERCENTAGE_FACTOR - percentage) > 0 and x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage))
         assembly {
             y := sub(PERCENTAGE_FACTOR, percentage) // Temporary assignment to save gas.
 
