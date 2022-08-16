@@ -174,7 +174,7 @@ contract TestPercentageMath is Test {
         assertEq(PercentageMath.weightedAvg(x, y, percentage), mathRef.weightedAvg(x, y, percentage));
     }
 
-    function testFailWeightedAvgOverflow(
+    function testWeightedAvgOverflow(
         uint256 x,
         uint256 y,
         uint256 percentage
@@ -186,16 +186,18 @@ contract TestPercentageMath is Test {
             (PERCENTAGE_FACTOR - percentage > 0 && x > (MAX_UINT256_MINUS_HALF_PERCENTAGE / (PERCENTAGE_FACTOR - percentage)))
         );
 
+        vm.expectRevert();
         PercentageMath.weightedAvg(x, y, percentage);
     }
 
-    function testFailWeightedAvgUnderflow(
+    function testWeightedAvgUnderflow(
         uint256 x,
         uint256 y,
         uint256 percentage
     ) public {
         vm.assume(percentage > PERCENTAGE_FACTOR);
 
+        vm.expectRevert();
         PercentageMath.weightedAvg(x, y, percentage);
     }
 
