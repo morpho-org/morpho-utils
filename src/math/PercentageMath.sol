@@ -119,7 +119,7 @@ library PercentageMath {
         //     <=> y * percentage > type(uint256).max - HALF_PERCENTAGE_FACTOR
         //     <=> percentage > 0 and y > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage
         //
-        // Note: x1 / PERCENTAGE_FACTOR + x2 / PERCENTAGE_FACTOR <= x * (1 - percentage) + 1 + y * percentage + 1
+        // Note: x1 / PERCENTAGE_FACTOR + x2 / PERCENTAGE_FACTOR <= x * (1 - p) + 1 + y * p + 1 where p is the fractional number percentage / PERCENTAGE_FACTOR
         // <= max(x, y) + 2 <= type(uint256).max - HALF_PERCENTAGE_FACTOR + 2 <= type(uint256).max
         assembly {
             z := sub(PERCENTAGE_FACTOR, percentage) // Temporary assignment to save gas.
