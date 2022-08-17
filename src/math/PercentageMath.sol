@@ -22,9 +22,9 @@ library PercentageMath {
     function percentAdd(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
         // Must revert if
         // PERCENTAGE_FACTOR + percentage > type(uint256).max
-        // or x * (PERCENTAGE_FACTOR + percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
+        //     or x * (PERCENTAGE_FACTOR + percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
         // <=> percentage > type(uint256).max - PERCENTAGE_FACTOR
-        // or x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR + percentage)
+        //     or x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR + percentage)
         // Note: PERCENTAGE_FACTOR + percentage >= PERCENTAGE_FACTOR > 0
         assembly {
             y := add(PERCENTAGE_FACTOR, percentage) // Temporary assignment to save gas.
@@ -47,9 +47,9 @@ library PercentageMath {
     function percentSub(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
         // Must revert if
         // percentage > PERCENTAGE_FACTOR
-        // or x * (PERCENTAGE_FACTOR - percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
+        //     or x * (PERCENTAGE_FACTOR - percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
         // <=> percentage > PERCENTAGE_FACTOR
-        // or ((PERCENTAGE_FACTOR - percentage) > 0 and x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage))
+        //     or ((PERCENTAGE_FACTOR - percentage) > 0 and x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage))
         assembly {
             y := sub(PERCENTAGE_FACTOR, percentage) // Temporary assignment to save gas.
 
@@ -85,9 +85,9 @@ library PercentageMath {
     function percentDiv(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
         // Must revert if
         // percentage == 0
-        // or x * PERCENTAGE_FACTOR + percentage / 2 > type(uint256).max
+        //     or x * PERCENTAGE_FACTOR + percentage / 2 > type(uint256).max
         // <=> percentage == 0
-        // or x > (type(uint256).max - percentage / 2) / PERCENTAGE_FACTOR
+        //     or x > (type(uint256).max - percentage / 2) / PERCENTAGE_FACTOR
         assembly {
             y := div(percentage, 2) // Temporary assignment to save gas.
 
@@ -110,16 +110,17 @@ library PercentageMath {
         uint256 percentage
     ) internal pure returns (uint256 z) {
         // Must revert if
-        // percentage > PERCENTAGE_FACTOR
-        // or
-        // x1 = x * (PERCENTAGE_FACTOR - percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
-        // <=> (PERCENTAGE_FACTOR - percentage) > 0 and x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
-        // or
-        // x2 = y * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
-        // <=> y * percentage > type(uint256).max - HALF_PERCENTAGE_FACTOR
-        // <=> percentage > 0 and y > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage
+        //     percentage > PERCENTAGE_FACTOR
+        // or if
+        //     x1 = x * (PERCENTAGE_FACTOR - percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
+        //     <=> (PERCENTAGE_FACTOR - percentage) > 0 and x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
+        // or if
+        //     x2 = y * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
+        //     <=> y * percentage > type(uint256).max - HALF_PERCENTAGE_FACTOR
+        //     <=> percentage > 0 and y > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage
         //
-        // Note: x1 / PERCENTAGE_FACTOR + x2 / PERCENTAGE_FACTOR < max(x,y) <= type(uint256).max
+        // Note: x1 / PERCENTAGE_FACTOR + x2 / PERCENTAGE_FACTOR <= x * (1 - percentage) + 1 + y * percentage + 1
+        // <= max(x, y) + 2 <= type(uint256).max - HALF_PERCENTAGE_FACTOR + 2 <= type(uint256).max
         assembly {
             z := sub(PERCENTAGE_FACTOR, percentage) // Temporary assignment to save gas.
 
