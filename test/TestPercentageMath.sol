@@ -55,8 +55,11 @@ contract PercentageMathFunctionsRef {
         uint256 percentage
     ) public pure returns (uint256) {
         return
-            PercentageMathRef.percentMul(x, PercentageMathRef.PERCENTAGE_FACTOR - percentage) +
-            PercentageMathRef.percentMul(y, percentage);
+            (x *
+                (PercentageMathRef.PERCENTAGE_FACTOR - percentage) +
+                y *
+                percentage +
+                PercentageMathRef.HALF_PERCENTAGE_FACTOR) / PercentageMath.PERCENTAGE_FACTOR;
     }
 }
 
@@ -164,12 +167,10 @@ contract TestPercentageMath is Test {
         uint256 y,
         uint16 percentage
     ) public {
-        vm.assume(percentage <= PERCENTAGE_FACTOR);
-        // prettier-ignore
-        vm.assume(
-            (percentage == 0 || y <= MAX_UINT256_MINUS_HALF_PERCENTAGE / percentage) &&
-            (PERCENTAGE_FACTOR - percentage == 0 || x <= MAX_UINT256_MINUS_HALF_PERCENTAGE / (PERCENTAGE_FACTOR - percentage))
-        );
+        vm.assume(percentage <= 1e4);
+        vm.assume(percentage == 1e4 || x <= type(uint256).max / (1e4 - percentage));
+        vm.assume(percentage == 0 || y <= (type(uint256).max - 0.5e4) / percentage);
+        vm.assume(x * (1e4 - percentage) <= type(uint256).max - y * percentage - 0.5e4);
 
         assertEq(PercentageMath.weightedAvg(x, y, percentage), mathRef.weightedAvg(x, y, percentage));
     }
@@ -179,11 +180,12 @@ contract TestPercentageMath is Test {
         uint256 y,
         uint256 percentage
     ) public {
-        vm.assume(percentage <= PERCENTAGE_FACTOR);
+        vm.assume(percentage <= 1e4);
         // prettier-ignore
         vm.assume(
-            (percentage > 0 && y > MAX_UINT256_MINUS_HALF_PERCENTAGE / percentage) ||
-            (PERCENTAGE_FACTOR - percentage > 0 && x > (MAX_UINT256_MINUS_HALF_PERCENTAGE / (PERCENTAGE_FACTOR - percentage)))
+            ( percentage != 1e4 && x > type(uint256).max / (1e4 - percentage) )         || 
+            ( percentage != 0   && y > (type(uint256).max - 0.5e4) / percentage )       ||
+            x * (1e4 - percentage) > type(uint256).max - y * percentage - 0.5e4
         );
 
         vm.expectRevert();
@@ -199,6 +201,17 @@ contract TestPercentageMath is Test {
 
         vm.expectRevert();
         PercentageMath.weightedAvg(x, y, percentage);
+    }
+
+    function testWeightedAvgOutOfBounds() public {
+        uint256 x = 5000;
+        uint256 y = 5000;
+        uint256 percentage = 1;
+
+        uint256 weightedAvg = PercentageMath.weightedAvg(x, y, percentage);
+
+        assertLe(x, weightedAvg);
+        assertLe(weightedAvg, y);
     }
 
     /// GAS COMPARISONS ///
