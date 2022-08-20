@@ -168,9 +168,8 @@ contract TestPercentageMath is Test {
         uint16 percentage
     ) public {
         vm.assume(percentage <= 1e4);
-        vm.assume(percentage == 1e4 || x <= type(uint256).max / (1e4 - percentage));
         vm.assume(percentage == 0 || y <= (type(uint256).max - 0.5e4) / percentage);
-        vm.assume(x * (1e4 - percentage) <= type(uint256).max - y * percentage - 0.5e4);
+        vm.assume(1e4 - percentage == 0 || x <= (type(uint256).max - y * percentage - 0.5e4) / (1e4 - percentage));
 
         assertEq(PercentageMath.weightedAvg(x, y, percentage), mathRef.weightedAvg(x, y, percentage));
     }
@@ -181,11 +180,9 @@ contract TestPercentageMath is Test {
         uint256 percentage
     ) public {
         vm.assume(percentage <= 1e4);
-        // prettier-ignore
         vm.assume(
-            ( percentage != 1e4 && x > type(uint256).max / (1e4 - percentage) )         || 
-            ( percentage != 0   && y > (type(uint256).max - 0.5e4) / percentage )       ||
-            x * (1e4 - percentage) > type(uint256).max - y * percentage - 0.5e4
+            (percentage != 0 && y > (type(uint256).max - 0.5e4) / percentage) ||
+                ((1e4 - percentage) != 0 && x > (type(uint256).max - y * percentage - 0.5e4) / (1e4 - percentage))
         );
 
         vm.expectRevert();

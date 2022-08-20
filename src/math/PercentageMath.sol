@@ -112,12 +112,9 @@ library PercentageMath {
         // Must revert if
         //     percentage > PERCENTAGE_FACTOR
         // or if
-        //     x * (PERCENTAGE_FACTOR - percentage) > type(uint256).max
-        //     <=> PERCENTAGE_FACTOR - percentage > 0 and x > type(uint256).max / (PERCENTAGE_FACTOR - percentage)
-        // or if
         //     y * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
         //     <=> percentage > 0 and y > (type(uint256).max - percentage) / percentage
-        // or if (assuming that the 3 previous conditions are false)
+        // or if
         //     x * (PERCENTAGE_FACTOR - percentage) + y * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
         //     <=> x > type(uint256).max - y * percentage - HALF_PERCENTAGE_FACTOR / (PERCENTAGE_FACTOR - percentage)
         assembly {
@@ -125,11 +122,8 @@ library PercentageMath {
             if or(
                 gt(percentage, PERCENTAGE_FACTOR),
                 or(
-                    or(
-                        mul(percentage, gt(y, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, percentage))),
-                        mul(z, gt(x, div(MAX_UINT256, z)))
-                    ),
-                    gt(mul(x, z), sub(sub(MAX_UINT256, mul(y, percentage)), HALF_PERCENTAGE_FACTOR))
+                    mul(percentage, gt(y, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, percentage))),
+                    mul(z, gt(x, div(sub(sub(MAX_UINT256, mul(y, percentage)), HALF_PERCENTAGE_FACTOR), z)))
                 )
             ) {
                 revert(0, 0)
