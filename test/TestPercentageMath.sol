@@ -167,9 +167,12 @@ contract TestPercentageMath is Test {
         uint256 y,
         uint16 percentage
     ) public {
-        vm.assume(percentage <= 1e4);
-        vm.assume(percentage == 0 || y <= (type(uint256).max - 0.5e4) / percentage);
-        vm.assume(1e4 - percentage == 0 || x <= (type(uint256).max - y * percentage - 0.5e4) / (1e4 - percentage));
+        vm.assume(percentage <= PERCENTAGE_FACTOR);
+        vm.assume(percentage == 0 || y <= (MAX_UINT256 - HALF_PERCENTAGE_FACTOR) / percentage);
+        vm.assume(
+            PERCENTAGE_FACTOR - percentage == 0 ||
+                x <= (MAX_UINT256 - y * percentage - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
+        );
 
         assertEq(PercentageMath.weightedAvg(x, y, percentage), mathRef.weightedAvg(x, y, percentage));
     }
@@ -179,10 +182,11 @@ contract TestPercentageMath is Test {
         uint256 y,
         uint256 percentage
     ) public {
-        vm.assume(percentage <= 1e4);
+        vm.assume(percentage <= PERCENTAGE_FACTOR);
         vm.assume(
-            (percentage != 0 && y > (type(uint256).max - 0.5e4) / percentage) ||
-                ((1e4 - percentage) != 0 && x > (type(uint256).max - y * percentage - 0.5e4) / (1e4 - percentage))
+            (percentage != 0 && y > (MAX_UINT256 - HALF_PERCENTAGE_FACTOR) / percentage) ||
+                ((PERCENTAGE_FACTOR - percentage) != 0 &&
+                    x > (MAX_UINT256 - y * percentage - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage))
         );
 
         vm.expectRevert();
