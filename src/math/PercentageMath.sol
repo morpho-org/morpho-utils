@@ -113,10 +113,10 @@ library PercentageMath {
         //     percentage > PERCENTAGE_FACTOR
         // or if
         //     y * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
-        //     <=> percentage > 0 and y > (type(uint256).max - percentage) / percentage
+        //     <=> percentage > 0 and y > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage
         // or if
         //     x * (PERCENTAGE_FACTOR - percentage) + y * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
-        //     <=> x > type(uint256).max - y * percentage - HALF_PERCENTAGE_FACTOR / (PERCENTAGE_FACTOR - percentage)
+        //     <=> (PERCENTAGE_FACTOR - percentage) > 0 and x > (type(uint256).max - y * percentage - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
         assembly {
             z := sub(PERCENTAGE_FACTOR, percentage) // Temporary assignment to save gas.
             if or(
