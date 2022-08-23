@@ -55,8 +55,11 @@ contract PercentageMathFunctionsRef {
         uint256 percentage
     ) public pure returns (uint256) {
         return
-            PercentageMathRef.percentMul(x, PercentageMathRef.PERCENTAGE_FACTOR - percentage) +
-            PercentageMathRef.percentMul(y, percentage);
+            (x *
+                (PercentageMathRef.PERCENTAGE_FACTOR - percentage) +
+                y *
+                percentage +
+                PercentageMathRef.HALF_PERCENTAGE_FACTOR) / PercentageMath.PERCENTAGE_FACTOR;
     }
 }
 
@@ -82,18 +85,18 @@ contract TestPercentageMath is Test {
         assertEq(PercentageMath.percentAdd(x, 0), x);
     }
 
-    function testPercentAdd(uint256 x, uint256 y) public {
-        vm.assume(y <= MAX_UINT256 - PERCENTAGE_FACTOR);
-        vm.assume(x <= MAX_UINT256 / (PERCENTAGE_FACTOR + y));
+    function testPercentAdd(uint256 x, uint256 p) public {
+        vm.assume(p <= MAX_UINT256 - PERCENTAGE_FACTOR);
+        vm.assume(x <= MAX_UINT256 / (PERCENTAGE_FACTOR + p));
 
-        assertApproxEqAbs(PercentageMath.percentAdd(x, y), (x * (PERCENTAGE_FACTOR + y)) / PERCENTAGE_FACTOR, 1);
+        assertEq(PercentageMath.percentAdd(x, p), mathRef.percentAdd(x, p));
     }
 
-    function testPercentAddOverflow(uint256 x, uint256 y) public {
-        vm.assume(y > MAX_UINT256 - PERCENTAGE_FACTOR);
+    function testPercentAddOverflow(uint256 x, uint256 p) public {
+        vm.assume(p > MAX_UINT256 - PERCENTAGE_FACTOR);
 
-        vm.expectRevert(stdError.arithmeticError);
-        PercentageMath.percentAdd(x, y);
+        vm.expectRevert();
+        PercentageMath.percentAdd(x, p);
     }
 
     function testPercentSubZero(uint256 x) public {
@@ -106,51 +109,57 @@ contract TestPercentageMath is Test {
         assertEq(PercentageMath.percentSub(x, PERCENTAGE_FACTOR), 0);
     }
 
-    function testPercentSub(uint256 x, uint256 y) public {
-        vm.assume(y <= PERCENTAGE_FACTOR);
-        vm.assume(x <= MAX_UINT256 / (PERCENTAGE_FACTOR - y));
+    function testPercentSub(uint256 x, uint256 p) public {
+        vm.assume(p <= PERCENTAGE_FACTOR);
+        vm.assume(x <= MAX_UINT256 / (PERCENTAGE_FACTOR - p));
 
-        assertApproxEqAbs(PercentageMath.percentSub(x, y), (x * (PERCENTAGE_FACTOR - y)) / PERCENTAGE_FACTOR, 1);
+        assertEq(PercentageMath.percentSub(x, p), mathRef.percentSub(x, p));
     }
 
-    function testPercentSubUnderflow(uint256 x, uint256 y) public {
-        vm.assume(y > PERCENTAGE_FACTOR);
-
-        vm.expectRevert(stdError.arithmeticError);
-        PercentageMath.percentSub(x, y);
-    }
-
-    function testPercentMul(uint256 x, uint256 y) public {
-        vm.assume(y == 0 || x <= MAX_UINT256_MINUS_HALF_PERCENTAGE / y);
-
-        assertEq(PercentageMath.percentMul(x, y), PercentageMathRef.percentMul(x, y));
-    }
-
-    function testPercentMulOverflow(uint256 x, uint256 y) public {
-        vm.assume(y > 0 && x > MAX_UINT256_MINUS_HALF_PERCENTAGE / y);
+    function testPercentSubUnderflow(uint256 x, uint256 p) public {
+        vm.assume(p > PERCENTAGE_FACTOR);
 
         vm.expectRevert();
-        PercentageMath.percentMul(x, y);
+        PercentageMath.percentSub(x, p);
     }
 
-    function testPercentDiv(uint256 x, uint256 y) public {
-        vm.assume(y > 0 && x <= (MAX_UINT256 - y / 2) / PERCENTAGE_FACTOR);
-
-        assertEq(PercentageMath.percentDiv(x, y), PercentageMathRef.percentDiv(x, y));
-    }
-
-    function testPercentDivOverflow(uint256 x, uint256 y) public {
-        vm.assume(x > (MAX_UINT256 - y / 2) / PERCENTAGE_FACTOR);
+    function testPercentSubOverflow(uint256 x, uint256 p) public {
+        vm.assume(p <= PERCENTAGE_FACTOR);
+        vm.assume(x > MAX_UINT256 / (PERCENTAGE_FACTOR - p));
 
         vm.expectRevert();
-        PercentageMath.percentDiv(x, y);
+        PercentageMath.percentSub(x, p);
     }
 
-    function testPercentDivByZero(uint256 x, uint256 y) public {
-        vm.assume(y == 0);
+    function testPercentMul(uint256 x, uint256 p) public {
+        vm.assume(p == 0 || x <= MAX_UINT256_MINUS_HALF_PERCENTAGE / p);
+
+        assertEq(PercentageMath.percentMul(x, p), PercentageMathRef.percentMul(x, p));
+    }
+
+    function testPercentMulOverflow(uint256 x, uint256 p) public {
+        vm.assume(p > 0 && x > MAX_UINT256_MINUS_HALF_PERCENTAGE / p);
 
         vm.expectRevert();
-        PercentageMath.percentDiv(x, y);
+        PercentageMath.percentMul(x, p);
+    }
+
+    function testPercentDiv(uint256 x, uint256 p) public {
+        vm.assume(p > 0 && x <= (MAX_UINT256 - p / 2) / PERCENTAGE_FACTOR);
+
+        assertEq(PercentageMath.percentDiv(x, p), PercentageMathRef.percentDiv(x, p));
+    }
+
+    function testPercentDivOverflow(uint256 x, uint256 p) public {
+        vm.assume(x > (MAX_UINT256 - p / 2) / PERCENTAGE_FACTOR);
+
+        vm.expectRevert();
+        PercentageMath.percentDiv(x, p);
+    }
+
+    function testPercentDivByZero(uint256 x) public {
+        vm.expectRevert();
+        PercentageMath.percentDiv(x, 0);
     }
 
     function testWeightedAvg(
@@ -159,25 +168,51 @@ contract TestPercentageMath is Test {
         uint16 percentage
     ) public {
         vm.assume(percentage <= PERCENTAGE_FACTOR);
-        if (percentage > 0) vm.assume(y <= MAX_UINT256_MINUS_HALF_PERCENTAGE / percentage);
-        if (percentage < PERCENTAGE_FACTOR)
-            vm.assume(x <= MAX_UINT256_MINUS_HALF_PERCENTAGE / (PERCENTAGE_FACTOR - percentage));
-
-        assertApproxEqAbs(
-            PercentageMath.weightedAvg(x, y, percentage),
-            ((x * (PERCENTAGE_FACTOR - percentage)) + (y * percentage)) / PERCENTAGE_FACTOR,
-            1
+        vm.assume(percentage == 0 || y <= (MAX_UINT256 - HALF_PERCENTAGE_FACTOR) / percentage);
+        vm.assume(
+            PERCENTAGE_FACTOR - percentage == 0 ||
+                x <= (MAX_UINT256 - y * percentage - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
         );
+
+        assertEq(PercentageMath.weightedAvg(x, y, percentage), mathRef.weightedAvg(x, y, percentage));
     }
 
-    function testFailWeightedAvgUnderflow(
+    function testWeightedAvgOverflow(
+        uint256 x,
+        uint256 y,
+        uint256 percentage
+    ) public {
+        vm.assume(percentage <= PERCENTAGE_FACTOR);
+        vm.assume(
+            (percentage != 0 && y > (MAX_UINT256 - HALF_PERCENTAGE_FACTOR) / percentage) ||
+                ((PERCENTAGE_FACTOR - percentage) != 0 &&
+                    x > (MAX_UINT256 - y * percentage - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage))
+        );
+
+        vm.expectRevert();
+        PercentageMath.weightedAvg(x, y, percentage);
+    }
+
+    function testWeightedAvgUnderflow(
         uint256 x,
         uint256 y,
         uint256 percentage
     ) public {
         vm.assume(percentage > PERCENTAGE_FACTOR);
 
+        vm.expectRevert();
         PercentageMath.weightedAvg(x, y, percentage);
+    }
+
+    function testWeightedAvgOutOfBounds() public {
+        uint256 x = 5000;
+        uint256 y = 5000;
+        uint256 percentage = 1;
+
+        uint256 weightedAvg = PercentageMath.weightedAvg(x, y, percentage);
+
+        assertLe(x, weightedAvg);
+        assertLe(weightedAvg, y);
     }
 
     /// GAS COMPARISONS ///
