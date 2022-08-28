@@ -33,7 +33,7 @@ contract Caller {
         }
 
         called.functionDelegateCall(abi.encodeWithSelector(_selector, ""));
-        
+
         assembly{
             ptr := mload(0x40)
             // We write a slot in the memory after the call.
@@ -79,7 +79,7 @@ contract CallerRef {
             } else revert LowLevelDelegateCallFailed();
         }
     }
-    
+
     function targetDelegateCallBehaviourAndReturnMemoryAndPointer(bytes4 _selector) external returns (bytes memory, bytes32) {
         bytes memory allMem;
         bytes32 ptr;
@@ -90,7 +90,7 @@ contract CallerRef {
         }
 
         targetDelegateCallBehaviour(address(called),abi.encodeWithSelector(_selector, ""));
-        
+
         assembly{
             ptr := mload(0x40)
             mstore(ptr, 0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)

@@ -10,8 +10,6 @@ library PercentageMath {
 
     uint256 internal constant PERCENTAGE_FACTOR = 1e4; // 100.00%
     uint256 internal constant HALF_PERCENTAGE_FACTOR = 0.5e4; // 50.00%
-    uint256 internal constant MAX_UINT256 = 2**256 - 1;
-    uint256 internal constant MAX_UINT256_MINUS_HALF_PERCENTAGE = 2**256 - 1 - 0.5e4;
 
     /// INTERNAL ///
 
@@ -30,8 +28,8 @@ library PercentageMath {
             y := add(PERCENTAGE_FACTOR, percentage) // Temporary assignment to save gas.
 
             if or(
-                gt(percentage, sub(MAX_UINT256, PERCENTAGE_FACTOR)),
-                gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, y))
+                gt(percentage, sub(not(0), PERCENTAGE_FACTOR)),
+                gt(x, div(sub(not(0), HALF_PERCENTAGE_FACTOR), y))
             ) {
                 revert(0, 0)
             }
@@ -53,7 +51,7 @@ library PercentageMath {
         assembly {
             y := sub(PERCENTAGE_FACTOR, percentage) // Temporary assignment to save gas.
 
-            if or(gt(percentage, PERCENTAGE_FACTOR), mul(y, gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, y)))) {
+            if or(gt(percentage, PERCENTAGE_FACTOR), mul(y, gt(x, div(sub(not(0), HALF_PERCENTAGE_FACTOR), y)))) {
                 revert(0, 0)
             }
 
@@ -70,7 +68,7 @@ library PercentageMath {
         // x * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
         // <=> percentage > 0 and x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage
         assembly {
-            if mul(percentage, gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, percentage))) {
+            if mul(percentage, gt(x, div(sub(not(0), HALF_PERCENTAGE_FACTOR), percentage))) {
                 revert(0, 0)
             }
 
@@ -91,7 +89,7 @@ library PercentageMath {
         assembly {
             y := div(percentage, 2) // Temporary assignment to save gas.
 
-            if iszero(mul(percentage, iszero(gt(x, div(sub(MAX_UINT256, y), PERCENTAGE_FACTOR))))) {
+            if iszero(mul(percentage, iszero(gt(x, div(sub(not(0), y), PERCENTAGE_FACTOR))))) {
                 revert(0, 0)
             }
 
@@ -122,8 +120,8 @@ library PercentageMath {
             if or(
                 gt(percentage, PERCENTAGE_FACTOR),
                 or(
-                    mul(percentage, gt(y, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, percentage))),
-                    mul(z, gt(x, div(sub(MAX_UINT256_MINUS_HALF_PERCENTAGE, mul(y, percentage)), z)))
+                    mul(percentage, gt(y, div(sub(not(0), HALF_PERCENTAGE_FACTOR), percentage))),
+                    mul(z, gt(x, div(sub(sub(not(0), HALF_PERCENTAGE_FACTOR), mul(y, percentage)), z)))
                 )
             ) {
                 revert(0, 0)
