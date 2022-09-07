@@ -8,6 +8,7 @@ pragma solidity ^0.8.0;
 library WadRayMath {
     /// CONSTANTS ///
 
+    uint256 internal constant MAX = 2**256 - 1;
     uint256 internal constant WAD = 1e18;
     uint256 internal constant HALF_WAD = 0.5e18;
     uint256 internal constant RAY = 1e27;
@@ -27,7 +28,7 @@ library WadRayMath {
         // <=> x * y > type(uint256).max - HALF_WAD
         // <=> x > (type(uint256).max - HALF_WAD) / y
         assembly {
-            if mul(y, gt(x, div(sub(not(0), HALF_WAD), y))) {
+            if mul(y, gt(x, div(sub(MAX, HALF_WAD), y))) {
                 revert(0, 0)
             }
 
@@ -46,7 +47,7 @@ library WadRayMath {
         // <=> x > (type(uint256).max - y / 2) / WAD
         assembly {
             z := div(y, 2)
-            if iszero(mul(y, iszero(gt(x, div(sub(not(0), z), WAD))))) {
+            if iszero(mul(y, iszero(gt(x, div(sub(MAX, z), WAD))))) {
                 revert(0, 0)
             }
 
@@ -64,7 +65,7 @@ library WadRayMath {
         // <=> x * y > type(uint256).max - HALF_RAY
         // <=> x > (type(uint256).max - HALF_RAY) / y
         assembly {
-            if mul(y, gt(x, div(sub(not(0), HALF_RAY), y))) {
+            if mul(y, gt(x, div(sub(MAX, HALF_RAY), y))) {
                 revert(0, 0)
             }
 
@@ -83,7 +84,7 @@ library WadRayMath {
         // <=> x > (type(uint256).max - y / 2) / RAY
         assembly {
             z := div(y, 2)
-            if iszero(mul(y, iszero(gt(x, div(sub(not(0), z), RAY))))) {
+            if iszero(mul(y, iszero(gt(x, div(sub(MAX, z), RAY))))) {
                 revert(0, 0)
             }
 
