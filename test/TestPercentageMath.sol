@@ -111,7 +111,7 @@ contract TestPercentageMath is Test {
 
     function testPercentSub(uint256 x, uint256 p) public {
         vm.assume(p <= PERCENTAGE_FACTOR);
-        vm.assume(x <= MAX_UINT256 / (PERCENTAGE_FACTOR - p));
+        vm.assume(p == PERCENTAGE_FACTOR || x <= MAX_UINT256 / (PERCENTAGE_FACTOR - p));
 
         assertEq(PercentageMath.percentSub(x, p), mathRef.percentSub(x, p));
     }
@@ -125,7 +125,7 @@ contract TestPercentageMath is Test {
 
     function testPercentSubOverflow(uint256 x, uint256 p) public {
         vm.assume(p <= PERCENTAGE_FACTOR);
-        vm.assume(x > MAX_UINT256 / (PERCENTAGE_FACTOR - p));
+        vm.assume(p != PERCENTAGE_FACTOR && x > MAX_UINT256 / (PERCENTAGE_FACTOR - p));
 
         vm.expectRevert();
         PercentageMath.percentSub(x, p);
