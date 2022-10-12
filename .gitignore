@@ -37,3 +37,8 @@ lcov.*
 
 # foundry
 .gas-snapshot
+
+# docs
+/docs/*
+!/docs/*.pdf
+!/docs/*.tex
