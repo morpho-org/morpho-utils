@@ -40,24 +40,18 @@ This document aims to provide useful theorems and proofs for morpho-utils.
 \end{proof}    
 
 \begin{theorem}
-    \[\forall(x,y, M)\in\mathbb{N}^3, x>\lfloor M/y \rfloor \Leftrightarrow x\times y>M\]
+    \[\forall x\in\mathbb{N}, \forall y\in\mathbb{N}^*, \forall M\in\mathbb{N}, x>\lfloor M/y \rfloor \Leftrightarrow x\times y>M\]
 \end{theorem}
 
 \begin{proof}
-    Let $M\in\mathbb{N}, (x, y)\in{\mathbb{N}^*}^2$, the case where $x$ or $y$ equals to 0 being trivial. 
-    With lemma \ref{lemma-1}, we have:
-    \begin{align*}
-        x > \lfloor M/y \rfloor &\Leftrightarrow x > M/y \\
-    \end{align*}
+    Let $x\in\mathbb{N}, y\in\mathbb{N}^*, M\in\mathbb{N}$. With lemma \ref{lemma-1}, we have:
+    \[x > \lfloor M/y \rfloor \Leftrightarrow x > M/y\]
     So:
-    \begin{align*}
-        x > \lfloor M/y \rfloor &\Leftrightarrow x \times y > M\\
-        &\Leftrightarrow x \times y > M\\
-    \end{align*}
+    \[x > \lfloor M/y \rfloor \Leftrightarrow x \times y > M\]
 \end{proof}
 
 \paragraph{Example}
 
-\[\forall(x,y)\in{\mathbb{N}^*}^2, x>\frac{2^{256}-1-\frac{10^{18}}{2}}{y} \Leftrightarrow x \times y + \frac{10^{18}}{2} > 2^{256}-1\]
+\[\forall x\in\mathbb{N}, \forall y\in\mathbb{N}^*, x>\frac{2^{256}-1-\frac{10^{18}}{2}}{y} \Leftrightarrow x \times y + \frac{10^{18}}{2} > 2^{256}-1\]
 
 \end{document}
