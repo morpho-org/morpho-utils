@@ -1,7 +1,5 @@
 [profile.default]
-src = 'src'
-out = 'out'
-libs = ['lib']
+via-ir = true
 fuzz_runs = 1024
 gas_reports = ["*"]
 

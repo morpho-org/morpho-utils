@@ -15,6 +15,7 @@ library CompoundMath {
     /// INTERNAL ///
 
     function mul(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        /// @solidity memory-safe-assembly
         assembly {
             // Revert if x * y > type(uint256).max
             // <=> y > 0 and x > type(uint256).max / y
@@ -27,6 +28,7 @@ library CompoundMath {
     }
 
     function div(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        /// @solidity memory-safe-assembly
         assembly {
             // Revert if x * SCALE > type(uint256).max or y == 0
             // <=> x > type(uint256).max / SCALE or y == 0

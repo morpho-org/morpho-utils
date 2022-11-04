@@ -29,6 +29,7 @@ library WadRayMath {
         // Overflow if (x * y + HALF_WAD) > type(uint256).max
         // <=> x * y > type(uint256).max - HALF_WAD
         // <=> x > (type(uint256).max - HALF_WAD) / y
+        /// @solidity memory-safe-assembly
         assembly {
             if mul(y, gt(x, div(MAX_UINT256_MINUS_HALF_WAD, y))) {
                 revert(0, 0)
@@ -47,6 +48,7 @@ library WadRayMath {
         // Overflow if (x * WAD + y / 2) > type(uint256).max
         // <=> x * WAD > type(uint256).max - y / 2
         // <=> x > (type(uint256).max - y / 2) / WAD
+        /// @solidity memory-safe-assembly
         assembly {
             z := div(y, 2)
             if iszero(mul(y, iszero(gt(x, div(sub(MAX_UINT256, z), WAD))))) {
@@ -66,6 +68,7 @@ library WadRayMath {
         // Overflow if (x * y + HALF_RAY) > type(uint256).max
         // <=> x * y > type(uint256).max - HALF_RAY
         // <=> x > (type(uint256).max - HALF_RAY) / y
+        /// @solidity memory-safe-assembly
         assembly {
             if mul(y, gt(x, div(MAX_UINT256_MINUS_HALF_RAY, y))) {
                 revert(0, 0)
@@ -84,6 +87,7 @@ library WadRayMath {
         // Overflow if (x * RAY + y / 2) > type(uint256).max
         // <=> x * RAY > type(uint256).max - y / 2
         // <=> x > (type(uint256).max - y / 2) / RAY
+        /// @solidity memory-safe-assembly
         assembly {
             z := div(y, 2)
             if iszero(mul(y, iszero(gt(x, div(sub(MAX_UINT256, z), RAY))))) {
@@ -98,6 +102,7 @@ library WadRayMath {
     /// @param x Ray.
     /// @return y = x converted to wad, rounded half up to the nearest wad.
     function rayToWad(uint256 x) internal pure returns (uint256 y) {
+        /// @solidity memory-safe-assembly
         assembly {
             // If x % WAD_RAY_RATIO >= HALF_WAD_RAY_RATIO, round up.
             y := add(div(x, WAD_RAY_RATIO), iszero(lt(mod(x, WAD_RAY_RATIO), HALF_WAD_RAY_RATIO)))
@@ -108,6 +113,7 @@ library WadRayMath {
     /// @param x Wad.
     /// @return y = x converted in ray.
     function wadToRay(uint256 x) internal pure returns (uint256 y) {
+        /// @solidity memory-safe-assembly
         assembly {
             y := mul(WAD_RAY_RATIO, x)
             // Revert if y / WAD_RAY_RATIO != x

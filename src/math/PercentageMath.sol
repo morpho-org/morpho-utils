@@ -26,6 +26,7 @@ library PercentageMath {
         // <=> percentage > type(uint256).max - PERCENTAGE_FACTOR
         //     or x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR + percentage)
         // Note: PERCENTAGE_FACTOR + percentage >= PERCENTAGE_FACTOR > 0
+        /// @solidity memory-safe-assembly
         assembly {
             y := add(PERCENTAGE_FACTOR, percentage) // Temporary assignment to save gas.
 
@@ -50,6 +51,7 @@ library PercentageMath {
         //     or x * (PERCENTAGE_FACTOR - percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
         // <=> percentage > PERCENTAGE_FACTOR
         //     or ((PERCENTAGE_FACTOR - percentage) > 0 and x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage))
+        /// @solidity memory-safe-assembly
         assembly {
             y := sub(PERCENTAGE_FACTOR, percentage) // Temporary assignment to save gas.
 
@@ -69,6 +71,7 @@ library PercentageMath {
         // Must revert if
         // x * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
         // <=> percentage > 0 and x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage
+        /// @solidity memory-safe-assembly
         assembly {
             if mul(percentage, gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, percentage))) {
                 revert(0, 0)
@@ -88,6 +91,7 @@ library PercentageMath {
         //     or x * PERCENTAGE_FACTOR + percentage / 2 > type(uint256).max
         // <=> percentage == 0
         //     or x > (type(uint256).max - percentage / 2) / PERCENTAGE_FACTOR
+        /// @solidity memory-safe-assembly
         assembly {
             y := div(percentage, 2) // Temporary assignment to save gas.
 
@@ -117,6 +121,7 @@ library PercentageMath {
         // or if
         //     x * (PERCENTAGE_FACTOR - percentage) + y * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
         //     <=> (PERCENTAGE_FACTOR - percentage) > 0 and x > (type(uint256).max - HALF_PERCENTAGE_FACTOR - y * percentage) / (PERCENTAGE_FACTOR - percentage)
+        /// @solidity memory-safe-assembly
         assembly {
             z := sub(PERCENTAGE_FACTOR, percentage) // Temporary assignment to save gas.
             if or(
