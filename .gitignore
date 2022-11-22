@@ -42,3 +42,9 @@ lcov.*
 /docs/*
 !/docs/*.pdf
 !/docs/*.tex
+
+# certora
+.certora*
+.last_confs
+certora_debug*
+resource_errors.json
