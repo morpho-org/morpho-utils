@@ -36,7 +36,7 @@ rule wadDivSafety(uint256 a, uint256 b) {
 rule wadDivLiveness(uint256 a, uint256 b) {
     wadDiv@withrevert(a, b);
 
-    assert lastReverted <=> (a * WAD() + b / 2 >= 2^256) || (b == 0);
+    assert lastReverted <=> a * WAD() + b / 2 >= 2^256 || b == 0;
 }
 
 /// rayMul ///
@@ -64,7 +64,7 @@ rule rayDivSafety(uint256 a, uint256 b) {
 rule rayDivLiveness(uint256 a, uint256 b) {
     rayDiv@withrevert(a, b);
 
-    assert lastReverted <=> (a * RAY() + b / 2 >= 2^256) || (b == 0);
+    assert lastReverted <=> a * RAY() + b / 2 >= 2^256 || b == 0;
 }
 
 /// rayToWad ///

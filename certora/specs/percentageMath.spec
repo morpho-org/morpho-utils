@@ -17,6 +17,7 @@ rule percentAddSafety(uint256 x, uint256 p) {
 rule percentAddLiveness(uint256 x, uint256 p) {
     percentAdd@withrevert(x, p);
 
+    // The first assertion does not implies the second one because x can be zero.
     assert lastReverted <=> 10^4 + p >= 2^256 || x * (10^4 + p) + 10^4 / 2 >= 2^256;
 }
 
@@ -31,7 +32,7 @@ rule percentSubSafety(uint256 x, uint256 p) {
 rule percentSubLiveness(uint256 x, uint256 p) {
     percentSub@withrevert(x, p);
 
-    assert lastReverted <=> x * (10^4 - p) + 10^4 / 2>= 2^256 || p > 10^4;
+    assert lastReverted <=> x * (10^4 - p) + 10^4 / 2 >= 2^256 || p > 10^4;
 }
 
 /// percentMul ///
