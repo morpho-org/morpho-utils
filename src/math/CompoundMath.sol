@@ -9,7 +9,6 @@ library CompoundMath {
     /// CONSTANTS ///
 
     uint256 internal constant MAX_UINT256 = 2**256 - 1;
-    uint256 public constant SCALE = 1e36;
     uint256 public constant WAD = 1e18;
 
     /// INTERNAL ///
@@ -28,13 +27,13 @@ library CompoundMath {
 
     function div(uint256 x, uint256 y) internal pure returns (uint256 z) {
         assembly {
-            // Revert if x * SCALE > type(uint256).max or y == 0
-            // <=> x > type(uint256).max / SCALE or y == 0
-            if iszero(mul(y, iszero(gt(x, div(MAX_UINT256, SCALE))))) {
+            // Revert if x * WAD > type(uint256).max or y == 0
+            // <=> x > type(uint256).max / WAD or y == 0
+            if iszero(mul(y, iszero(gt(x, div(MAX_UINT256, WAD))))) {
                 revert(0, 0)
             }
 
-            z := div(div(mul(SCALE, x), y), WAD)
+            z := div(mul(WAD, x), y)
         }
     }
 }
