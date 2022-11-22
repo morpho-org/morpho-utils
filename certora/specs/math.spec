@@ -11,11 +11,8 @@ methods {
 rule minSafety(uint256 a, uint256 b) {
     uint res = min(a, b);
 
-    if a <= b {
-        assert res == a;
-    } else {
-        assert res == b;
-    }
+    assert a <= b => res == a;
+    assert a > b => res == b;
 }
 
 rule minLiveness(uint256 a, uint256 b) {
@@ -29,11 +26,8 @@ rule minLiveness(uint256 a, uint256 b) {
 rule maxSafety(uint256 a, uint256 b) {
     uint res = max(a, b);
 
-    if a >= b {
-        assert res == a;
-    } else {
-        assert res == b;
-    }
+    assert a >= b => res == a;
+    assert a < b => res == b;
 }
 
 rule maxLiveness(uint256 a, uint256 b) {
@@ -47,11 +41,8 @@ rule maxLiveness(uint256 a, uint256 b) {
 rule zeroFloorSubSafety(uint256 a, uint256 b) {
     uint res = zeroFloorSub(a, b);
 
-    if a >= b {
-        assert res == a - b;
-    } else {
-        assert res == 0;
-    }
+    assert a >= b => res == a - b;
+    assert a < b => res == 0;
 }
 
 rule zeroFloorSubLiveness(uint256 a, uint256 b) {
@@ -65,11 +56,8 @@ rule zeroFloorSubLiveness(uint256 a, uint256 b) {
 rule divUpSafety(uint256 a, uint256 b) {
     uint res = divUp(a, b);
 
-    if a % b == 0 {
-        assert res == a / b;
-    } else {
-        assert res == a / b + 1;
-    }
+    assert a % b == 0 => res == a / b;
+    assert a % b != 0 => res == a / b + 1;
 }
 
 rule divUpLiveness(uint256 a, uint256 b) {

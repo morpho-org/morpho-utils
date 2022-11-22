@@ -78,7 +78,7 @@ rule rayToWadSafety(uint256 a) {
 rule rayToWadLiveness(uint256 a) {
     rayToWad@withrevert(a);
 
-    assert !lastReverted;
+    assert lastReverted <=> false;
 }
 
 /// wadToRay ///
