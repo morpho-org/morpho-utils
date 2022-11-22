@@ -66,7 +66,7 @@ contract TestCompoundMath is Test {
 
     function testDivOverflow(uint256 x, uint256 y) public {
         unchecked {
-            vm.assume(x > 0 && (x * SCALE) / x != SCALE);
+            vm.assume(x > 0 && (x * WAD) / x != WAD);
         }
 
         vm.expectRevert();
