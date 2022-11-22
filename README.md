@@ -20,7 +20,7 @@ forge test
 
 ## Formal verification
 
-To run the Certora formal verification tool, run (with a CERTORAKEY in your environment):
+To run the Certora prover, run (with a CERTORAKEY in your environment):
 
 ```bash
 ./certora/scripts/verifyAll.sh
