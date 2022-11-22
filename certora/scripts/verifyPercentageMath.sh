@@ -1,8 +1,9 @@
-#!/bin/sh
+#!/bin/bash
+
+set -euxo pipefail
 
 certoraRun \
     certora/helpers/MockPercentageMath.sol \
     --verify MockPercentageMath:certora/specs/percentageMath.spec \
-    --send_only \
     --msg "PercentageMath" \
     $@

@@ -1,9 +1,10 @@
-#!/bin/sh
+#!/bin/bash
+
+set -euxo pipefail
 
 certoraRun \
     certora/helpers/MockMath.sol \
     --verify MockMath:certora/specs/math.spec \
-    --send_only \
     --settings -useBitVectorTheory \
     --msg "Math" \
     $@

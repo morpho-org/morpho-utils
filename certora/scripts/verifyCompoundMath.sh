@@ -1,8 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
-certoraRun                                                          \
-    certora/helpers/MockCompoundMath.sol                            \
-    --verify MockCompoundMath:certora/specs/compoundMath.spec       \
-    --send_only                                                     \
-    --msg "CompoundMath"                                            \
+set -euxo pipefail
+
+certoraRun \
+    certora/helpers/MockCompoundMath.sol \
+    --verify MockCompoundMath:certora/specs/compoundMath.spec \
+    --msg "CompoundMath" \
     $@
