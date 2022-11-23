@@ -1,4 +1,4 @@
-name: Report gas diff
+name: Foundry tests
 
 on:
   push:
@@ -27,17 +27,15 @@ jobs:
         with:
           version: nightly
 
-      - name: Run tests
-        run: forge test --gas-report | tee gasreport.ansi
+      - name: Run tests & create gas report
+        run: forge test --gas-report > gasreport.ansi
         env:
           # make fuzzing semi-deterministic to avoid noisy gas cost estimation
           # due to non-deterministic fuzzing, but keep it not always deterministic
           FOUNDRY_FUZZ_SEED: 0x${{ github.event.pull_request.base.sha || github.sha }}
 
       - name: Compare gas reports
-        uses: Rubilmax/foundry-gas-diff@v3.9
-        with:
-          workflowId: foundry-gas-diff.yml
+        uses: Rubilmax/foundry-gas-diff@v3.11
         id: gas_diff
 
       - name: Add gas diff to sticky comment
