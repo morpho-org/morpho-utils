@@ -18,6 +18,14 @@ For testing, run:
 forge test
 ```
 
+## Formal verification
+
+To run the Certora prover, run (with a CERTORAKEY in your environment):
+
+```bash
+./certora/scripts/verifyAll.sh
+```
+
 ## External contributors
 
 We thank the MEP team for their help on code optimization:
