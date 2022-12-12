@@ -15,9 +15,9 @@ library PercentageMath {
 
     /// INTERNAL ///
 
-    /// @notice Executes a percentage addition (x * (1 + p)), rounded up.
+    /// @notice Executes a percentage addition (x * (1 + p)), rounded half up.
     /// @param x The value to which to add the percentage.
-    /// @param percentage The percentage of the value to add.
+    /// @param percentage The percentage of the value to add (in bps).
     /// @return y The result of the addition.
     function percentAdd(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
         // Must revert if
@@ -40,9 +40,9 @@ library PercentageMath {
         }
     }
 
-    /// @notice Executes a percentage subtraction (x * (1 - p)), rounded up.
+    /// @notice Executes a percentage subtraction (x * (1 - p)), rounded half up.
     /// @param x The value to which to subtract the percentage.
-    /// @param percentage The percentage of the value to subtract.
+    /// @param percentage The percentage of the value to subtract (in bps).
     /// @return y The result of the subtraction.
     function percentSub(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
         // Must revert if
@@ -61,9 +61,9 @@ library PercentageMath {
         }
     }
 
-    /// @notice Executes a percentage multiplication (x * p), rounded up.
+    /// @notice Executes a (bps-based) percentage multiplication (x * p), rounded half up.
     /// @param x The value to multiply by the percentage.
-    /// @param percentage The percentage of the value to multiply.
+    /// @param percentage The percentage of the value to multiply (in bps).
     /// @return y The result of the multiplication.
     function percentMul(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
         // Must revert if
@@ -78,9 +78,9 @@ library PercentageMath {
         }
     }
 
-    /// @notice Executes a percentage division (x / p), rounded up.
+    /// @notice Executes a (bps-based) percentage division (x / p), rounded half up.
     /// @param x The value to divide by the percentage.
-    /// @param percentage The percentage of the value to divide.
+    /// @param percentage The percentage of the value to divide (in bps).
     /// @return y The result of the division.
     function percentDiv(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
         // Must revert if
@@ -99,11 +99,11 @@ library PercentageMath {
         }
     }
 
-    /// @notice Executes a weighted average (x * (1 - p) + y * p), rounded up.
+    /// @notice Computes the bps-based weighted average (x * (1 - p) + y * p), rounded half up.
     /// @param x The first value, with a weight of 1 - percentage.
     /// @param y The second value, with a weight of percentage.
-    /// @param percentage The weight of y, and complement of the weight of x.
-    /// @return z The result of the weighted average.
+    /// @param percentage The weight of y, and complement of the weight of x (in bps).
+    /// @return z The result of the bps-based weighted average.
     function weightedAvg(
         uint256 x,
         uint256 y,

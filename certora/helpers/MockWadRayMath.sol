@@ -27,4 +27,20 @@ contract MockWadRayMath {
     function wadToRay(uint256 x) public pure returns (uint256) {
         return WadRayMath.wadToRay(x);
     }
+
+    function wadWeightedAvg(
+        uint256 x,
+        uint256 y,
+        uint256 weight
+    ) public pure returns (uint256) {
+        return WadRayMath.wadWeightedAvg(x, y, weight);
+    }
+
+    function rayWeightedAvg(
+        uint256 x,
+        uint256 y,
+        uint256 weight
+    ) public pure returns (uint256) {
+        return WadRayMath.rayWeightedAvg(x, y, weight);
+    }
 }

@@ -66,8 +66,8 @@ contract PercentageMathFunctionsRef {
 contract TestPercentageMath is Test {
     uint256 internal constant PERCENTAGE_FACTOR = 1e4;
     uint256 internal constant HALF_PERCENTAGE_FACTOR = 0.5e4;
-    uint256 internal constant MAX_UINT256 = 2**256 - 1;
-    uint256 internal constant MAX_UINT256_MINUS_HALF_PERCENTAGE = 2**256 - 1 - 0.5e4;
+    uint256 internal constant MAX_UINT256 = type(uint256).max;
+    uint256 internal constant MAX_UINT256_MINUS_HALF_PERCENTAGE = MAX_UINT256 - HALF_PERCENTAGE_FACTOR;
 
     PercentageMathFunctions math;
     PercentageMathFunctionsRef mathRef;
@@ -168,7 +168,7 @@ contract TestPercentageMath is Test {
         uint16 percentage
     ) public {
         vm.assume(percentage <= PERCENTAGE_FACTOR);
-        vm.assume(percentage == 0 || y <= (MAX_UINT256 - HALF_PERCENTAGE_FACTOR) / percentage);
+        vm.assume(percentage == 0 || y <= MAX_UINT256_MINUS_HALF_PERCENTAGE / percentage);
         vm.assume(
             PERCENTAGE_FACTOR - percentage == 0 ||
                 x <= (MAX_UINT256 - y * percentage - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
@@ -184,7 +184,7 @@ contract TestPercentageMath is Test {
     ) public {
         vm.assume(percentage <= PERCENTAGE_FACTOR);
         vm.assume(
-            (percentage != 0 && y > (MAX_UINT256 - HALF_PERCENTAGE_FACTOR) / percentage) ||
+            (percentage != 0 && y > MAX_UINT256_MINUS_HALF_PERCENTAGE / percentage) ||
                 ((PERCENTAGE_FACTOR - percentage) != 0 &&
                     x > (MAX_UINT256 - y * percentage - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage))
         );
@@ -209,10 +209,10 @@ contract TestPercentageMath is Test {
         uint256 y = 5000;
         uint256 percentage = 1;
 
-        uint256 weightedAvg = PercentageMath.weightedAvg(x, y, percentage);
+        uint256 avg = PercentageMath.weightedAvg(x, y, percentage);
 
-        assertLe(x, weightedAvg);
-        assertLe(weightedAvg, y);
+        assertLe(x, avg);
+        assertLe(avg, y);
     }
 
     /// GAS COMPARISONS ///
@@ -237,7 +237,7 @@ contract TestPercentageMath is Test {
         mathRef.percentDiv(1 ether, 1_000);
     }
 
-    function testGasPercentageAvg() public view {
+    function testGasWeightedAvg() public view {
         math.weightedAvg(1 ether, 2 ether, 5_000);
         mathRef.weightedAvg(1 ether, 2 ether, 5_000);
     }

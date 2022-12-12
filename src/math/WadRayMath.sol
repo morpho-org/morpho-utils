@@ -20,7 +20,7 @@ library WadRayMath {
 
     /// INTERNAL ///
 
-    /// @dev Multiplies two wad, rounding half up to the nearest wad.
+    /// @dev Executes the wad-based multiplication of 2 numbers, rounded half up.
     /// @param x Wad.
     /// @param y Wad.
     /// @return z The result of x * y, in wad.
@@ -38,7 +38,7 @@ library WadRayMath {
         }
     }
 
-    /// @dev Divides two wad, rounding half up to the nearest wad.
+    /// @dev Executes wad-based division of 2 numbers, rounded half up.
     /// @param x Wad.
     /// @param y Wad.
     /// @return z The result of x / y, in wad.
@@ -57,7 +57,7 @@ library WadRayMath {
         }
     }
 
-    /// @dev Multiplies two ray, rounding half up to the nearest ray.
+    /// @dev Executes the ray-based multiplication of 2 numbers, rounded half up.
     /// @param x Ray.
     /// @param y Ray.
     /// @return z The result of x * y, in ray.
@@ -75,7 +75,7 @@ library WadRayMath {
         }
     }
 
-    /// @dev Divides two ray, rounding half up to the nearest ray.
+    /// @dev Executes the ray-based division of 2 numbers, rounded half up.
     /// @param x Ray.
     /// @param y Ray.
     /// @return z The result of x / y, in ray.
@@ -94,7 +94,7 @@ library WadRayMath {
         }
     }
 
-    /// @dev Casts ray down to wad.
+    /// @dev Converts ray down to wad.
     /// @param x Ray.
     /// @return y = x converted to wad, rounded half up to the nearest wad.
     function rayToWad(uint256 x) internal pure returns (uint256 y) {
@@ -114,6 +114,72 @@ library WadRayMath {
             if iszero(eq(div(y, WAD_RAY_RATIO), x)) {
                 revert(0, 0)
             }
+        }
+    }
+
+    /// @notice Computes the wad-based weighted average (x * (1 - p) + y * p), rounded half up.
+    /// @param x The first value, with a weight of 1 - weight.
+    /// @param y The second value, with a weight of weight.
+    /// @param weight The weight of y, and complement of the weight of x (in wad).
+    /// @return z The result of the wad-based weighted average.
+    function wadWeightedAvg(
+        uint256 x,
+        uint256 y,
+        uint256 weight
+    ) internal pure returns (uint256 z) {
+        // Must revert if
+        //     weight > WAD
+        // or if
+        //     y * weight + HALF_WAD > type(uint256).max
+        //     <=> weight > 0 and y > (type(uint256).max - HALF_WAD) / weight
+        // or if
+        //     x * (WAD - weight) + y * weight + HALF_WAD > type(uint256).max
+        //     <=> (WAD - weight) > 0 and x > (type(uint256).max - HALF_WAD - y * weight) / (WAD - weight)
+        assembly {
+            z := sub(WAD, weight) // Temporary assignment to save gas.
+            if or(
+                gt(weight, WAD),
+                or(
+                    mul(weight, gt(y, div(MAX_UINT256_MINUS_HALF_WAD, weight))),
+                    mul(z, gt(x, div(sub(MAX_UINT256_MINUS_HALF_WAD, mul(y, weight)), z)))
+                )
+            ) {
+                revert(0, 0)
+            }
+            z := div(add(add(mul(x, z), mul(y, weight)), HALF_WAD), WAD)
+        }
+    }
+
+    /// @notice Computes the ray-based weighted average (x * (1 - p) + y * p), rounded half up.
+    /// @param x The first value, with a weight of 1 - weight.
+    /// @param y The second value, with a weight of weight.
+    /// @param weight The weight of y, and complement of the weight of x (in ray).
+    /// @return z The result of the ray-based weighted average.
+    function rayWeightedAvg(
+        uint256 x,
+        uint256 y,
+        uint256 weight
+    ) internal pure returns (uint256 z) {
+        // Must revert if
+        //     weight > RAY
+        // or if
+        //     y * weight + HALF_RAY > type(uint256).max
+        //     <=> weight > 0 and y > (type(uint256).max - HALF_RAY) / weight
+        // or if
+        //     x * (RAY - weight) + y * weight + HALF_RAY > type(uint256).max
+        //     <=> (RAY - weight) > 0 and x > (type(uint256).max - HALF_RAY - y * weight) / (RAY - weight)
+        assembly {
+            z := sub(RAY, weight) // Temporary assignment to save gas.
+            if or(
+                gt(weight, RAY),
+                or(
+                    mul(weight, gt(y, div(MAX_UINT256_MINUS_HALF_RAY, weight))),
+                    mul(z, gt(x, div(sub(MAX_UINT256_MINUS_HALF_RAY, mul(y, weight)), z)))
+                )
+            ) {
+                revert(0, 0)
+            }
+            z := div(add(add(mul(x, z), mul(y, weight)), HALF_RAY), RAY)
         }
     }
 }
