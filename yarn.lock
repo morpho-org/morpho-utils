@@ -46,7 +46,7 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
-prettier-plugin-solidity@^1.0.0-dev.22:
+prettier-plugin-solidity@1.0.0-dev.22:
   version "1.0.0-dev.22"
   resolved "https://registry.yarnpkg.com/prettier-plugin-solidity/-/prettier-plugin-solidity-1.0.0-dev.22.tgz#08c07816884d17bd9171c073c2421559057230c3"
   integrity sha512-0v+O2/sqq6WMlZ2TsnRBXaNmKF4zANn0uLLWuvNra4BjmKUtp33EZ4AVKB26fzWy14BkVGeJfPAtKry0x3SFfQ==
@@ -58,7 +58,7 @@ prettier-plugin-solidity@^1.0.0-dev.22:
     solidity-comments-extractor "^0.0.7"
     string-width "^4.2.3"
 
-prettier@^2.7.1:
+prettier@2.7.1:
   version "2.7.1"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.7.1.tgz#e235806850d057f97bb08368a4f7d899f7760c64"
   integrity sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==
