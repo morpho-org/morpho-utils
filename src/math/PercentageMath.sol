@@ -8,10 +8,14 @@ pragma solidity ^0.8.0;
 library PercentageMath {
     ///	CONSTANTS ///
 
-    uint256 internal constant PERCENTAGE_FACTOR = 1e4; // 100.00%
-    uint256 internal constant HALF_PERCENTAGE_FACTOR = 0.5e4; // 50.00%
+    // Only direct number constants and references to such constants are supported by inline assembly.
+    uint256 internal constant PERCENTAGE_FACTOR = 100_00;
+    uint256 internal constant HALF_PERCENTAGE_FACTOR = 50_00;
+    uint256 internal constant PERCENTAGE_FACTOR_MINUS_ONE = 100_00 - 1;
     uint256 internal constant MAX_UINT256 = 2**256 - 1;
-    uint256 internal constant MAX_UINT256_MINUS_HALF_PERCENTAGE = 2**256 - 1 - 0.5e4;
+    uint256 internal constant MAX_UINT256_MINUS_HALF_PERCENTAGE = 2**256 - 1 - 50_00;
+    uint256 internal constant MAX_UINT256_MINUS_PERCENTAGE_FACTOR_MINUS_ONE = 2**256 - 1 - (100_00 - 1);
+    uint256 internal constant MAX_UINT256_PERCENTAGE_FACTOR_RATIO = 0x68db8bac710cb295e9e1b089a027525460aa64c2f837b4a2339c0ebedfa43;
 
     /// INTERNAL ///
 
@@ -78,6 +82,41 @@ library PercentageMath {
         }
     }
 
+    /// @notice Executes a percentage multiplication (x * p), flooring the result.
+    /// @param x The value to multiply by the percentage.
+    /// @param percentage The percentage of the value to multiply.
+    /// @return y The result of the multiplication.
+    function percentMulDown(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
+        // Let percentage > 0
+        // Overflow if (x * percentage) > type(uint256).max
+        // <=> x > type(uint256).max / percentage
+        assembly {
+            if mul(percentage, gt(x, div(MAX_UINT256, percentage))) {
+                revert(0, 0)
+            }
+
+            y := div(mul(x, percentage), PERCENTAGE_FACTOR)
+        }
+    }
+
+    /// @notice Executes a percentage multiplication (x * p), ceiling the result.
+    /// @param x The value to multiply by the percentage.
+    /// @param percentage The percentage of the value to multiply.
+    /// @return y The result of the multiplication.
+    function percentMulUp(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
+        // Let percentage > 0
+        // Overflow if (x * percentage + PERCENTAGE_FACTOR_MINUS_ONE) > type(uint256).max
+        // <=> x * percentage > type(uint256).max - PERCENTAGE_FACTOR_MINUS_ONE
+        // <=> x > (type(uint256).max - PERCENTAGE_FACTOR_MINUS_ONE) / percentage
+        assembly {
+            if mul(percentage, gt(x, div(MAX_UINT256_MINUS_PERCENTAGE_FACTOR_MINUS_ONE, percentage))) {
+                revert(0, 0)
+            }
+
+            y := div(add(mul(x, percentage), PERCENTAGE_FACTOR_MINUS_ONE), PERCENTAGE_FACTOR)
+        }
+    }
+
     /// @notice Executes a percentage division (x / p), rounded up.
     /// @param x The value to divide by the percentage.
     /// @param percentage The percentage of the value to divide.
@@ -91,6 +130,42 @@ library PercentageMath {
         assembly {
             y := div(percentage, 2) // Temporary assignment to save gas.
 
+            if iszero(mul(percentage, iszero(gt(x, div(sub(MAX_UINT256, y), PERCENTAGE_FACTOR))))) {
+                revert(0, 0)
+            }
+
+            y := div(add(mul(PERCENTAGE_FACTOR, x), y), percentage)
+        }
+    }
+
+    /// @notice Executes a percentage division (x / p), flooring the result.
+    /// @param x The value to divide by the percentage.
+    /// @param percentage The percentage of the value to divide.
+    /// @return y The result of the division.
+    function percentDivDown(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
+        // Overflow if percentage == 0
+        // Overflow if (x * PERCENTAGE_FACTOR) > type(uint256).max
+        // <=> x > type(uint256).max / PERCENTAGE_FACTOR
+        assembly {
+            if iszero(mul(percentage, iszero(gt(x, MAX_UINT256_PERCENTAGE_FACTOR_RATIO)))) {
+                revert(0, 0)
+            }
+
+            y := div(mul(PERCENTAGE_FACTOR, x), percentage)
+        }
+    }
+
+    /// @notice Executes a percentage division (x / p), ceiling the result.
+    /// @param x The value to divide by the percentage.
+    /// @param percentage The percentage of the value to divide.
+    /// @return y The result of the division.
+    function percentDivUp(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
+        // Overflow if percentage == 0
+        // Overflow if (x * PERCENTAGE_FACTOR + percentage - 1) > type(uint256).max
+        // <=> x * PERCENTAGE_FACTOR > type(uint256).max - (percentage - 1)
+        // <=> x > (type(uint256).max - (percentage - 1)) / PERCENTAGE_FACTOR
+        assembly {
+            y := sub(percentage, 1)
             if iszero(mul(percentage, iszero(gt(x, div(sub(MAX_UINT256, y), PERCENTAGE_FACTOR))))) {
                 revert(0, 0)
             }
