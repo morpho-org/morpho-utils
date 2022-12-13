@@ -16,7 +16,7 @@ library SafeCast {
 
 	function toUint128(uint256 value) internal pure returns(uint128 casted) {
 		assembly {
-			if iszero(lt(value, MAX_UINT128)) {
+			if gt(value, MAX_UINT128) {
 				revert(0, 0)
 			}
 
@@ -26,7 +26,7 @@ library SafeCast {
 
 	function toUint96(uint256 value) internal pure returns(uint96 casted) {
 		assembly {
-			if iszero(lt(value, MAX_UINT96)) {
+			if gt(value, MAX_UINT96) {
 				revert(0, 0)
 			}
 
@@ -36,7 +36,7 @@ library SafeCast {
 
 	function toUint64(uint256 value) internal pure returns(uint64 casted) {
 		assembly {
-			if iszero(lt(value, MAX_UINT64)) {
+			if gt(value, MAX_UINT64) {
 				revert(0, 0)
 			}
 
@@ -46,7 +46,7 @@ library SafeCast {
 
 	function toUint32(uint256 value) internal pure returns(uint32 casted) {
 		assembly {
-			if iszero(lt(value, MAX_UINT32)) {
+			if gt(value, MAX_UINT32) {
 				revert(0, 0)
 			}
 
@@ -56,7 +56,7 @@ library SafeCast {
 
 	function toUint16(uint256 value) internal pure returns(uint16 casted) {
 		assembly {
-			if iszero(lt(value, MAX_UINT16)) {
+			if gt(value, MAX_UINT16) {
 				revert(0, 0)
 			}
 
@@ -66,7 +66,7 @@ library SafeCast {
 
 	function toUint8(uint256 value) internal pure returns(uint8 casted) {
 		assembly {
-			if iszero(lt(value, MAX_UINT8)) {
+			if lt(MAX_UINT8, value) {
 				revert(0, 0)
 			}
 

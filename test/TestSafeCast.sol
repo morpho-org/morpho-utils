@@ -7,14 +7,54 @@ import "src/math/safeCast.sol";
 import {SafeCast as SafeCastRef} from "openzeppelin-contracts/contracts/utils/math/SafeCast.sol";
 
 contract SafeCastFunctions {
+    function toUint128(uint256 x) public pure returns (uint128) {
+        return SafeCast.toUint128(x);
+    }
+
     function toUint96(uint256 x) public pure returns (uint96) {
         return SafeCast.toUint96(x);
+    }
+
+    function toUint64(uint256 x) public pure returns (uint64) {
+        return SafeCast.toUint64(x);
+    }
+
+    function toUint32(uint256 x) public pure returns (uint32) {
+        return SafeCast.toUint32(x);
+    }
+
+    function toUint16(uint256 x) public pure returns (uint16) {
+        return SafeCast.toUint16(x);
+    }
+
+    function toUint8(uint256 x) public pure returns (uint8) {
+        return SafeCast.toUint8(x);
     }
 }
 
 contract SafeCastFunctionsRef {
+    function toUint128(uint256 x) public pure returns (uint128) {
+        return SafeCastRef.toUint128(x);
+    }
+
     function toUint96(uint256 x) public pure returns (uint96) {
         return SafeCastRef.toUint96(x);
+    }
+
+    function toUint64(uint256 x) public pure returns (uint64) {
+        return SafeCastRef.toUint64(x);
+    }
+
+    function toUint32(uint256 x) public pure returns (uint32) {
+        return SafeCastRef.toUint32(x);
+    }
+
+    function toUint16(uint256 x) public pure returns (uint16) {
+        return SafeCastRef.toUint16(x);
+    }
+
+    function toUint8(uint256 x) public pure returns (uint8) {
+        return SafeCastRef.toUint8(x);
     }
 }
 
@@ -110,8 +150,33 @@ contract TestSafeCast is Test {
 
     // GAS COMPARISONS ///
 
+    function testSafeCastUint128() public view {
+        safeCast.toUint128(1);
+        safeCastRef.toUint128(1);
+    }
+
     function testSafeCastUint96() public view {
         safeCast.toUint96(1);
         safeCastRef.toUint96(1);
+    }
+
+    function testSafeCastUint64() public view {
+        safeCast.toUint64(1);
+        safeCastRef.toUint64(1);
+    }
+
+    function testSafeCastUint32() public view {
+        safeCast.toUint32(1);
+        safeCastRef.toUint32(1);
+    }
+
+    function testSafeCastUint16() public view {
+        safeCast.toUint16(1);
+        safeCastRef.toUint16(1);
+    }
+
+    function testSafeCastUint8() public view {
+        safeCast.toUint8(1);
+        safeCastRef.toUint8(1);
     }
 }
