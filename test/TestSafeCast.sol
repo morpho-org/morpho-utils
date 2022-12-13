@@ -30,6 +30,10 @@ contract SafeCastFunctions {
     function toUint8(uint256 x) public pure returns (uint8) {
         return SafeCast.toUint8(x);
     }
+
+    function toInt128(int256 x) public pure returns (int128) {
+        return SafeCast.toInt128(x);
+    }
 }
 
 contract SafeCastFunctionsRef {
@@ -55,6 +59,10 @@ contract SafeCastFunctionsRef {
 
     function toUint8(uint256 x) public pure returns (uint8) {
         return SafeCastRef.toUint8(x);
+    }
+
+    function toInt128(int256 x) public pure returns (int128) {
+        return SafeCastRef.toInt128(x);
     }
 }
 
@@ -178,5 +186,10 @@ contract TestSafeCast is Test {
     function testSafeCastUint8() public view {
         safeCast.toUint8(1);
         safeCastRef.toUint8(1);
+    }
+
+    function testSafeCastInt128() public view {
+        safeCast.toInt128(1);
+        safeCastRef.toInt128(1);
     }
 }

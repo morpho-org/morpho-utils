@@ -73,4 +73,14 @@ library SafeCast {
 			casted := value
 		}
 	}
+
+	function toInt128(int256 value) internal pure returns(int128 downcasted) {
+		assembly {
+			downcasted := signextend(15, value)
+
+			if iszero(eq(downcasted, value)) {
+				revert(0, 0)
+			}
+		}
+	}
 }
