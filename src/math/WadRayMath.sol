@@ -150,7 +150,7 @@ library WadRayMath {
         }
     }
 
-    /// @notice Computes the ray-based weighted average (x * (1 - p) + y * p), rounded half up.
+    /// @notice Computes the ray-based weighted average (x * (1 - weight) + y * weight), rounded half up.
     /// @param x The first value, with a weight of 1 - weight.
     /// @param y The second value, with a weight of weight.
     /// @param weight The weight of y, and complement of the weight of x (in ray).

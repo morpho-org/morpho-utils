@@ -99,16 +99,16 @@ rule wadToRayLiveness(uint256 a) {
 
 /// wadWeightedAvg ///
 
-rule wadWeightedAvgSafety(uint256 x, uint256 y, uint256 p) {
-    uint res = wadWeightedAvg(x, y, p);
+rule wadWeightedAvgSafety(uint256 x, uint256 y, uint256 w) {
+    uint res = wadWeightedAvg(x, y, w);
 
-    assert res == (x * (10^18 - p) + y * p + 10^18 / 2) / 10^18;
+    assert res == (x * (10^18 - w) + y * w + 10^18 / 2) / 10^18;
 }
 
-rule wadWeightedAvgLiveness(uint256 x, uint256 y, uint256 p) {
-    wadWeightedAvg@withrevert(x, y, p);
+rule wadWeightedAvgLiveness(uint256 x, uint256 y, uint256 w) {
+    wadWeightedAvg@withrevert(x, y, w);
 
-    assert lastReverted <=> x * (10^18 - p) + y * p + 10^18 / 2 >= 2^256 || p > 10^18;
+    assert lastReverted <=> x * (10^18 - w) + y * w + 10^18 / 2 >= 2^256 || w > 10^18;
 }
 
 /// rayWeightedAvg ///
