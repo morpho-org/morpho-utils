@@ -1,7 +1,7 @@
 #!/bin/bash
 
 certoraRun \
-    certora/helpers/MockCompoundMath.sol \
-    --verify MockCompoundMath:certora/specs/compoundMath.spec \
+    test/mocks/CompoundMathMock.sol \
+    --verify CompoundMathMock:certora/specs/compoundMath.spec \
     --msg "CompoundMath" \
     $@
