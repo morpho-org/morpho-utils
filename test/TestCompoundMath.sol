@@ -17,14 +17,33 @@ contract TestCompoundMath is Test {
     /// TESTS ///
 
     function testMul(uint256 x, uint256 y) public {
-        vm.assume(y == 0 || x < type(uint256).max / y);
+        vm.assume(y == 0 || x <= type(uint256).max / y);
 
         assertEq(mock.mul(x, y), ref.mul(x, y));
     }
 
+    function testMulOverflow(uint256 x, uint256 y) public {
+        vm.assume(y > 0 && x > type(uint256).max / y);
+
+        vm.expectRevert();
+        mock.mul(x, y);
+    }
+
     function testDiv(uint256 x, uint256 y) public {
-        vm.assume(y > 0 && x < type(uint256).max / 1e36);
+        vm.assume(y > 0 && x <= type(uint256).max / 1e36);
 
         assertEq(mock.div(x, y), ref.div(x, y));
+    }
+
+    function testDivOverflow(uint256 x, uint256 y) public {
+        vm.assume(y > 0 && x > type(uint256).max / 1e18);
+
+        vm.expectRevert();
+        mock.div(x, y);
+    }
+
+    function testDivByZero(uint256 x) public {
+        vm.expectRevert();
+        mock.div(x, 0);
     }
 }

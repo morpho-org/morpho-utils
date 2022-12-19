@@ -31,10 +31,31 @@ contract TestWadRayMath is Test {
         assertEq(mock.wadMul(x, y), ref.wadMul(x, y));
     }
 
+    function testWadMulOverflow(uint256 x, uint256 y) public {
+        vm.assume(y > 0 && x > MAX_UINT256_MINUS_HALF_WAD / y);
+
+        vm.expectRevert();
+        mock.wadMul(x, y);
+    }
+
     function testWadDiv(uint256 x, uint256 y) public {
         vm.assume(y > 0 && x <= (type(uint256).max - y / 2) / WAD);
 
         assertEq(mock.wadDiv(x, y), ref.wadDiv(x, y));
+    }
+
+    function testWadDivOverflow(uint256 x, uint256 y) public {
+        vm.assume(x > (type(uint256).max - y / 2) / WAD);
+
+        vm.expectRevert();
+        mock.wadDiv(x, y);
+    }
+
+    function testWadDivByZero(uint256 x, uint256 y) public {
+        vm.assume(y == 0);
+
+        vm.expectRevert();
+        mock.wadDiv(x, y);
     }
 
     function testRayMul(uint256 x, uint256 y) public {
@@ -43,10 +64,31 @@ contract TestWadRayMath is Test {
         assertEq(mock.rayMul(x, y), ref.rayMul(x, y));
     }
 
+    function testRayMulOverflow(uint256 x, uint256 y) public {
+        vm.assume(y > 0 && x > MAX_UINT256_MINUS_HALF_RAY / y);
+
+        vm.expectRevert();
+        mock.rayMul(x, y);
+    }
+
     function testRayDiv(uint256 x, uint256 y) public {
         vm.assume(y > 0 && x <= (type(uint256).max - y / 2) / RAY);
 
         assertEq(mock.rayDiv(x, y), ref.rayDiv(x, y));
+    }
+
+    function testRayDivOverflow(uint256 x, uint256 y) public {
+        vm.assume(x > (type(uint256).max - y / 2) / RAY);
+
+        vm.expectRevert();
+        mock.rayDiv(x, y);
+    }
+
+    function testRayDivByZero(uint256 x, uint256 y) public {
+        vm.assume(y == 0);
+
+        vm.expectRevert();
+        mock.rayDiv(x, y);
     }
 
     function testRayToWad(uint256 x) public {
@@ -54,10 +96,15 @@ contract TestWadRayMath is Test {
     }
 
     function testWadToRay(uint256 x) public {
-        unchecked {
-            vm.assume((x * WAD_RAY_RATIO) / WAD_RAY_RATIO == x);
-        }
+        vm.assume(x <= type(uint256).max / WAD_RAY_RATIO);
 
         assertEq(mock.wadToRay(x), ref.wadToRay(x));
+    }
+
+    function testWadToRayOverflow(uint256 x) public {
+        vm.assume(x > type(uint256).max / WAD_RAY_RATIO);
+
+        vm.expectRevert();
+        mock.wadToRay(x);
     }
 }

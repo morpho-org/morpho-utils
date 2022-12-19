@@ -33,4 +33,24 @@ contract TestMath is Test {
 
         assertEq(mock.divUp(x, y), ref.divUp(x, y));
     }
+
+    function testDivUpByZero(uint256 x) public {
+        vm.expectRevert();
+        mock.divUp(x, 0);
+    }
+
+    function testDivUpNumSmaller(uint256 x, uint256 y) public {
+        vm.assume(x > 0 && x < y);
+        assertEq(mock.divUp(x, y), 1);
+    }
+
+    function testDivUpNumDivisible(uint256 x, uint256 y) public {
+        vm.assume(y > 0 && x % y == 0);
+        assertEq(mock.divUp(x, y), x / y);
+    }
+
+    function testDivUpNumNotDivisible(uint256 x, uint256 y) public {
+        vm.assume(y > 0 && x % y != 0);
+        assertEq(mock.divUp(x, y), x / y + 1);
+    }
 }
