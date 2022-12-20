@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import "../../src/math/Math.sol";
+import {Math} from "src/math/Math.sol";
 
-contract MockMath {
+contract MathMock {
     function min(uint256 x, uint256 y) public pure returns (uint256) {
         return Math.min(x, y);
     }

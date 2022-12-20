@@ -1,8 +1,8 @@
 #!/bin/bash
 
 certoraRun \
-    certora/helpers/MockMath.sol \
-    --verify MockMath:certora/specs/math.spec \
+    test/mocks/MathMock.sol \
+    --verify MathMock:certora/specs/math.spec \
     --settings -useBitVectorTheory \
     --msg "Math" \
     $@

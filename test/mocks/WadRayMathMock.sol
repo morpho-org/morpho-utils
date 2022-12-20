@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import "../../src/math/WadRayMath.sol";
+import {WadRayMath} from "src/math/WadRayMath.sol";
 
-contract MockWadRayMath {
+contract WadRayMathMock {
     function wadMul(uint256 x, uint256 y) public pure returns (uint256) {
         return WadRayMath.wadMul(x, y);
     }

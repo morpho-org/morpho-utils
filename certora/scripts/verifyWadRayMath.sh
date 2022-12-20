@@ -1,8 +1,8 @@
 #!/bin/bash
 
 certoraRun \
-    certora/helpers/MockWadRayMath.sol \
-    --verify MockWadRayMath:certora/specs/wadRayMath.spec \
+    test/mocks/WadRayMathMock.sol \
+    --verify WadRayMathMock:certora/specs/wadRayMath.spec \
     --msg "WadRayMath" \
     $@
 
