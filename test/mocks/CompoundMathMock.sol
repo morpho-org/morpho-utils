@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import "src/math/CompoundMath.sol";
+import {CompoundMath} from "src/math/CompoundMath.sol";
 
-contract MockCompoundMath {
+contract CompoundMathMock {
     function mul(uint256 x, uint256 y) public pure returns (uint256) {
         return CompoundMath.mul(x, y);
     }
@@ -12,4 +12,3 @@ contract MockCompoundMath {
         return CompoundMath.div(x, y);
     }
 }
-
