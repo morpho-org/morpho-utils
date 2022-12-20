@@ -155,7 +155,6 @@ contract TestSafeCast is Test {
         SafeCast.toUint8(x);
     }
 
-
     // GAS COMPARISONS ///
 
     function testSafeCastUint128() public view {
