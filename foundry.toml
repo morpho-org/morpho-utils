@@ -1,8 +1,4 @@
-[profile.default]
-src = 'src'
-out = 'out'
-libs = ['lib']
-fuzz_runs = 1024
-gas_reports = ["*"]
+[fuzz]
+runs = 2048
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config

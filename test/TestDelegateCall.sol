@@ -21,11 +21,10 @@ contract Caller {
         return abi.decode(data, (uint256));
     }
 
-
     function delegateCallAndReturnMemoryAndPointer(bytes4 _selector) external returns (bytes memory, bytes32) {
         bytes memory allMem;
         bytes32 ptr;
-        assembly{
+        assembly {
             ptr := mload(0x40)
             // We write a slot in the memory before the call.
             mstore(ptr, 0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb)
@@ -33,15 +32,15 @@ contract Caller {
         }
 
         called.functionDelegateCall(abi.encodeWithSelector(_selector, ""));
-        
-        assembly{
+
+        assembly {
             ptr := mload(0x40)
             // We write a slot in the memory after the call.
             mstore(ptr, 0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)
             mstore(0x40, add(ptr, 0x20))
         }
         // We store the memory in allMem.
-        assembly{
+        assembly {
             ptr := mload(0x40)
             allMem := 0x00
             mstore(allMem, mload(0x40))
@@ -79,25 +78,28 @@ contract CallerRef {
             } else revert LowLevelDelegateCallFailed();
         }
     }
-    
-    function targetDelegateCallBehaviourAndReturnMemoryAndPointer(bytes4 _selector) external returns (bytes memory, bytes32) {
+
+    function targetDelegateCallBehaviourAndReturnMemoryAndPointer(bytes4 _selector)
+        external
+        returns (bytes memory, bytes32)
+    {
         bytes memory allMem;
         bytes32 ptr;
-        assembly{
+        assembly {
             ptr := mload(0x40)
             mstore(ptr, 0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb)
             mstore(0x40, add(ptr, 0x20))
         }
 
-        targetDelegateCallBehaviour(address(called),abi.encodeWithSelector(_selector, ""));
-        
-        assembly{
+        targetDelegateCallBehaviour(address(called), abi.encodeWithSelector(_selector, ""));
+
+        assembly {
             ptr := mload(0x40)
             mstore(ptr, 0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)
             mstore(0x40, add(ptr, 0x20))
         }
 
-        assembly{
+        assembly {
             ptr := mload(0x40)
             allMem := 0x00
             mstore(allMem, mload(0x40))
@@ -105,7 +107,6 @@ contract CallerRef {
 
         return (allMem, ptr);
     }
-
 }
 
 contract Called {
@@ -117,7 +118,7 @@ contract Called {
         return x;
     }
 
-    function returnBytes32() external pure returns (bytes32){
+    function returnBytes32() external pure returns (bytes32) {
         return "33333333333333333333333333333333";
     }
 
@@ -174,8 +175,8 @@ contract TestDelegateCall is Test {
         caller.delegateCall(Called.revertWithCustomError.selector);
     }
 
-    function testMemoryUncorruptedWithRef() public{
-        // This test makes sure that the delegateCall function of our library acts on the memory in the exact same way 
+    function testMemoryUncorruptedWithRef() public {
+        // This test makes sure that the delegateCall function of our library acts on the memory in the exact same way
         // as a targetBehaviour function corresponding to the desired behavior.
         bytes memory memoryReturned;
         bytes32 pointerReturned;
@@ -183,22 +184,30 @@ contract TestDelegateCall is Test {
         bytes32 pointerReturnedRef;
 
         (memoryReturned, pointerReturned) = caller.delegateCallAndReturnMemoryAndPointer(Called.number.selector);
-        (memoryReturnedRef, pointerReturnedRef) = callerRef.targetDelegateCallBehaviourAndReturnMemoryAndPointer(Called.number.selector);
+        (memoryReturnedRef, pointerReturnedRef) = callerRef.targetDelegateCallBehaviourAndReturnMemoryAndPointer(
+            Called.number.selector
+        );
         assert(keccak256(memoryReturned) == keccak256(memoryReturnedRef));
         assert(pointerReturned == pointerReturnedRef);
 
         (memoryReturned, pointerReturned) = caller.delegateCallAndReturnMemoryAndPointer(Called.return40Bytes.selector);
-        (memoryReturnedRef, pointerReturnedRef) = callerRef.targetDelegateCallBehaviourAndReturnMemoryAndPointer(Called.return40Bytes.selector);
+        (memoryReturnedRef, pointerReturnedRef) = callerRef.targetDelegateCallBehaviourAndReturnMemoryAndPointer(
+            Called.return40Bytes.selector
+        );
         assert(keccak256(memoryReturned) == keccak256(memoryReturnedRef));
         assert(pointerReturned == pointerReturnedRef);
 
         (memoryReturned, pointerReturned) = caller.delegateCallAndReturnMemoryAndPointer(Called.return32Bytes.selector);
-        (memoryReturnedRef, pointerReturnedRef) = callerRef.targetDelegateCallBehaviourAndReturnMemoryAndPointer(Called.return32Bytes.selector);
+        (memoryReturnedRef, pointerReturnedRef) = callerRef.targetDelegateCallBehaviourAndReturnMemoryAndPointer(
+            Called.return32Bytes.selector
+        );
         assert(keccak256(memoryReturned) == keccak256(memoryReturnedRef));
         assert(pointerReturned == pointerReturnedRef);
-        
+
         (memoryReturned, pointerReturned) = caller.delegateCallAndReturnMemoryAndPointer(Called.returnBytes32.selector);
-        (memoryReturnedRef, pointerReturnedRef) = callerRef.targetDelegateCallBehaviourAndReturnMemoryAndPointer(Called.returnBytes32.selector);
+        (memoryReturnedRef, pointerReturnedRef) = callerRef.targetDelegateCallBehaviourAndReturnMemoryAndPointer(
+            Called.returnBytes32.selector
+        );
         assert(keccak256(memoryReturned) == keccak256(memoryReturnedRef));
         assert(pointerReturned == pointerReturnedRef);
     }
