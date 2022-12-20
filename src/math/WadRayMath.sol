@@ -17,7 +17,8 @@ library WadRayMath {
     uint256 internal constant MAX_UINT256 = 2**256 - 1; // Not possible to use type(uint256).max in yul.
     uint256 internal constant MAX_UINT256_MINUS_HALF_WAD = 2**256 - 1 - 0.5e18;
     uint256 internal constant MAX_UINT256_MINUS_HALF_RAY = 2**256 - 1 - 0.5e27;
-    uint256 internal constant MAX_UINT256_RAY_WAD_RATIO = 0x44b82fa09b5a52cb98b405447c4a98187eebb22f008d5d64f9c394ae9;
+    uint256 internal constant MAX_UINT256_OVER_RAY_WAD_RATIO =
+        0x44b82fa09b5a52cb98b405447c4a98187eebb22f008d5d64f9c394ae9;
 
     /// INTERNAL ///
 
@@ -120,7 +121,7 @@ library WadRayMath {
         //     x * RAY_WAD_RATIO > type(uint256).max
         // <=> x > type(uint256).max / RAY_WAD_RATIO
         assembly {
-            if gt(x, MAX_UINT256_RAY_WAD_RATIO) {
+            if gt(x, MAX_UINT256_OVER_RAY_WAD_RATIO) {
                 revert(0, 0)
             }
 
