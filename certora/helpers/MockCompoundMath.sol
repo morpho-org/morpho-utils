@@ -12,4 +12,3 @@ contract MockCompoundMath {
         return CompoundMath.div(x, y);
     }
 }
-
