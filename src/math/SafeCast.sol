@@ -71,4 +71,15 @@ library SafeCast {
             revert(0, 0)
         }
     }
+
+	function toInt128(int256 value) internal pure returns (int128) {
+		assembly {
+            if lt(value, shl(127, 1)) {
+                mstore(0x00, value)
+                return(0x00, 0x20)
+            }
+
+            revert(0, 0)
+        }
+	}
 }
