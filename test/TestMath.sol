@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {MathMock} from "./mocks/MathMock.sol";
 import {MathRef} from "./references/MathRef.sol";
+import {DeBruijn} from "./helpers/DeBruijn.sol";
 import "forge-std/Test.sol";
 
 contract TestMath is Test {
@@ -54,11 +55,6 @@ contract TestMath is Test {
         assertEq(mock.divUp(x, y), x / y + 1);
     }
 
-    function log2Ref(uint256 x) public pure returns (uint256) {
-        for (uint256 i; i < 256; i++) if (x < 2**i) return i;
-        return 256;
-    }
-
     function testStore() public {
         uint256 m;
         uint256 key;
@@ -86,5 +82,10 @@ contract TestMath is Test {
             }
             assertEq(value, i, "wrong value in lookup table");
         }
+    }
+
+    function testDeBruijnSequence() public {
+        uint256 deBruijnSeq = 0x818283848586878898a8b8c8d8e8f929395969799a9b9d9e9faaeb6bedeeff;
+        assertTrue(DeBruijn.isDeBruijnSequence(deBruijnSeq));
     }
 }
