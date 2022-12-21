@@ -55,7 +55,12 @@ contract TestMath is Test {
         assertEq(mock.divUp(x, y), x / y + 1);
     }
 
-    function testStore() public {
+    function testDeBruijnSequence() public {
+        uint256 deBruijnSeq = 0x818283848586878898a8b8c8d8e8f929395969799a9b9d9e9faaeb6bedeeff;
+        assertTrue(DeBruijn.isDeBruijnSequence(deBruijnSeq));
+    }
+
+    function testLookupTable() public {
         uint256 m;
         uint256 key;
         uint256 value;
@@ -63,14 +68,14 @@ contract TestMath is Test {
         uint256 shift = 2**248;
         assembly {
             m := mload(0x40)
-            mstore(m, 0xf8f9cbfae6cc78fbefe7cdc3a1793dfcf4f0e8bbd8cec470b6a28a7a5a3e1efd)
-            mstore(add(m, 0x20), 0xf5ecf1b3e9debc68e1d9cfabc5997135bfb7a7a3938b7b606b5b4b3f2f1f0ffe)
-            mstore(add(m, 0x40), 0xf6e4ed9ff2d6b458eadcdf97bd91692de2d4da8fd2d0ac50c6ae9a8272523616)
-            mstore(add(m, 0x60), 0xc8c0b887b0a8a4489c948c7f847c6125746c645c544c444038302820181008ff)
-            mstore(add(m, 0x80), 0xf7cae577eec2a03cf3bad76fb589591debb2dd67e0aa9834bea6925f6a4a2e0e)
-            mstore(add(m, 0xa0), 0xe39ed557db96902cd38ed14fad815115c786af479b7e83247363534337271707)
-            mstore(add(m, 0xc0), 0xc976c13bb96e881cb166a933a55e490d9d56952b8d4e801485467d2362422606)
-            mstore(add(m, 0xe0), 0x753a6d1b65325d0c552a4d1345224105391a310b29122104190a110309020100)
+            mstore(m, 0x0001020903110a19042112290b311a3905412245134d2a550c5d32651b6d3a75)
+            mstore(add(m, 0x20), 0x06264262237d468514804e8d2b95569d0d495ea533a966b11c886eb93bc176c9)
+            mstore(add(m, 0x40), 0x071727374353637324837e9b47af86c7155181ad4fd18ed32c9096db57d59ee3)
+            mstore(add(m, 0x60), 0x0e2e4a6a5f92a6be3498aae067ddb2eb1d5989b56fd7baf33ca0c2ee77e5caf7)
+            mstore(add(m, 0x80), 0xff0810182028303840444c545c646c7425617c847f8c949c48a4a8b087b8c0c8)
+            mstore(add(m, 0xa0), 0x16365272829aaec650acd0d28fdad4e22d6991bd97dfdcea58b4d6f29fede4f6)
+            mstore(add(m, 0xc0), 0xfe0f1f2f3f4b5b6b607b8b93a3a7b7bf357199c5abcfd9e168bcdee9b3f1ecf5)
+            mstore(add(m, 0xe0), 0xfd1e3e5a7a8aa2b670c4ced8bbe8f0f4fc3d79a1c3cde7effb78cce6facbf9f8)
             mstore(0x40, add(m, 0x100))
         }
 
@@ -78,14 +83,18 @@ contract TestMath is Test {
             uint256 x = 2**i;
             assembly {
                 key := div(mul(x, deBruijnSeq), shift)
-                value := div(mload(add(m, sub(255, key))), shift)
+                value := div(mload(add(m, key)), shift)
             }
             assertEq(value, i, "wrong value in lookup table");
         }
-    }
 
-    function testDeBruijnSequence() public {
-        uint256 deBruijnSeq = 0x818283848586878898a8b8c8d8e8f929395969799a9b9d9e9faaeb6bedeeff;
-        assertTrue(DeBruijn.isDeBruijnSequence(deBruijnSeq));
+        uint256[] memory rows = DeBruijn.precomputeRows(deBruijnSeq);
+        uint256 rowFromLookupTable;
+        for (uint256 i; i < 8; i++) {
+            assembly {
+                rowFromLookupTable := mload(add(m, mul(32, i)))
+            }
+            assertEq(rowFromLookupTable, rows[i]);
+        }
     }
 }
