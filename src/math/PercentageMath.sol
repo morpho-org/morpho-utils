@@ -83,7 +83,7 @@ library PercentageMath {
     /// @param percentage The percentage of the value to divide (in bps).
     /// @return y The result of the division.
     function percentDiv(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
-        // Revert if
+        // Division by 0 if
         //     percentage == 0
         // Overflow if
         //     x * PERCENTAGE_FACTOR + percentage / 2 > type(uint256).max
@@ -99,7 +99,7 @@ library PercentageMath {
         }
     }
 
-    /// @notice Computes the bps-based weighted average (x * (1 - p) + y * p), rounded half up.
+    /// @notice Executes the bps-based weighted average (x * (1 - p) + y * p), rounded half up.
     /// @param x The first value, with a weight of 1 - percentage.
     /// @param y The second value, with a weight of percentage.
     /// @param percentage The weight of y, and complement of the weight of x (in bps).
@@ -109,14 +109,15 @@ library PercentageMath {
         uint256 y,
         uint256 percentage
     ) internal pure returns (uint256 z) {
-        // Revert if
+        // Underflow if
         //     percentage > PERCENTAGE_FACTOR
         // Overflow if
         //     y * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
         // <=> percentage > 0 and y > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage
-        // Ogverflow if
+        // Overflow if
         //     x * (PERCENTAGE_FACTOR - percentage) + y * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
-        // <=> (PERCENTAGE_FACTOR - percentage) > 0 and x > (type(uint256).max - HALF_PERCENTAGE_FACTOR - y * percentage) / (PERCENTAGE_FACTOR - percentage)
+        // <=> x * (PERCENTAGE_FACTOR - percentage) > type(uint256).max - HALF_PERCENTAGE_FACTOR - y * percentage
+        // <=> PERCENTAGE_FACTOR > percentage and x > (type(uint256).max - HALF_PERCENTAGE_FACTOR - y * percentage) / (PERCENTAGE_FACTOR - percentage)
         assembly {
             z := sub(PERCENTAGE_FACTOR, percentage) // Temporary assignment to save gas.
 

@@ -102,13 +102,13 @@ rule wadToRayLiveness(uint256 a) {
 rule wadWeightedAvgSafety(uint256 x, uint256 y, uint256 w) {
     uint res = wadWeightedAvg(x, y, w);
 
-    assert res == (x * (10^18 - w) + y * w + 10^18 / 2) / 10^18;
+    assert res == (x * (WAD() - w) + y * w + WAD() / 2) / WAD();
 }
 
 rule wadWeightedAvgLiveness(uint256 x, uint256 y, uint256 w) {
     wadWeightedAvg@withrevert(x, y, w);
 
-    assert lastReverted <=> x * (10^18 - w) + y * w + 10^18 / 2 >= 2^256 || w > 10^18;
+    assert lastReverted <=> x * (WAD() - w) + y * w + WAD() / 2 >= 2^256 || w > WAD();
 }
 
 /// rayWeightedAvg ///
@@ -116,11 +116,11 @@ rule wadWeightedAvgLiveness(uint256 x, uint256 y, uint256 w) {
 rule rayWeightedAvgSafety(uint256 x, uint256 y, uint256 w) {
     uint res = rayWeightedAvg(x, y, w);
 
-    assert res == (x * (10^27 - w) + y * w + 10^27 / 2) / 10^27;
+    assert res == (x * (RAY() - w) + y * w + RAY() / 2) / RAY();
 }
 
 rule rayWeightedAvgLiveness(uint256 x, uint256 y, uint256 w) {
     rayWeightedAvg@withrevert(x, y, w);
 
-    assert lastReverted <=> x * (10^27 - w) + y * w + 10^27 / 2 >= 2^256 || w > 10^27;
+    assert lastReverted <=> x * (RAY() - w) + y * w + RAY() / 2 >= 2^256 || w > RAY();
 }
