@@ -33,9 +33,11 @@ library Math {
         }
     }
 
+    /// @dev Returns the floor of log2(x) and returns 0 on input 0.
+    /// @dev This computation makes use of De Bruijn sequences, their usage for computing log2 is referenced here: http://supertech.csail.mit.edu/papers/debruijn.pdf
     function log2(uint256 x) internal pure returns (uint256 y) {
         assembly {
-            let arg := x
+            // Use the highest set bit of x to set each of its lower bits
             x := or(x, div(x, 0x02))
             x := or(x, div(x, 0x04))
             x := or(x, div(x, 0x10))
@@ -44,7 +46,11 @@ library Math {
             x := or(x, div(x, 0x100000000))
             x := or(x, div(x, 0x10000000000000000))
             x := or(x, div(x, 0x100000000000000000000000000000000))
+            // Take only the highest bit of x
+            x := xor(x, div(x, 0x02))
 
+            // Lookup table storing the 256 bytes obtained by "hashing" the powers of 2 against one De Bruijn sequence
+            // See the referenced article for a detailed explanation
             let m := mload(0x40)
             mstore(m, 0x0001020903110a19042112290b311a3905412245134d2a550c5d32651b6d3a75)
             mstore(add(m, 0x20), 0x06264262237d468514804e8d2b95569d0d495ea533a966b11c886eb93bc176c9)
@@ -56,9 +62,10 @@ library Math {
             mstore(add(m, 0xe0), 0xfd1e3e5a7a8aa2b670c4ced8bbe8f0f4fc3d79a1c3cde7effb78cce6facbf9f8)
             mstore(0x40, add(m, 0x100))
 
+            // This De Bruijn sequence begins with the byte 0, which is important to make shifting work like a rotation on the first byte
             let deBruijnSeq := 0x818283848586878898a8b8c8d8e8f929395969799a9b9d9e9faaeb6bedeeff
             let shift := 0x100000000000000000000000000000000000000000000000000000000000000
-            let key := div(mul(x, deBruijnSeq), shift)
+            let key := div(mul(x, deBruijnSeq), shift) // With the multiplication it works also for 0
             y := div(mload(add(m, key)), shift)
         }
     }

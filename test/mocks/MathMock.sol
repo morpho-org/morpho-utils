@@ -19,4 +19,8 @@ contract MathMock {
     function divUp(uint256 x, uint256 y) public pure returns (uint256) {
         return Math.divUp(x, y);
     }
+
+    function log2(uint256 x) public pure returns (uint256) {
+        return Math.log2(x);
+    }
 }
