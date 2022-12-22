@@ -55,17 +55,20 @@ contract TestMath is Test {
         assertEq(mock.divUp(x, y), x / y + 1);
     }
 
+    function testLog2(uint256 x) public {
+        assertEq(mock.log2(x), ref.log2Naive(x));
+    }
+
     function testDeBruijnSequence() public {
         uint256 deBruijnSeq = 0x818283848586878898a8b8c8d8e8f929395969799a9b9d9e9faaeb6bedeeff;
         assertTrue(DeBruijn.isDeBruijnSequence(deBruijnSeq));
     }
 
-    function testLookupTable() public {
+    function testHashTable() public {
         uint256 m;
         uint256 key;
         uint256 value;
         uint256 deBruijnSeq = 0x818283848586878898a8b8c8d8e8f929395969799a9b9d9e9faaeb6bedeeff;
-        uint256 shift = 2**248;
         assembly {
             m := mload(0x40)
             mstore(m, 0x0001020903110a19042112290b311a3905412245134d2a550c5d32651b6d3a75)
@@ -82,8 +85,8 @@ contract TestMath is Test {
         for (uint256 i; i < 256; i++) {
             uint256 x = 2**i;
             assembly {
-                key := div(mul(x, deBruijnSeq), shift)
-                value := div(mload(add(m, key)), shift)
+                key := shr(248, mul(x, deBruijnSeq))
+                value := shr(248, mload(add(m, key)))
             }
             assertEq(value, i, "wrong value in lookup table");
         }

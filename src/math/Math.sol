@@ -38,19 +38,19 @@ library Math {
     function log2(uint256 x) internal pure returns (uint256 y) {
         assembly {
             // Use the highest set bit of x to set each of its lower bits
-            x := or(x, shr(x, 1))
-            x := or(x, shr(x, 2))
-            x := or(x, shr(x, 4))
-            x := or(x, shr(x, 8))
-            x := or(x, shr(x, 16))
-            x := or(x, shr(x, 32))
-            x := or(x, shr(x, 64))
-            x := or(x, shr(x, 128))
+            x := or(x, shr(1, x))
+            x := or(x, shr(2, x))
+            x := or(x, shr(4, x))
+            x := or(x, shr(8, x))
+            x := or(x, shr(16, x))
+            x := or(x, shr(32, x))
+            x := or(x, shr(64, x))
+            x := or(x, shr(128, x))
             // Take only the highest bit of x
-            x := xor(x, shr(x, 1))
+            x := xor(x, shr(1, x))
 
-            // Lookup table storing the 256 bytes obtained by "hashing" the powers of 2 against one De Bruijn sequence
-            // See the referenced article for a detailed explanation
+            // Hash table associating the first 256 powers of 2 to their exponent
+            // Let x be a power of 2, its hash is obtained by taking the first byte of x * deBruijnSeq
             let m := mload(0x40)
             mstore(m, 0x0001020903110a19042112290b311a3905412245134d2a550c5d32651b6d3a75)
             mstore(add(m, 0x20), 0x06264262237d468514804e8d2b95569d0d495ea533a966b11c886eb93bc176c9)
@@ -64,8 +64,8 @@ library Math {
 
             // This De Bruijn sequence begins with the byte 0, which is important to make shifting work like a rotation on the first byte
             let deBruijnSeq := 0x818283848586878898a8b8c8d8e8f929395969799a9b9d9e9faaeb6bedeeff
-            let key := shr(mul(x, deBruijnSeq), 248) // With the multiplication it works also for 0
-            y := shr(mload(add(m, key)), 248)
+            let key := shr(248, mul(x, deBruijnSeq)) // With the multiplication it works also for 0
+            y := shr(248, mload(add(m, key)))
         }
     }
 }
