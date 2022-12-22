@@ -55,8 +55,12 @@ contract TestMath is Test {
         assertEq(mock.divUp(x, y), x / y + 1);
     }
 
-    function testLog2(uint256 x) public {
+    function testLog2CompareNaive(uint256 x) public {
         assertEq(mock.log2(x), ref.log2Naive(x));
+    }
+
+    function testLog2CompareDicho(uint256 x) public {
+        assertEq(mock.log2(x), ref.log2Dichotomy(x));
     }
 
     function testDeBruijnSequence() public {
