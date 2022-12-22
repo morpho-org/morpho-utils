@@ -38,16 +38,16 @@ library Math {
     function log2(uint256 x) internal pure returns (uint256 y) {
         assembly {
             // Use the highest set bit of x to set each of its lower bits
-            x := or(x, div(x, 0x02))
-            x := or(x, div(x, 0x04))
-            x := or(x, div(x, 0x10))
-            x := or(x, div(x, 0x100))
-            x := or(x, div(x, 0x10000))
-            x := or(x, div(x, 0x100000000))
-            x := or(x, div(x, 0x10000000000000000))
-            x := or(x, div(x, 0x100000000000000000000000000000000))
+            x := or(x, shr(x, 1))
+            x := or(x, shr(x, 2))
+            x := or(x, shr(x, 4))
+            x := or(x, shr(x, 8))
+            x := or(x, shr(x, 16))
+            x := or(x, shr(x, 32))
+            x := or(x, shr(x, 64))
+            x := or(x, shr(x, 128))
             // Take only the highest bit of x
-            x := xor(x, div(x, 0x02))
+            x := xor(x, shr(x, 1))
 
             // Lookup table storing the 256 bytes obtained by "hashing" the powers of 2 against one De Bruijn sequence
             // See the referenced article for a detailed explanation
@@ -64,9 +64,8 @@ library Math {
 
             // This De Bruijn sequence begins with the byte 0, which is important to make shifting work like a rotation on the first byte
             let deBruijnSeq := 0x818283848586878898a8b8c8d8e8f929395969799a9b9d9e9faaeb6bedeeff
-            let shift := 0x100000000000000000000000000000000000000000000000000000000000000
-            let key := div(mul(x, deBruijnSeq), shift) // With the multiplication it works also for 0
-            y := div(mload(add(m, key)), shift)
+            let key := shr(mul(x, deBruijnSeq), 248) // With the multiplication it works also for 0
+            y := shr(mload(add(m, key)), 248)
         }
     }
 }
