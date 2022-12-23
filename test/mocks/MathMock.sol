@@ -20,7 +20,7 @@ contract MathMock {
         return Math.divUp(x, y);
     }
 
-    function log2(uint256 x) public pure returns (uint256) {
-        return Math.log2(x);
+    function log2Map(uint256 x, bytes calldata map) public pure returns (uint256) {
+        return Math.log2Map(x, map);
     }
 }

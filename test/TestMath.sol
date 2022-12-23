@@ -10,6 +10,18 @@ contract TestMath is Test {
     MathMock mock;
     MathRef ref;
 
+    function mock_log2(uint256 x) internal view returns (uint256 y) {
+        bytes32 a0 = bytes32(uint256(0x0001020903110a19042112290b311a3905412245134d2a550c5d32651b6d3a75));
+        bytes32 a1 = bytes32(uint256(0x06264262237d468514804e8d2b95569d0d495ea533a966b11c886eb93bc176c9));
+        bytes32 a2 = bytes32(uint256(0x071727374353637324837e9b47af86c7155181ad4fd18ed32c9096db57d59ee3));
+        bytes32 a3 = bytes32(uint256(0x0e2e4a6a5f92a6be3498aae067ddb2eb1d5989b56fd7baf33ca0c2ee77e5caf7));
+        bytes32 a4 = bytes32(uint256(0xff0810182028303840444c545c646c7425617c847f8c949c48a4a8b087b8c0c8));
+        bytes32 a5 = bytes32(uint256(0x16365272829aaec650acd0d28fdad4e22d6991bd97dfdcea58b4d6f29fede4f6));
+        bytes32 a6 = bytes32(uint256(0xfe0f1f2f3f4b5b6b607b8b93a3a7b7bf357199c5abcfd9e168bcdee9b3f1ecf5));
+        bytes32 a7 = bytes32(uint256(0xfd1e3e5a7a8aa2b670c4ced8bbe8f0f4fc3d79a1c3cde7effb78cce6facbf9f8));
+        y = mock.log2Map(x, abi.encode(a0, a1, a2, a3, a4, a5, a6, a7));
+    }
+
     function setUp() public {
         mock = new MathMock();
         ref = new MathRef();
@@ -56,11 +68,11 @@ contract TestMath is Test {
     }
 
     function testLog2CompareNaive(uint256 x) public {
-        assertEq(mock.log2(x), ref.log2Naive(x));
+        assertEq(mock_log2(x), ref.log2Naive(x));
     }
 
     function testLog2CompareDicho(uint256 x) public {
-        assertEq(mock.log2(x), ref.log2Dichotomy(x));
+        assertEq(mock_log2(x), ref.log2Dichotomy(x));
     }
 
     function testDeBruijnSequence() public {
