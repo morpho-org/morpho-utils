@@ -63,7 +63,7 @@ library Math {
             mstore(0x40, add(m, 0x100))
 
             // This De Bruijn sequence begins with the byte 0, which is important to make shifting work like a rotation on the first byte
-            let deBruijnSeq := 0x818283848586878898a8b8c8d8e8f929395969799a9b9d9e9faaeb6bedeeff
+            let deBruijnSeq := 0x00818283848586878898a8b8c8d8e8f929395969799a9b9d9e9faaeb6bedeeff
             let key := shr(248, mul(x, deBruijnSeq)) // With the multiplication it works also for 0
             y := shr(248, mload(add(m, key))) // Look in the table and take the first byte
         }

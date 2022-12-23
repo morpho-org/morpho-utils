@@ -64,7 +64,7 @@ contract TestMath is Test {
     }
 
     function testDeBruijnSequence() public {
-        uint256 deBruijnSeq = 0x818283848586878898a8b8c8d8e8f929395969799a9b9d9e9faaeb6bedeeff;
+        uint256 deBruijnSeq = 0x00818283848586878898a8b8c8d8e8f929395969799a9b9d9e9faaeb6bedeeff;
         assertTrue(DeBruijn.isDeBruijnSequence(deBruijnSeq));
     }
 
@@ -72,7 +72,7 @@ contract TestMath is Test {
         uint256 m;
         uint256 key;
         uint256 value;
-        uint256 deBruijnSeq = 0x818283848586878898a8b8c8d8e8f929395969799a9b9d9e9faaeb6bedeeff;
+        uint256 deBruijnSeq = 0x00818283848586878898a8b8c8d8e8f929395969799a9b9d9e9faaeb6bedeeff;
         assembly {
             m := mload(0x40)
             mstore(m, 0x0001020903110a19042112290b311a3905412245134d2a550c5d32651b6d3a75)
