@@ -25,9 +25,7 @@ library Math {
     function divUp(uint256 x, uint256 y) internal pure returns (uint256 z) {
         assembly {
             // Revert if y = 0
-            if iszero(y) {
-                revert(0, 0)
-            }
+            if iszero(y) { revert(0, 0) }
 
             z := add(gt(mod(x, y), 0), div(x, y))
         }

@@ -20,11 +20,7 @@ contract PercentageMathMock {
         return PercentageMath.percentDiv(x, y);
     }
 
-    function weightedAvg(
-        uint256 x,
-        uint256 y,
-        uint256 percentage
-    ) public pure returns (uint256) {
+    function weightedAvg(uint256 x, uint256 y, uint256 percentage) public pure returns (uint256) {
         return PercentageMath.weightedAvg(x, y, percentage);
     }
 }

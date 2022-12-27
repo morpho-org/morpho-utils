@@ -14,9 +14,9 @@ library WadRayMath {
     uint256 internal constant HALF_RAY = 0.5e27;
     uint256 internal constant WAD_RAY_RATIO = 1e9;
     uint256 internal constant HALF_WAD_RAY_RATIO = 0.5e9;
-    uint256 internal constant MAX_UINT256 = 2**256 - 1; // Not possible to use type(uint256).max in yul.
-    uint256 internal constant MAX_UINT256_MINUS_HALF_WAD = 2**256 - 1 - 0.5e18;
-    uint256 internal constant MAX_UINT256_MINUS_HALF_RAY = 2**256 - 1 - 0.5e27;
+    uint256 internal constant MAX_UINT256 = 2 ** 256 - 1; // Not possible to use type(uint256).max in yul.
+    uint256 internal constant MAX_UINT256_MINUS_HALF_WAD = 2 ** 256 - 1 - 0.5e18;
+    uint256 internal constant MAX_UINT256_MINUS_HALF_RAY = 2 ** 256 - 1 - 0.5e27;
 
     /// INTERNAL ///
 
@@ -30,9 +30,7 @@ library WadRayMath {
         // <=> x * y > type(uint256).max - HALF_WAD
         // <=> x > (type(uint256).max - HALF_WAD) / y
         assembly {
-            if mul(y, gt(x, div(MAX_UINT256_MINUS_HALF_WAD, y))) {
-                revert(0, 0)
-            }
+            if mul(y, gt(x, div(MAX_UINT256_MINUS_HALF_WAD, y))) { revert(0, 0) }
 
             z := div(add(mul(x, y), HALF_WAD), WAD)
         }
@@ -49,9 +47,7 @@ library WadRayMath {
         // <=> x > (type(uint256).max - y / 2) / WAD
         assembly {
             z := div(y, 2)
-            if iszero(mul(y, iszero(gt(x, div(sub(MAX_UINT256, z), WAD))))) {
-                revert(0, 0)
-            }
+            if iszero(mul(y, iszero(gt(x, div(sub(MAX_UINT256, z), WAD))))) { revert(0, 0) }
 
             z := div(add(mul(WAD, x), z), y)
         }
@@ -67,9 +63,7 @@ library WadRayMath {
         // <=> x * y > type(uint256).max - HALF_RAY
         // <=> x > (type(uint256).max - HALF_RAY) / y
         assembly {
-            if mul(y, gt(x, div(MAX_UINT256_MINUS_HALF_RAY, y))) {
-                revert(0, 0)
-            }
+            if mul(y, gt(x, div(MAX_UINT256_MINUS_HALF_RAY, y))) { revert(0, 0) }
 
             z := div(add(mul(x, y), HALF_RAY), RAY)
         }
@@ -86,9 +80,7 @@ library WadRayMath {
         // <=> x > (type(uint256).max - y / 2) / RAY
         assembly {
             z := div(y, 2)
-            if iszero(mul(y, iszero(gt(x, div(sub(MAX_UINT256, z), RAY))))) {
-                revert(0, 0)
-            }
+            if iszero(mul(y, iszero(gt(x, div(sub(MAX_UINT256, z), RAY))))) { revert(0, 0) }
 
             z := div(add(mul(RAY, x), z), y)
         }
@@ -111,9 +103,7 @@ library WadRayMath {
         assembly {
             y := mul(WAD_RAY_RATIO, x)
             // Revert if y / WAD_RAY_RATIO != x
-            if iszero(eq(div(y, WAD_RAY_RATIO), x)) {
-                revert(0, 0)
-            }
+            if iszero(eq(div(y, WAD_RAY_RATIO), x)) { revert(0, 0) }
         }
     }
 }

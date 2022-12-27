@@ -104,42 +104,32 @@ contract TestPercentageMath is Test {
         mock.percentDiv(x, 0);
     }
 
-    function testWeightedAvg(
-        uint256 x,
-        uint256 y,
-        uint16 percentage
-    ) public {
+    function testWeightedAvg(uint256 x, uint256 y, uint16 percentage) public {
         vm.assume(percentage <= PERCENTAGE_FACTOR);
         vm.assume(percentage == 0 || y <= (MAX_UINT256 - HALF_PERCENTAGE_FACTOR) / percentage);
         vm.assume(
-            PERCENTAGE_FACTOR - percentage == 0 ||
-                x <= (MAX_UINT256 - y * percentage - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
+            PERCENTAGE_FACTOR - percentage == 0
+                || x <= (MAX_UINT256 - y * percentage - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
         );
 
         assertEq(mock.weightedAvg(x, y, percentage), ref.weightedAvg(x, y, percentage));
     }
 
-    function testWeightedAvgOverflow(
-        uint256 x,
-        uint256 y,
-        uint256 percentage
-    ) public {
+    function testWeightedAvgOverflow(uint256 x, uint256 y, uint256 percentage) public {
         vm.assume(percentage <= PERCENTAGE_FACTOR);
         vm.assume(
-            (percentage != 0 && y > (MAX_UINT256 - HALF_PERCENTAGE_FACTOR) / percentage) ||
-                ((PERCENTAGE_FACTOR - percentage) != 0 &&
-                    x > (MAX_UINT256 - y * percentage - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage))
+            (percentage != 0 && y > (MAX_UINT256 - HALF_PERCENTAGE_FACTOR) / percentage)
+                || (
+                    (PERCENTAGE_FACTOR - percentage) != 0
+                        && x > (MAX_UINT256 - y * percentage - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
+                )
         );
 
         vm.expectRevert();
         mock.weightedAvg(x, y, percentage);
     }
 
-    function testWeightedAvgUnderflow(
-        uint256 x,
-        uint256 y,
-        uint256 percentage
-    ) public {
+    function testWeightedAvgUnderflow(uint256 x, uint256 y, uint256 percentage) public {
         vm.assume(percentage > PERCENTAGE_FACTOR);
 
         vm.expectRevert();

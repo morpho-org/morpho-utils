@@ -10,8 +10,8 @@ library PercentageMath {
 
     uint256 internal constant PERCENTAGE_FACTOR = 1e4; // 100.00%
     uint256 internal constant HALF_PERCENTAGE_FACTOR = 0.5e4; // 50.00%
-    uint256 internal constant MAX_UINT256 = 2**256 - 1;
-    uint256 internal constant MAX_UINT256_MINUS_HALF_PERCENTAGE = 2**256 - 1 - 0.5e4;
+    uint256 internal constant MAX_UINT256 = 2 ** 256 - 1;
+    uint256 internal constant MAX_UINT256_MINUS_HALF_PERCENTAGE = 2 ** 256 - 1 - 0.5e4;
 
     /// INTERNAL ///
 
@@ -29,10 +29,8 @@ library PercentageMath {
         assembly {
             y := add(PERCENTAGE_FACTOR, percentage) // Temporary assignment to save gas.
 
-            if or(
-                gt(percentage, sub(MAX_UINT256, PERCENTAGE_FACTOR)),
-                gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, y))
-            ) {
+            if or(gt(percentage, sub(MAX_UINT256, PERCENTAGE_FACTOR)), gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, y)))
+            {
                 revert(0, 0)
             }
 
@@ -70,9 +68,7 @@ library PercentageMath {
         // x * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
         // <=> percentage > 0 and x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage
         assembly {
-            if mul(percentage, gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, percentage))) {
-                revert(0, 0)
-            }
+            if mul(percentage, gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, percentage))) { revert(0, 0) }
 
             y := div(add(mul(x, percentage), HALF_PERCENTAGE_FACTOR), PERCENTAGE_FACTOR)
         }
@@ -91,9 +87,7 @@ library PercentageMath {
         assembly {
             y := div(percentage, 2) // Temporary assignment to save gas.
 
-            if iszero(mul(percentage, iszero(gt(x, div(sub(MAX_UINT256, y), PERCENTAGE_FACTOR))))) {
-                revert(0, 0)
-            }
+            if iszero(mul(percentage, iszero(gt(x, div(sub(MAX_UINT256, y), PERCENTAGE_FACTOR))))) { revert(0, 0) }
 
             y := div(add(mul(PERCENTAGE_FACTOR, x), y), percentage)
         }
@@ -104,11 +98,7 @@ library PercentageMath {
     /// @param y The second value, with a weight of percentage.
     /// @param percentage The weight of y, and complement of the weight of x.
     /// @return z The result of the weighted average.
-    function weightedAvg(
-        uint256 x,
-        uint256 y,
-        uint256 percentage
-    ) internal pure returns (uint256 z) {
+    function weightedAvg(uint256 x, uint256 y, uint256 percentage) internal pure returns (uint256 z) {
         // Must revert if
         //     percentage > PERCENTAGE_FACTOR
         // or if
@@ -125,9 +115,7 @@ library PercentageMath {
                     mul(percentage, gt(y, div(MAX_UINT256_MINUS_HALF_PERCENTAGE, percentage))),
                     mul(z, gt(x, div(sub(MAX_UINT256_MINUS_HALF_PERCENTAGE, mul(y, percentage)), z)))
                 )
-            ) {
-                revert(0, 0)
-            }
+            ) { revert(0, 0) }
             z := div(add(add(mul(x, z), mul(y, percentage)), HALF_PERCENTAGE_FACTOR), PERCENTAGE_FACTOR)
         }
     }
