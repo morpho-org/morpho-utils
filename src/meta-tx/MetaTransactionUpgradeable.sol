@@ -2,9 +2,8 @@
 pragma solidity ^0.8.0;
 
 import {MinimalForwarderUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/metatx/MinimalForwarderUpgradeable.sol";
-import {ContextMixin} from "./ContextMixin.sol";
 
-contract MetaTransactionUpgradeable is ContextMixin, MinimalForwarderUpgradeable {
+contract MetaTransactionUpgradeable is MinimalForwarderUpgradeable {
     error FunctionCallFailed();
     error OnlySelf();
 
