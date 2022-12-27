@@ -61,4 +61,28 @@ contract TestMetaTransaction is Test, MetaTransactionUpgradeable {
         // Adding this. so that memory parameters can be passed as argument.
         this.executeMetaTransaction(req, abi.encodePacked(r, s, v));
     }
+
+    function testCallNotSelfMustRevert(address _to) public {
+        vm.assume(_to != address(this));
+
+        address alice = vm.addr(1);
+        ForwardRequest memory req = ForwardRequest({
+            from: alice,
+            to: _to,
+            value: 0,
+            gas: 1_000_000,
+            nonce: 0,
+            data: abi.encodeWithSignature("revert()")
+        });
+
+        bytes32 hash = ECDSAUpgradeable.toTypedDataHash(
+            _domainSeparatorV4(),
+            keccak256(abi.encode(_TYPEHASH, req.from, req.to, req.value, req.gas, req.nonce, keccak256(req.data)))
+        );
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(1, hash);
+
+        vm.expectRevert(abi.encodeWithSelector(MetaTransactionUpgradeable.OnlySelf.selector));
+        // Adding this. so that memory parameters can be passed as argument.
+        this.executeMetaTransaction(req, abi.encodePacked(r, s, v));
+    }
 }
