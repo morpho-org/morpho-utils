@@ -20,12 +20,12 @@ library PercentageMath {
     /// @param percentage The percentage of the value to add (in bps).
     /// @return y The result of the addition.
     function percentAdd(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
-        // Overflow if
-        //     PERCENTAGE_FACTOR + percentage > type(uint256).max
-        // <=> percentage > type(uint256).max - PERCENTAGE_FACTOR
-        // Overflow if
-        //     x * (PERCENTAGE_FACTOR + percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
-        // <=> x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR + percentage)
+        // 1. Overflow if
+        //        PERCENTAGE_FACTOR + percentage > type(uint256).max
+        //    <=> percentage > type(uint256).max - PERCENTAGE_FACTOR
+        // 2. Overflow if
+        //        x * (PERCENTAGE_FACTOR + percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
+        //    <=> x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR + percentage)
         assembly {
             y := add(PERCENTAGE_FACTOR, percentage) // Temporary assignment to save gas.
 
@@ -45,11 +45,11 @@ library PercentageMath {
     /// @param percentage The percentage of the value to subtract (in bps).
     /// @return y The result of the subtraction.
     function percentSub(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
-        // Underflow if
-        //     percentage > PERCENTAGE_FACTOR
-        // Overflow if
-        //     x * (PERCENTAGE_FACTOR - percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
-        // <=> (PERCENTAGE_FACTOR - percentage) > 0 and x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
+        // 1. Underflow if
+        //        percentage > PERCENTAGE_FACTOR
+        // 2. Overflow if
+        //        x * (PERCENTAGE_FACTOR - percentage) + HALF_PERCENTAGE_FACTOR > type(uint256).max
+        //    <=> (PERCENTAGE_FACTOR - percentage) > 0 and x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
         assembly {
             y := sub(PERCENTAGE_FACTOR, percentage) // Temporary assignment to save gas.
 
@@ -83,11 +83,11 @@ library PercentageMath {
     /// @param percentage The percentage of the value to divide (in bps).
     /// @return y The result of the division.
     function percentDiv(uint256 x, uint256 percentage) internal pure returns (uint256 y) {
-        // Division by 0 if
-        //     percentage == 0
-        // Overflow if
-        //     x * PERCENTAGE_FACTOR + percentage / 2 > type(uint256).max
-        // <=> x > (type(uint256).max - percentage / 2) / PERCENTAGE_FACTOR
+        // 1. Division by 0 if
+        //        percentage == 0
+        // 2. Overflow if
+        //        x * PERCENTAGE_FACTOR + percentage / 2 > type(uint256).max
+        //    <=> x > (type(uint256).max - percentage / 2) / PERCENTAGE_FACTOR
         assembly {
             y := div(percentage, 2) // Temporary assignment to save gas.
 
@@ -109,15 +109,15 @@ library PercentageMath {
         uint256 y,
         uint256 percentage
     ) internal pure returns (uint256 z) {
-        // Underflow if
-        //     percentage > PERCENTAGE_FACTOR
-        // Overflow if
-        //     y * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
-        // <=> percentage > 0 and y > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage
-        // Overflow if
-        //     x * (PERCENTAGE_FACTOR - percentage) + y * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
-        // <=> x * (PERCENTAGE_FACTOR - percentage) > type(uint256).max - HALF_PERCENTAGE_FACTOR - y * percentage
-        // <=> PERCENTAGE_FACTOR > percentage and x > (type(uint256).max - HALF_PERCENTAGE_FACTOR - y * percentage) / (PERCENTAGE_FACTOR - percentage)
+        // 1. Underflow if
+        //        percentage > PERCENTAGE_FACTOR
+        // 2. Overflow if
+        //        y * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
+        //    <=> percentage > 0 and y > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage
+        // 3. Overflow if
+        //        x * (PERCENTAGE_FACTOR - percentage) + y * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
+        //    <=> x * (PERCENTAGE_FACTOR - percentage) > type(uint256).max - HALF_PERCENTAGE_FACTOR - y * percentage
+        //    <=> PERCENTAGE_FACTOR > percentage and x > (type(uint256).max - HALF_PERCENTAGE_FACTOR - y * percentage) / (PERCENTAGE_FACTOR - percentage)
         assembly {
             z := sub(PERCENTAGE_FACTOR, percentage) // Temporary assignment to save gas.
 

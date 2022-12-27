@@ -25,11 +25,10 @@ library WadRayMath {
     /// @param y Wad.
     /// @return z The result of x * y, in wad.
     function wadMul(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        // Let y > 0
         // Overflow if
         //     x * y + HALF_WAD > type(uint256).max
         // <=> x * y > type(uint256).max - HALF_WAD
-        // <=> x > (type(uint256).max - HALF_WAD) / y
+        // <=> y > 0 and x > (type(uint256).max - HALF_WAD) / y
         assembly {
             if mul(y, gt(x, div(MAX_UINT256_MINUS_HALF_WAD, y))) {
                 revert(0, 0)
@@ -44,14 +43,15 @@ library WadRayMath {
     /// @param y Wad.
     /// @return z The result of x / y, in wad.
     function wadDiv(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        // Revert if
-        //     y == 0
-        // Overflow if
-        //     x * WAD + y / 2 > type(uint256).max
-        // <=> x * WAD > type(uint256).max - y / 2
-        // <=> x > (type(uint256).max - y / 2) / WAD
+        // 1. Division by 0 if
+        //        y == 0
+        // 2. Overflow if
+        //        x * WAD + y / 2 > type(uint256).max
+        //    <=> x * WAD > type(uint256).max - y / 2
+        //    <=> x > (type(uint256).max - y / 2) / WAD
         assembly {
-            z := div(y, 2)
+            z := div(y, 2) // Temporary assignment to save gas.
+
             if iszero(mul(y, iszero(gt(x, div(sub(MAX_UINT256, z), WAD))))) {
                 revert(0, 0)
             }
@@ -65,11 +65,10 @@ library WadRayMath {
     /// @param y Ray.
     /// @return z The result of x * y, in ray.
     function rayMul(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        // Let y > 0
         // Overflow if
         //     x * y + HALF_RAY > type(uint256).max
         // <=> x * y > type(uint256).max - HALF_RAY
-        // <=> x > (type(uint256).max - HALF_RAY) / y
+        // <=> y > 0 and x > (type(uint256).max - HALF_RAY) / y
         assembly {
             if mul(y, gt(x, div(MAX_UINT256_MINUS_HALF_RAY, y))) {
                 revert(0, 0)
@@ -84,14 +83,14 @@ library WadRayMath {
     /// @param y Ray.
     /// @return z The result of x / y, in ray.
     function rayDiv(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        // Revert if
-        //     y == 0
-        // Overflow if
-        //     x * RAY + y / 2 > type(uint256).max
-        // <=> x * RAY > type(uint256).max - y / 2
-        // <=> x > (type(uint256).max - y / 2) / RAY
+        // 1. Division by 0 if
+        //        y == 0
+        // 2. Overflow if
+        //        x * RAY + y / 2 > type(uint256).max
+        //    <=> x * RAY > type(uint256).max - y / 2
+        //    <=> x > (type(uint256).max - y / 2) / RAY
         assembly {
-            z := div(y, 2)
+            z := div(y, 2) // Temporary assignment to save gas.
 
             if iszero(mul(y, iszero(gt(x, div(sub(MAX_UINT256, z), RAY))))) {
                 revert(0, 0)
@@ -137,14 +136,15 @@ library WadRayMath {
         uint256 y,
         uint256 weight
     ) internal pure returns (uint256 z) {
-        // Overflow if
-        //     weight > WAD
-        // Overflow if
-        //     y * weight + HALF_WAD > type(uint256).max
-        // <=> weight > 0 and y > (type(uint256).max - HALF_WAD) / weight
-        // Overflow if
-        //     x * (WAD - weight) + y * weight + HALF_WAD > type(uint256).max
-        // <=> (WAD - weight) > 0 and x > (type(uint256).max - HALF_WAD - y * weight) / (WAD - weight)
+        // 1. Underflow if
+        //        weight > WAD
+        // 2. Overflow if
+        //        y * weight + HALF_WAD > type(uint256).max
+        //    <=> weight > 0 and y > (type(uint256).max - HALF_WAD) / weight
+        // 3. Overflow if
+        //        x * (WAD - weight) + y * weight + HALF_WAD > type(uint256).max
+        //    <=> x * (WAD - weight) > type(uint256).max - HALF_WAD - y * weight
+        //    <=> WAD > weight and x > (type(uint256).max - HALF_WAD - y * weight) / (WAD - weight)
         assembly {
             z := sub(WAD, weight) // Temporary assignment to save gas.
 
@@ -172,14 +172,15 @@ library WadRayMath {
         uint256 y,
         uint256 weight
     ) internal pure returns (uint256 z) {
-        // Overflow if
-        //     weight > RAY
-        // Overflow if
-        //     y * weight + HALF_RAY > type(uint256).max
-        // <=> weight > 0 and y > (type(uint256).max - HALF_RAY) / weight
-        // Overflow if
-        //     x * (RAY - weight) + y * weight + HALF_RAY > type(uint256).max
-        // <=> (RAY - weight) > 0 and x > (type(uint256).max - HALF_RAY - y * weight) / (RAY - weight)
+        // 1. Underflow if
+        //        weight > RAY
+        // 2. Overflow if
+        //        y * weight + HALF_RAY > type(uint256).max
+        //    <=> weight > 0 and y > (type(uint256).max - HALF_RAY) / weight
+        // 3. Overflow if
+        //        x * (RAY - weight) + y * weight + HALF_RAY > type(uint256).max
+        //    <=> x * (RAY - weight) > type(uint256).max - HALF_RAY - y * weight
+        //    <=> RAY > weight and x > (type(uint256).max - HALF_RAY - y * weight) / (RAY - weight)
         assembly {
             z := sub(RAY, weight) // Temporary assignment to save gas.
 
