@@ -15,7 +15,7 @@ library PercentageMath {
 
     /// INTERNAL ///
 
-    /// @notice Executes a percentage addition (x * (1 + p)), rounded half up.
+    /// @notice Executes the bps-based percentage addition (x * (1 + p)), rounded half up.
     /// @param x The value to which to add the percentage.
     /// @param percentage The percentage of the value to add (in bps).
     /// @return y The result of the addition.
@@ -40,7 +40,7 @@ library PercentageMath {
         }
     }
 
-    /// @notice Executes a percentage subtraction (x * (1 - p)), rounded half up.
+    /// @notice Executes the bps-based percentage subtraction (x * (1 - p)), rounded half up.
     /// @param x The value to which to subtract the percentage.
     /// @param percentage The percentage of the value to subtract (in bps).
     /// @return y The result of the subtraction.
