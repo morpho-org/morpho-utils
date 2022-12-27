@@ -23,8 +23,9 @@ library Math {
 
     /// @dev Returns x / y rounded up (x / y + boolAsInt(x % y > 0)).
     function divUp(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        // Division by 0 if
+        //    y = 0
         assembly {
-            // Revert if y = 0
             if iszero(y) {
                 revert(0, 0)
             }

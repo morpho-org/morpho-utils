@@ -9,7 +9,7 @@ contract TestPercentageMath is Test {
     uint256 internal constant PERCENTAGE_FACTOR = 100_00;
     uint256 internal constant HALF_PERCENTAGE_FACTOR = 50_00;
     uint256 internal constant MAX_UINT256 = type(uint256).max;
-    uint256 internal constant MAX_UINT256_MINUS_HALF_PERCENTAGE = type(uint256).max - HALF_PERCENTAGE_FACTOR;
+    uint256 internal constant MAX_UINT256_MINUS_HALF_PERCENTAGE = MAX_UINT256 - HALF_PERCENTAGE_FACTOR;
 
     PercentageMathMock mock;
     PercentageMathRef ref;
@@ -110,7 +110,7 @@ contract TestPercentageMath is Test {
         uint16 percentage
     ) public {
         vm.assume(percentage <= PERCENTAGE_FACTOR);
-        vm.assume(percentage == 0 || y <= (MAX_UINT256 - HALF_PERCENTAGE_FACTOR) / percentage);
+        vm.assume(percentage == 0 || y <= MAX_UINT256_MINUS_HALF_PERCENTAGE / percentage);
         vm.assume(
             PERCENTAGE_FACTOR - percentage == 0 ||
                 x <= (MAX_UINT256 - y * percentage - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
@@ -126,7 +126,7 @@ contract TestPercentageMath is Test {
     ) public {
         vm.assume(percentage <= PERCENTAGE_FACTOR);
         vm.assume(
-            (percentage != 0 && y > (MAX_UINT256 - HALF_PERCENTAGE_FACTOR) / percentage) ||
+            (percentage != 0 && y > MAX_UINT256_MINUS_HALF_PERCENTAGE / percentage) ||
                 ((PERCENTAGE_FACTOR - percentage) != 0 &&
                     x > (MAX_UINT256 - y * percentage - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage))
         );
@@ -151,9 +151,9 @@ contract TestPercentageMath is Test {
         vm.assume(y <= MAX_UINT256 - HALF_PERCENTAGE_FACTOR);
         vm.assume(x <= (MAX_UINT256 - y - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - 1));
 
-        uint256 weightedAvg = mock.weightedAvg(x, y, 1);
+        uint256 avg = mock.weightedAvg(x, y, 1);
 
-        assertLe(x, weightedAvg);
-        assertLe(weightedAvg, y);
+        assertLe(x, avg);
+        assertLe(avg, y);
     }
 }

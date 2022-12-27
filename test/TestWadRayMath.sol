@@ -6,14 +6,15 @@ import {WadRayMathRef} from "./references/WadRayMathRef.sol";
 import "forge-std/Test.sol";
 
 contract TestWadRayMath is Test {
-    uint256 public constant WAD = 1e18;
-    uint256 public constant HALF_WAD = WAD / 2;
-    uint256 public constant RAY = 1e27;
-    uint256 public constant HALF_RAY = RAY / 2;
-    uint256 public constant WAD_RAY_RATIO = 1e9;
-    uint256 public constant HALF_WAD_RAY_RATIO = WAD_RAY_RATIO / 2;
-    uint256 public constant MAX_UINT256_MINUS_HALF_WAD = type(uint256).max - HALF_WAD;
-    uint256 public constant MAX_UINT256_MINUS_HALF_RAY = type(uint256).max - HALF_RAY;
+    uint256 internal constant WAD = 1e18;
+    uint256 internal constant HALF_WAD = WAD / 2;
+    uint256 internal constant RAY = 1e27;
+    uint256 internal constant HALF_RAY = RAY / 2;
+    uint256 internal constant WAD_RAY_RATIO = 1e9;
+    uint256 internal constant HALF_WAD_RAY_RATIO = WAD_RAY_RATIO / 2;
+    uint256 internal constant MAX_UINT256 = type(uint256).max;
+    uint256 internal constant MAX_UINT256_MINUS_HALF_WAD = MAX_UINT256 - HALF_WAD;
+    uint256 internal constant MAX_UINT256_MINUS_HALF_RAY = MAX_UINT256 - HALF_RAY;
 
     WadRayMathMock mock;
     WadRayMathRef ref;
@@ -106,5 +107,103 @@ contract TestWadRayMath is Test {
 
         vm.expectRevert();
         mock.wadToRay(x);
+    }
+
+    function testWadWeightedAvg(
+        uint256 x,
+        uint256 y,
+        uint16 weight
+    ) public {
+        vm.assume(weight <= WAD);
+        vm.assume(weight == 0 || y <= MAX_UINT256_MINUS_HALF_WAD / weight);
+        vm.assume(WAD - weight == 0 || x <= (MAX_UINT256 - y * weight - HALF_WAD) / (WAD - weight));
+
+        assertEq(mock.wadWeightedAvg(x, y, weight), ref.wadWeightedAvg(x, y, weight));
+    }
+
+    function testWadWeightedAvgOverflow(
+        uint256 x,
+        uint256 y,
+        uint256 weight
+    ) public {
+        vm.assume(weight <= WAD);
+        vm.assume(
+            (weight != 0 && y > MAX_UINT256_MINUS_HALF_WAD / weight) ||
+                ((WAD - weight) != 0 && x > (MAX_UINT256 - y * weight - HALF_WAD) / (WAD - weight))
+        );
+
+        vm.expectRevert();
+        mock.wadWeightedAvg(x, y, weight);
+    }
+
+    function testWadWeightedAvgUnderflow(
+        uint256 x,
+        uint256 y,
+        uint256 weight
+    ) public {
+        vm.assume(weight > WAD);
+
+        vm.expectRevert();
+        mock.wadWeightedAvg(x, y, weight);
+    }
+
+    function testWadWeightedAvgBounds(uint256 x, uint256 y) public {
+        vm.assume(x <= y);
+        vm.assume(y <= MAX_UINT256 - HALF_WAD);
+        vm.assume(x <= (MAX_UINT256 - y - HALF_WAD) / (WAD - 1));
+
+        uint256 avg = mock.wadWeightedAvg(x, y, 1);
+
+        assertLe(x, avg);
+        assertLe(avg, y);
+    }
+
+    function testRayWeightedAvg(
+        uint256 x,
+        uint256 y,
+        uint16 weight
+    ) public {
+        vm.assume(weight <= RAY);
+        vm.assume(weight == 0 || y <= MAX_UINT256_MINUS_HALF_RAY / weight);
+        vm.assume(RAY - weight == 0 || x <= (MAX_UINT256 - y * weight - HALF_RAY) / (RAY - weight));
+
+        assertEq(mock.rayWeightedAvg(x, y, weight), ref.rayWeightedAvg(x, y, weight));
+    }
+
+    function testRayWeightedAvgOverflow(
+        uint256 x,
+        uint256 y,
+        uint256 weight
+    ) public {
+        vm.assume(weight <= RAY);
+        vm.assume(
+            (weight != 0 && y > MAX_UINT256_MINUS_HALF_RAY / weight) ||
+                ((RAY - weight) != 0 && x > (MAX_UINT256 - y * weight - HALF_RAY) / (RAY - weight))
+        );
+
+        vm.expectRevert();
+        mock.rayWeightedAvg(x, y, weight);
+    }
+
+    function testRayWeightedAvgUnderflow(
+        uint256 x,
+        uint256 y,
+        uint256 weight
+    ) public {
+        vm.assume(weight > RAY);
+
+        vm.expectRevert();
+        mock.rayWeightedAvg(x, y, weight);
+    }
+
+    function testRayWeightedAvgBounds(uint256 x, uint256 y) public {
+        vm.assume(x <= y);
+        vm.assume(y <= MAX_UINT256 - HALF_RAY);
+        vm.assume(x <= (MAX_UINT256 - y - HALF_RAY) / (RAY - 1));
+
+        uint256 avg = mock.rayWeightedAvg(x, y, 1);
+
+        assertLe(x, avg);
+        assertLe(avg, y);
     }
 }
