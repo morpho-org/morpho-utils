@@ -7,7 +7,7 @@ Repository gathering useful libraries and contracts.
 Install this repository as a forge dependency:
 
 ```bash
-forge install https://github.com/morpho-dao/morpho-utils
+forge install morpho-dao/morpho-utils
 ```
 
 Then add a remapping to your `remappings.txt`:
