@@ -28,19 +28,11 @@ contract WadRayMathRef {
         return WadRayMath.wadToRay(x);
     }
 
-    function wadWeightedAvg(
-        uint256 x,
-        uint256 y,
-        uint256 weight
-    ) public pure returns (uint256) {
+    function wadWeightedAvg(uint256 x, uint256 y, uint256 weight) public pure returns (uint256) {
         return (x * (WadRayMath.WAD - weight) + y * weight + WadRayMath.HALF_WAD) / WadRayMath.WAD;
     }
 
-    function rayWeightedAvg(
-        uint256 x,
-        uint256 y,
-        uint256 weight
-    ) public pure returns (uint256) {
+    function rayWeightedAvg(uint256 x, uint256 y, uint256 weight) public pure returns (uint256) {
         return (x * (WadRayMath.RAY - weight) + y * weight + WadRayMath.HALF_RAY) / WadRayMath.RAY;
     }
 }

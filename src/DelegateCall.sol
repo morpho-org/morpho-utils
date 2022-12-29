@@ -10,6 +10,7 @@ library DelegateCall {
 
     /// @notice Thrown when a low delegate call has failed without error message.
     error LowLevelDelegateCallFailed();
+
     bytes4 constant LowLevelDelegateCallFailedError = 0x06f7035e; // bytes4(keccak256("LowLevelDelegateCallFailed()"))
 
     /// INTERNAL ///

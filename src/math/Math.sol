@@ -26,9 +26,7 @@ library Math {
         // Division by 0 if
         //    y = 0
         assembly {
-            if iszero(y) {
-                revert(0, 0)
-            }
+            if iszero(y) { revert(0, 0) }
 
             z := add(gt(mod(x, y), 0), div(x, y))
         }

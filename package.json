@@ -6,10 +6,15 @@
   "author": "Morpho Labs <security@morpho.xyz>",
   "license": "AGPL-3.0",
   "scripts": {
-    "lint": "prettier --write **.sol"
+    "postinstall": "husky install"
   },
   "devDependencies": {
-    "prettier": "2.7.1",
-    "prettier-plugin-solidity": "1.0.0-dev.22"
+    "husky": "8.0.2",
+    "lint-staged": "13.1.0",
+    "prettier": "2.8.1"
+  },
+  "lint-staged": {
+    "*.sol": "forge fmt",
+    "*.json": "yarn prettier"
   }
 }

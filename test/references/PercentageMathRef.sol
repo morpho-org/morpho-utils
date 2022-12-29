@@ -20,16 +20,9 @@ contract PercentageMathRef {
         return PercentageMath.percentDiv(x, y);
     }
 
-    function weightedAvg(
-        uint256 x,
-        uint256 y,
-        uint256 percentage
-    ) public pure returns (uint256) {
-        return
-            (x *
-                (PercentageMath.PERCENTAGE_FACTOR - percentage) +
-                y *
-                percentage +
-                PercentageMath.HALF_PERCENTAGE_FACTOR) / PercentageMath.PERCENTAGE_FACTOR;
+    function weightedAvg(uint256 x, uint256 y, uint256 percentage) public pure returns (uint256) {
+        return (
+            x * (PercentageMath.PERCENTAGE_FACTOR - percentage) + y * percentage + PercentageMath.HALF_PERCENTAGE_FACTOR
+        ) / PercentageMath.PERCENTAGE_FACTOR;
     }
 }

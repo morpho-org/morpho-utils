@@ -109,11 +109,7 @@ contract TestWadRayMath is Test {
         mock.wadToRay(x);
     }
 
-    function testWadWeightedAvg(
-        uint256 x,
-        uint256 y,
-        uint16 weight
-    ) public {
+    function testWadWeightedAvg(uint256 x, uint256 y, uint16 weight) public {
         vm.assume(weight <= WAD);
         vm.assume(weight == 0 || y <= MAX_UINT256_MINUS_HALF_WAD / weight);
         vm.assume(WAD - weight == 0 || x <= (MAX_UINT256 - y * weight - HALF_WAD) / (WAD - weight));
@@ -121,26 +117,18 @@ contract TestWadRayMath is Test {
         assertEq(mock.wadWeightedAvg(x, y, weight), ref.wadWeightedAvg(x, y, weight));
     }
 
-    function testWadWeightedAvgOverflow(
-        uint256 x,
-        uint256 y,
-        uint256 weight
-    ) public {
+    function testWadWeightedAvgOverflow(uint256 x, uint256 y, uint256 weight) public {
         vm.assume(weight <= WAD);
         vm.assume(
-            (weight != 0 && y > MAX_UINT256_MINUS_HALF_WAD / weight) ||
-                ((WAD - weight) != 0 && x > (MAX_UINT256 - y * weight - HALF_WAD) / (WAD - weight))
+            (weight != 0 && y > MAX_UINT256_MINUS_HALF_WAD / weight)
+                || ((WAD - weight) != 0 && x > (MAX_UINT256 - y * weight - HALF_WAD) / (WAD - weight))
         );
 
         vm.expectRevert();
         mock.wadWeightedAvg(x, y, weight);
     }
 
-    function testWadWeightedAvgUnderflow(
-        uint256 x,
-        uint256 y,
-        uint256 weight
-    ) public {
+    function testWadWeightedAvgUnderflow(uint256 x, uint256 y, uint256 weight) public {
         vm.assume(weight > WAD);
 
         vm.expectRevert();
@@ -158,11 +146,7 @@ contract TestWadRayMath is Test {
         assertLe(avg, y);
     }
 
-    function testRayWeightedAvg(
-        uint256 x,
-        uint256 y,
-        uint16 weight
-    ) public {
+    function testRayWeightedAvg(uint256 x, uint256 y, uint16 weight) public {
         vm.assume(weight <= RAY);
         vm.assume(weight == 0 || y <= MAX_UINT256_MINUS_HALF_RAY / weight);
         vm.assume(RAY - weight == 0 || x <= (MAX_UINT256 - y * weight - HALF_RAY) / (RAY - weight));
@@ -170,26 +154,18 @@ contract TestWadRayMath is Test {
         assertEq(mock.rayWeightedAvg(x, y, weight), ref.rayWeightedAvg(x, y, weight));
     }
 
-    function testRayWeightedAvgOverflow(
-        uint256 x,
-        uint256 y,
-        uint256 weight
-    ) public {
+    function testRayWeightedAvgOverflow(uint256 x, uint256 y, uint256 weight) public {
         vm.assume(weight <= RAY);
         vm.assume(
-            (weight != 0 && y > MAX_UINT256_MINUS_HALF_RAY / weight) ||
-                ((RAY - weight) != 0 && x > (MAX_UINT256 - y * weight - HALF_RAY) / (RAY - weight))
+            (weight != 0 && y > MAX_UINT256_MINUS_HALF_RAY / weight)
+                || ((RAY - weight) != 0 && x > (MAX_UINT256 - y * weight - HALF_RAY) / (RAY - weight))
         );
 
         vm.expectRevert();
         mock.rayWeightedAvg(x, y, weight);
     }
 
-    function testRayWeightedAvgUnderflow(
-        uint256 x,
-        uint256 y,
-        uint256 weight
-    ) public {
+    function testRayWeightedAvgUnderflow(uint256 x, uint256 y, uint256 weight) public {
         vm.assume(weight > RAY);
 
         vm.expectRevert();
