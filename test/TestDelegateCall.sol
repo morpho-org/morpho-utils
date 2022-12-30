@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
-import "forge-std/Vm.sol";
-import "forge-std/Test.sol";
+import {Address} from "../lib/openzeppelin-contracts/contracts/utils/Address.sol";
+
 import "src/DelegateCall.sol";
-import "openzeppelin-contracts/contracts/utils/Address.sol";
+import "../lib/forge-std/src/Test.sol";
 
 contract Caller {
     using DelegateCall for address;

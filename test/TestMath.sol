@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {MathMock} from "./mocks/MathMock.sol";
 import {MathRef} from "./references/MathRef.sol";
-import "forge-std/Test.sol";
+import "../lib/forge-std/src/Test.sol";
 
 contract TestMath is Test {
     MathMock mock;

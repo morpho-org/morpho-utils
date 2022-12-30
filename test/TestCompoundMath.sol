@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {CompoundMathMock} from "./mocks/CompoundMathMock.sol";
 import {CompoundMathRef} from "./references/CompoundMathRef.sol";
-import "forge-std/Test.sol";
+import "../lib/forge-std/src/Test.sol";
 
 contract TestCompoundMath is Test {
     CompoundMathMock mock;

@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {WadRayMathMock} from "./mocks/WadRayMathMock.sol";
 import {WadRayMathRef} from "./references/WadRayMathRef.sol";
-import "forge-std/Test.sol";
+import "../lib/forge-std/src/Test.sol";
 
 contract TestWadRayMath is Test {
     uint256 internal constant WAD = 1e18;

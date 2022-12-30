@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
-import {PercentageMath} from "@aave/core-v3/contracts/protocol/libraries/math/PercentageMath.sol";
+import {PercentageMath} from "../../lib/aave-v3-core/contracts/protocol/libraries/math/PercentageMath.sol";
 
 contract PercentageMathRef {
     function percentAdd(uint256 x, uint256 y) public pure returns (uint256) {

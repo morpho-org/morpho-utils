@@ -1,4 +1,0 @@
-@aave/core-v3/=lib/aave-v3-core/
-ds-test/=lib/forge-std/lib/ds-test/src/
-forge-std/=lib/forge-std/src/
-openzeppelin-contracts/=lib/openzeppelin-contracts/

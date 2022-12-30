@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {PercentageMathMock} from "./mocks/PercentageMathMock.sol";
 import {PercentageMathRef} from "./references/PercentageMathRef.sol";
-import "forge-std/Test.sol";
+import "../lib/forge-std/src/Test.sol";
 
 contract TestPercentageMath is Test {
     uint256 internal constant PERCENTAGE_FACTOR = 100_00;
