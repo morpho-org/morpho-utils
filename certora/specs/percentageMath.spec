@@ -10,7 +10,7 @@ methods {
     weightedAvg(uint256, uint256, uint256)  returns (uint256)   envfree
 }
 
-definition PERCENTAGE_FACTOR()   returns uint = 10^4;
+definition PERCENTAGE_FACTOR()  returns uint = 10^4;
 
 /// percentAdd ///
 
@@ -57,30 +57,30 @@ rule percentMulLiveness(uint256 x, uint256 p) {
 
 /// percentMulDown ///
 
-rule percentMulDownSafety(uint256 a, uint256 b) {
-    uint res = percentMulDown(a, b);
+rule percentMulDownSafety(uint256 a, uint256 p) {
+    uint res = percentMulDown(a, p);
 
-    assert res == (a * b) / PERCENTAGE_FACTOR();
+    assert res == (a * p) / PERCENTAGE_FACTOR();
 }
 
-rule percentMulDownLiveness(uint256 a, uint256 b) {
-    percentMulDown@withrevert(a, b);
+rule percentMulDownLiveness(uint256 a, uint256 p) {
+    percentMulDown@withrevert(a, p);
 
-    assert lastReverted <=> a * b >= 2^256;
+    assert lastReverted <=> a * p >= 2^256;
 }
 
 /// percentMulUp ///
 
-rule percentMulUpSafety(uint256 a, uint256 b) {
-    uint res = percentMulUp(a, b);
+rule percentMulUpSafety(uint256 a, uint256 p) {
+    uint res = percentMulUp(a, p);
 
-    assert res == (a * b + (PERCENTAGE_FACTOR() - 1)) / PERCENTAGE_FACTOR();
+    assert res == (a * p + (PERCENTAGE_FACTOR() - 1)) / PERCENTAGE_FACTOR();
 }
 
-rule percentMulUpLiveness(uint256 a, uint256 b) {
-    percentMulUp@withrevert(a, b);
+rule percentMulUpLiveness(uint256 a, uint256 p) {
+    percentMulUp@withrevert(a, p);
 
-    assert lastReverted <=> a * b + PERCENTAGE_FACTOR() - 1 >= 2^256;
+    assert lastReverted <=> a * p + PERCENTAGE_FACTOR() - 1 >= 2^256;
 }
 
 /// percentDiv ///
@@ -99,30 +99,30 @@ rule percentDivLiveness(uint256 x, uint256 p) {
 
 /// percentDivDown ///
 
-rule percentDivDownSafety(uint256 a, uint256 b) {
-    uint res = percentDivDown(a, b);
+rule percentDivDownSafety(uint256 a, uint256 p) {
+    uint res = percentDivDown(a, p);
 
-    assert res == (a * PERCENTAGE_FACTOR()) / b;
+    assert res == (a * PERCENTAGE_FACTOR()) / p;
 }
 
-rule percentDivDownLiveness(uint256 a, uint256 b) {
-    percentDivDown@withrevert(a, b);
+rule percentDivDownLiveness(uint256 a, uint256 p) {
+    percentDivDown@withrevert(a, p);
 
-    assert lastReverted <=> a * PERCENTAGE_FACTOR() >= 2^256 || b == 0;
+    assert lastReverted <=> a * PERCENTAGE_FACTOR() >= 2^256 || p == 0;
 }
 
 /// percentDivUp ///
 
-rule percentDivUpSafety(uint256 a, uint256 b) {
-    uint res = percentDivUp(a, b);
+rule percentDivUpSafety(uint256 a, uint256 p) {
+    uint res = percentDivUp(a, p);
 
-    assert res == (a * PERCENTAGE_FACTOR() + (b - 1)) / b;
+    assert res == (a * PERCENTAGE_FACTOR() + (p - 1)) / p;
 }
 
-rule percentDivUpLiveness(uint256 a, uint256 b) {
-    percentDivUp@withrevert(a, b);
+rule percentDivUpLiveness(uint256 a, uint256 p) {
+    percentDivUp@withrevert(a, p);
 
-    assert lastReverted <=> a * PERCENTAGE_FACTOR() + (b - 1) >= 2^256 || b == 0;
+    assert lastReverted <=> a * PERCENTAGE_FACTOR() + (p - 1) >= 2^256 || p == 0;
 }
 
 /// weightedAvg ///

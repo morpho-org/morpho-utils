@@ -17,9 +17,9 @@ methods {
     rayWeightedAvg(uint256, uint256, uint256)  returns (uint256)       envfree
 }
 
-definition WAD()        returns uint = 10^18;
-definition RAY()        returns uint = 10^27;
-definition WADTORAY()   returns uint = 10^9;
+definition WAD()       returns uint = 10^18;
+definition RAY()       returns uint = 10^27;
+definition WADTORAY()  returns uint = 10^9;
 
 /// wadMul ///
 
