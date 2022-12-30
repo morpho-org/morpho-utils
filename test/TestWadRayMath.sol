@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
 import {WadRayMathMock} from "./mocks/WadRayMathMock.sol";
@@ -262,5 +262,79 @@ contract TestWadRayMath is Test {
 
         vm.expectRevert();
         mock.wadToRay(x);
+    }
+
+    function testWadWeightedAvg(uint256 x, uint256 y, uint16 weight) public {
+        vm.assume(weight <= WAD);
+        vm.assume(weight == 0 || y <= MAX_UINT256_MINUS_HALF_WAD / weight);
+        vm.assume(WAD - weight == 0 || x <= (type(uint256).max - y * weight - HALF_WAD) / (WAD - weight));
+
+        assertEq(mock.wadWeightedAvg(x, y, weight), ref.wadWeightedAvg(x, y, weight));
+    }
+
+    function testWadWeightedAvgOverflow(uint256 x, uint256 y, uint256 weight) public {
+        vm.assume(weight <= WAD);
+        vm.assume(
+            (weight != 0 && y > MAX_UINT256_MINUS_HALF_WAD / weight)
+                || ((WAD - weight) != 0 && x > (type(uint256).max - y * weight - HALF_WAD) / (WAD - weight))
+        );
+
+        vm.expectRevert();
+        mock.wadWeightedAvg(x, y, weight);
+    }
+
+    function testWadWeightedAvgUnderflow(uint256 x, uint256 y, uint256 weight) public {
+        vm.assume(weight > WAD);
+
+        vm.expectRevert();
+        mock.wadWeightedAvg(x, y, weight);
+    }
+
+    function testWadWeightedAvgBounds(uint256 x, uint256 y) public {
+        vm.assume(x <= y);
+        vm.assume(y <= type(uint256).max - HALF_WAD);
+        vm.assume(x <= (type(uint256).max - y - HALF_WAD) / (WAD - 1));
+
+        uint256 avg = mock.wadWeightedAvg(x, y, 1);
+
+        assertLe(x, avg);
+        assertLe(avg, y);
+    }
+
+    function testRayWeightedAvg(uint256 x, uint256 y, uint16 weight) public {
+        vm.assume(weight <= RAY);
+        vm.assume(weight == 0 || y <= MAX_UINT256_MINUS_HALF_RAY / weight);
+        vm.assume(RAY - weight == 0 || x <= (type(uint256).max - y * weight - HALF_RAY) / (RAY - weight));
+
+        assertEq(mock.rayWeightedAvg(x, y, weight), ref.rayWeightedAvg(x, y, weight));
+    }
+
+    function testRayWeightedAvgOverflow(uint256 x, uint256 y, uint256 weight) public {
+        vm.assume(weight <= RAY);
+        vm.assume(
+            (weight != 0 && y > MAX_UINT256_MINUS_HALF_RAY / weight)
+                || ((RAY - weight) != 0 && x > (type(uint256).max - y * weight - HALF_RAY) / (RAY - weight))
+        );
+
+        vm.expectRevert();
+        mock.rayWeightedAvg(x, y, weight);
+    }
+
+    function testRayWeightedAvgUnderflow(uint256 x, uint256 y, uint256 weight) public {
+        vm.assume(weight > RAY);
+
+        vm.expectRevert();
+        mock.rayWeightedAvg(x, y, weight);
+    }
+
+    function testRayWeightedAvgBounds(uint256 x, uint256 y) public {
+        vm.assume(x <= y);
+        vm.assume(y <= type(uint256).max - HALF_RAY);
+        vm.assume(x <= (type(uint256).max - y - HALF_RAY) / (RAY - 1));
+
+        uint256 avg = mock.rayWeightedAvg(x, y, 1);
+
+        assertLe(x, avg);
+        assertLe(avg, y);
     }
 }

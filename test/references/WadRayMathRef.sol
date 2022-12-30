@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GNU AGPLv3
+// SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
 import {WadRayMath} from "@aave/core-v3/contracts/protocol/libraries/math/WadRayMath.sol";
@@ -58,5 +58,13 @@ contract WadRayMathRef {
 
     function wadToRay(uint256 x) public pure returns (uint256) {
         return WadRayMath.wadToRay(x);
+    }
+
+    function wadWeightedAvg(uint256 x, uint256 y, uint256 weight) public pure returns (uint256) {
+        return (x * (WadRayMath.WAD - weight) + y * weight + WadRayMath.HALF_WAD) / WadRayMath.WAD;
+    }
+
+    function rayWeightedAvg(uint256 x, uint256 y, uint256 weight) public pure returns (uint256) {
+        return (x * (WadRayMath.RAY - weight) + y * weight + WadRayMath.HALF_RAY) / WadRayMath.RAY;
     }
 }

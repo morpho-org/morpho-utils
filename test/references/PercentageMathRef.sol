@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GNU AGPLv3
+// SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
 import {PercentageMath} from "@aave/core-v3/contracts/protocol/libraries/math/PercentageMath.sol";
@@ -36,16 +36,9 @@ contract PercentageMathRef {
         return (x * PercentageMath.PERCENTAGE_FACTOR + y - 1) / y;
     }
 
-    function weightedAvg(
-        uint256 x,
-        uint256 y,
-        uint256 percentage
-    ) public pure returns (uint256) {
-        return
-            (x *
-                (PercentageMath.PERCENTAGE_FACTOR - percentage) +
-                y *
-                percentage +
-                PercentageMath.HALF_PERCENTAGE_FACTOR) / PercentageMath.PERCENTAGE_FACTOR;
+    function weightedAvg(uint256 x, uint256 y, uint256 percentage) public pure returns (uint256) {
+        return (
+            x * (PercentageMath.PERCENTAGE_FACTOR - percentage) + y * percentage + PercentageMath.HALF_PERCENTAGE_FACTOR
+        ) / PercentageMath.PERCENTAGE_FACTOR;
     }
 }

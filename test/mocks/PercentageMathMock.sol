@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
 import {PercentageMath} from "src/math/PercentageMath.sol";
@@ -36,11 +36,7 @@ contract PercentageMathMock {
         return PercentageMath.percentDivUp(x, y);
     }
 
-    function weightedAvg(
-        uint256 x,
-        uint256 y,
-        uint256 percentage
-    ) public pure returns (uint256) {
+    function weightedAvg(uint256 x, uint256 y, uint256 percentage) public pure returns (uint256) {
         return PercentageMath.weightedAvg(x, y, percentage);
     }
 }

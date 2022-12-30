@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GNU AGPLv3
+// SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
 library Math {
@@ -23,11 +23,10 @@ library Math {
 
     /// @dev Returns x / y rounded up (x / y + boolAsInt(x % y > 0)).
     function divUp(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        // Division by 0 if
+        //    y = 0
         assembly {
-            // Revert if y = 0
-            if iszero(y) {
-                revert(0, 0)
-            }
+            if iszero(y) { revert(0, 0) }
 
             z := add(gt(mod(x, y), 0), div(x, y))
         }

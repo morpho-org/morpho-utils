@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
 import "forge-std/Vm.sol";
@@ -52,7 +52,9 @@ contract Caller {
 
 contract CallerRef {
     using Address for address;
+
     error LowLevelDelegateCallFailed();
+
     address public immutable called;
     uint256 public x = 2;
 
@@ -67,15 +69,18 @@ contract CallerRef {
 
     function targetDelegateCallBehaviour(address _target, bytes memory _data) internal returns (bytes memory) {
         (bool success, bytes memory returndata) = _target.delegatecall(_data);
-        if (success) return returndata;
-        else {
+        if (success) {
+            return returndata;
+        } else {
             // Look for revert reason and bubble it up if present.
             if (returndata.length > 0) {
                 // The easiest way to bubble the revert reason is using memory via assembly.
                 assembly {
                     revert(add(32, returndata), mload(returndata))
                 }
-            } else revert LowLevelDelegateCallFailed();
+            } else {
+                revert LowLevelDelegateCallFailed();
+            }
         }
     }
 
@@ -184,30 +189,26 @@ contract TestDelegateCall is Test {
         bytes32 pointerReturnedRef;
 
         (memoryReturned, pointerReturned) = caller.delegateCallAndReturnMemoryAndPointer(Called.number.selector);
-        (memoryReturnedRef, pointerReturnedRef) = callerRef.targetDelegateCallBehaviourAndReturnMemoryAndPointer(
-            Called.number.selector
-        );
+        (memoryReturnedRef, pointerReturnedRef) =
+            callerRef.targetDelegateCallBehaviourAndReturnMemoryAndPointer(Called.number.selector);
         assert(keccak256(memoryReturned) == keccak256(memoryReturnedRef));
         assert(pointerReturned == pointerReturnedRef);
 
         (memoryReturned, pointerReturned) = caller.delegateCallAndReturnMemoryAndPointer(Called.return40Bytes.selector);
-        (memoryReturnedRef, pointerReturnedRef) = callerRef.targetDelegateCallBehaviourAndReturnMemoryAndPointer(
-            Called.return40Bytes.selector
-        );
+        (memoryReturnedRef, pointerReturnedRef) =
+            callerRef.targetDelegateCallBehaviourAndReturnMemoryAndPointer(Called.return40Bytes.selector);
         assert(keccak256(memoryReturned) == keccak256(memoryReturnedRef));
         assert(pointerReturned == pointerReturnedRef);
 
         (memoryReturned, pointerReturned) = caller.delegateCallAndReturnMemoryAndPointer(Called.return32Bytes.selector);
-        (memoryReturnedRef, pointerReturnedRef) = callerRef.targetDelegateCallBehaviourAndReturnMemoryAndPointer(
-            Called.return32Bytes.selector
-        );
+        (memoryReturnedRef, pointerReturnedRef) =
+            callerRef.targetDelegateCallBehaviourAndReturnMemoryAndPointer(Called.return32Bytes.selector);
         assert(keccak256(memoryReturned) == keccak256(memoryReturnedRef));
         assert(pointerReturned == pointerReturnedRef);
 
         (memoryReturned, pointerReturned) = caller.delegateCallAndReturnMemoryAndPointer(Called.returnBytes32.selector);
-        (memoryReturnedRef, pointerReturnedRef) = callerRef.targetDelegateCallBehaviourAndReturnMemoryAndPointer(
-            Called.returnBytes32.selector
-        );
+        (memoryReturnedRef, pointerReturnedRef) =
+            callerRef.targetDelegateCallBehaviourAndReturnMemoryAndPointer(Called.returnBytes32.selector);
         assert(keccak256(memoryReturned) == keccak256(memoryReturnedRef));
         assert(pointerReturned == pointerReturnedRef);
     }

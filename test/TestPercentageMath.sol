@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
 import {PercentageMathMock} from "./mocks/PercentageMathMock.sol";
@@ -8,7 +8,6 @@ import "forge-std/Test.sol";
 contract TestPercentageMath is Test {
     uint256 internal constant PERCENTAGE_FACTOR = 100_00;
     uint256 internal constant HALF_PERCENTAGE_FACTOR = 50_00;
-    uint256 internal constant MAX_UINT256_MINUS_HALF_PERCENTAGE = type(uint256).max - HALF_PERCENTAGE_FACTOR;
 
     PercentageMathMock mock;
     PercentageMathRef ref;
@@ -73,13 +72,13 @@ contract TestPercentageMath is Test {
     }
 
     function testPercentMul(uint256 x, uint256 p) public {
-        vm.assume(p == 0 || x <= MAX_UINT256_MINUS_HALF_PERCENTAGE / p);
+        vm.assume(p == 0 || x <= (type(uint256).max - HALF_PERCENTAGE_FACTOR) / p);
 
         assertEq(mock.percentMul(x, p), ref.percentMul(x, p));
     }
 
     function testPercentMulOverflow(uint256 x, uint256 p) public {
-        vm.assume(p > 0 && x > MAX_UINT256_MINUS_HALF_PERCENTAGE / p);
+        vm.assume(p > 0 && x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / p);
 
         vm.expectRevert();
         mock.percentMul(x, p);
@@ -181,43 +180,32 @@ contract TestPercentageMath is Test {
         mock.percentDivUp(x, 0);
     }
 
-    function testWeightedAvg(
-        uint256 x,
-        uint256 y,
-        uint16 percentage
-    ) public {
+    function testWeightedAvg(uint256 x, uint256 y, uint16 percentage) public {
         vm.assume(percentage <= PERCENTAGE_FACTOR);
         vm.assume(percentage == 0 || y <= (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage);
         vm.assume(
-            PERCENTAGE_FACTOR - percentage == 0 ||
-                x <= (type(uint256).max - y * percentage - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
+            PERCENTAGE_FACTOR - percentage == 0
+                || x <= (type(uint256).max - y * percentage - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
         );
 
         assertEq(mock.weightedAvg(x, y, percentage), ref.weightedAvg(x, y, percentage));
     }
 
-    function testWeightedAvgOverflow(
-        uint256 x,
-        uint256 y,
-        uint256 percentage
-    ) public {
+    function testWeightedAvgOverflow(uint256 x, uint256 y, uint256 percentage) public {
         vm.assume(percentage <= PERCENTAGE_FACTOR);
         vm.assume(
-            (percentage != 0 && y > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage) ||
-                ((PERCENTAGE_FACTOR - percentage) != 0 &&
-                    x >
-                    (type(uint256).max - y * percentage - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage))
+            (percentage != 0 && y > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage)
+                || (
+                    (PERCENTAGE_FACTOR - percentage) != 0
+                        && x > (type(uint256).max - y * percentage - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
+                )
         );
 
         vm.expectRevert();
         mock.weightedAvg(x, y, percentage);
     }
 
-    function testWeightedAvgUnderflow(
-        uint256 x,
-        uint256 y,
-        uint256 percentage
-    ) public {
+    function testWeightedAvgUnderflow(uint256 x, uint256 y, uint256 percentage) public {
         vm.assume(percentage > PERCENTAGE_FACTOR);
 
         vm.expectRevert();
@@ -229,9 +217,9 @@ contract TestPercentageMath is Test {
         vm.assume(y <= type(uint256).max - HALF_PERCENTAGE_FACTOR);
         vm.assume(x <= (type(uint256).max - y - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - 1));
 
-        uint256 weightedAvg = mock.weightedAvg(x, y, 1);
+        uint256 avg = mock.weightedAvg(x, y, 1);
 
-        assertLe(x, weightedAvg);
-        assertLe(weightedAvg, y);
+        assertLe(x, avg);
+        assertLe(avg, y);
     }
 }
