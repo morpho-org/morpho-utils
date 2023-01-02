@@ -49,7 +49,7 @@ library Math {
             // Take only the highest bit of x
             x := xor(x, shr(1, x))
 
-            // Hash table associating the first 256 powers of 2 to their exponent
+            // Hash table associating the first 256 powers of 2 to their log
             // Let x be a power of 2, its hash is obtained by taking the first byte of x * deBruijnSeq
             let m := mload(0x40)
             mstore(m, 0x0001020903110a19042112290b311a3905412245134d2a550c5d32651b6d3a75)
@@ -60,7 +60,7 @@ library Math {
             mstore(add(m, 0xa0), 0x16365272829aaec650acd0d28fdad4e22d6991bd97dfdcea58b4d6f29fede4f6)
             mstore(add(m, 0xc0), 0xfe0f1f2f3f4b5b6b607b8b93a3a7b7bf357199c5abcfd9e168bcdee9b3f1ecf5)
             mstore(add(m, 0xe0), 0xfd1e3e5a7a8aa2b670c4ced8bbe8f0f4fc3d79a1c3cde7effb78cce6facbf9f8)
-            mstore(0x40, add(m, 0x100))
+            mstore(0x40, add(m, 0x100)) // Update the free memory pointer
 
             // This De Bruijn sequence begins with the byte 0, which is important to make shifting work like a rotation on the first byte
             let deBruijnSeq := 0x00818283848586878898a8b8c8d8e8f929395969799a9b9d9e9faaeb6bedeeff
