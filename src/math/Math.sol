@@ -33,9 +33,8 @@ library Math {
         }
     }
 
-    /// @dev Returns the floor of log2(x) and returns 0 on input 0.
-    /// @dev This computation makes use of De Bruijn sequences, their usage for computing log2 is referenced here: http://supertech.csail.mit.edu/papers/debruijn.pdf
-    function log2(uint256 x) internal pure returns (uint256 y) {
+    /// @dev Returns the biggest power of 2 smaller than or equal to x and returns 0 on input 0.
+    function _roundDownToPowerOf2(uint256 x) internal pure returns (uint256) {
         assembly {
             // Use the highest set bit of x to set each of its lower bits
             x := or(x, shr(1, x))
@@ -48,7 +47,14 @@ library Math {
             x := or(x, shr(128, x))
             // Take only the highest bit of x
             x := xor(x, shr(1, x))
+        }
+        return x;
+    }
 
+    /// @dev Returns a particular de Bruijn sequence and log2(x) given that x is a power of 2.
+    function _lookupDeBruijn(uint256 x) internal pure returns (uint256 deBruijnSeq, uint256 y) {
+        deBruijnSeq = 0x00818283848586878898a8b8c8d8e8f929395969799a9b9d9e9faaeb6bedeeff;
+        assembly {
             // Hash table associating the first 256 powers of 2 to their log
             // Let x be a power of 2, its hash is obtained by taking the first byte of x * deBruijnSeq
             let m := mload(0x40)
@@ -63,9 +69,15 @@ library Math {
             mstore(0x40, add(m, 0x100)) // Update the free memory pointer
 
             // This De Bruijn sequence begins with the byte 0, which is important to make shifting work like a rotation on the first byte
-            let deBruijnSeq := 0x00818283848586878898a8b8c8d8e8f929395969799a9b9d9e9faaeb6bedeeff
             let key := shr(248, mul(x, deBruijnSeq)) // With the multiplication it works also for 0
             y := shr(248, mload(add(m, key))) // Look in the table and take the first byte
         }
+    }
+
+    /// @dev Returns the floor of log2(x) and returns 0 on input 0.
+    /// @dev This computation makes use of De Bruijn sequences, their usage for computing log2 is referenced here: http://supertech.csail.mit.edu/papers/debruijn.pdf
+    function log2(uint256 x) internal pure returns (uint256 y) {
+        x = _roundDownToPowerOf2(x);
+        (, y) = _lookupDeBruijn(x);
     }
 }

@@ -18,6 +18,11 @@ contract MathRef {
         return (x + y - 1) / y;
     }
 
+    function roundDownToPowerOf2Naive(uint256 x) external pure returns (uint256) {
+        for (uint256 i = 255; i > 0; i--) if (x >= 2**i) return 2**i;
+        return x; // handles the cases x = 0 and x = 1
+    }
+
     function log2Naive(uint256 x) external pure returns (uint256) {
         for (uint256 i = 255; i > 0; i--) if (x >= 2**i) return i;
         return 0;
