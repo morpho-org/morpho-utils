@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 library DeBruijn {
-    function isDeBruijnSequence(uint256 seq) public pure returns (bool) {
+    function isDeBruijnSequence(uint256 seq) internal pure returns (bool) {
         bool[] memory seen = new bool[](256);
 
         for (uint256 i; i < 256; i++) {
@@ -18,7 +18,7 @@ library DeBruijn {
         return true;
     }
 
-    function precomputeRows(uint256 seq) public pure returns (uint256[] memory) {
+    function precomputeRows(uint256 seq) internal pure returns (uint256[] memory) {
         uint256[] memory rows = new uint256[](8);
 
         for (uint256 i; i < 256; i++) {
