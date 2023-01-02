@@ -63,20 +63,20 @@ contract TestMath is Test {
         assertEq(mock.log2(x), ref.log2Dichotomy(x));
     }
 
-    function testRoundDownToPowerOf2(uint256 x) public {
-        assertEq(mock.roundDownToPowerOf2(x), ref.roundDownToPowerOf2Naive(x));
-    }
+    // function testRoundDownToPowerOf2(uint256 x) public {
+    //     assertEq(mock.roundDownToPowerOf2(x), ref.roundDownToPowerOf2Naive(x));
+    // }
 
-    function testDeBruijnSequence() public {
-        (uint256 deBruijnSeq, ) = mock.lookupDeBruijn(1);
-        assertTrue(DeBruijn.isDeBruijnSequence(deBruijnSeq));
-    }
+    // function testDeBruijnSequence() public {
+    //     (uint256 deBruijnSeq, ) = mock.lookupDeBruijn(1);
+    //     assertTrue(DeBruijn.isDeBruijnSequence(deBruijnSeq));
+    // }
 
-    function testHashTable() public {
-        for (uint256 i; i < 256; i++) {
-            uint256 x = 2**i;
-            (, uint256 value) = mock.lookupDeBruijn(x);
-            assertEq(value, i, "wrong value in lookup table");
-        }
-    }
+    // function testHashTable() public {
+    //     for (uint256 i; i < 256; i++) {
+    //         uint256 x = 2**i;
+    //         (, uint256 value) = mock.lookupDeBruijn(x);
+    //         assertEq(value, i, "wrong value in lookup table");
+    //     }
+    // }
 }

@@ -20,13 +20,13 @@ contract MathMock {
         return Math.divUp(x, y);
     }
 
-    function roundDownToPowerOf2(uint256 x) public pure returns (uint256) {
-        return Math._roundDownToPowerOf2(x);
-    }
+    // function roundDownToPowerOf2(uint256 x) public pure returns (uint256) {
+    //     return Math._roundDownToPowerOf2(x);
+    // }
 
-    function lookupDeBruijn(uint256 x) public pure returns (uint256 deBruijnSeq, uint256 y) {
-        return Math._lookupDeBruijn(x);
-    }
+    // function lookupDeBruijn(uint256 x) public pure returns (uint256 deBruijnSeq, uint256 y) {
+    //     return Math._lookupDeBruijn(x);
+    // }
 
     function log2(uint256 x) public pure returns (uint256) {
         return Math.log2(x);
