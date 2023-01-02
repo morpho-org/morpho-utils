@@ -137,7 +137,7 @@ library PercentageMath {
         //        x * PERCENTAGE_FACTOR > type(uint256).max
         //    <=> x > type(uint256).max / PERCENTAGE_FACTOR
         assembly {
-            if iszero(mul(percentage, iszero(gt(x, div(MAX_UINT256, PERCENTAGE_FACTOR))))) { revert(0, 0) }
+            if iszero(mul(percentage, lt(x, add(div(MAX_UINT256, PERCENTAGE_FACTOR), 1)))) { revert(0, 0) }
 
             y := div(mul(PERCENTAGE_FACTOR, x), percentage)
         }
