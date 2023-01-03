@@ -52,7 +52,7 @@ library Math {
     }
 
     /// A particular de Bruijn sequence.
-    uint256 internal constant deBruijnSeq = 0x00818283848586878898a8b8c8d8e8f929395969799a9b9d9e9faaeb6bedeeff;
+    uint256 internal constant DE_BRUIJN_SEQ = 0x00818283848586878898a8b8c8d8e8f929395969799a9b9d9e9faaeb6bedeeff;
 
     /// @dev Returns log2(x) given that x is a power of 2.
     function _lookupDeBruijn(uint256 x) internal pure returns (uint256 y) {
@@ -71,7 +71,7 @@ library Math {
             mstore(0x40, add(m, 0x100)) // Update the free memory pointer
 
             // This De Bruijn sequence begins with the byte 0, which is important to make shifting work like a rotation on the first byte
-            let key := shr(248, mul(x, deBruijnSeq)) // With the multiplication it works also for 0
+            let key := shr(248, mul(x, DE_BRUIJN_SEQ)) // With the multiplication it works also for 0
             y := shr(248, mload(add(m, key))) // Look in the table and take the first byte
         }
     }

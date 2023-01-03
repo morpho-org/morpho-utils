@@ -25,7 +25,7 @@ contract MathMock {
     }
 
     function deBruijnSeq() public pure returns (uint256) {
-        return Math.deBruijnSeq;
+        return Math.DE_BRUIJN_SEQ;
     }
 
     function lookupDeBruijn(uint256 x) public pure returns (uint256 y) {
