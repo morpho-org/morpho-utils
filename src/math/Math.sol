@@ -54,7 +54,8 @@ library Math {
     /// A particular de Bruijn sequence.
     uint256 internal constant DE_BRUIJN_SEQ = 0x00818283848586878898a8b8c8d8e8f929395969799a9b9d9e9faaeb6bedeeff;
 
-    /// @dev Returns log2(x) given that x is a power of 2.
+    /// @dev Returns log2(x) given that x is a power of 2 and returns 0 on input 0.
+    /// @dev This computation makes use of De Bruijn sequences, their usage for computing log2 is referenced here: http://supertech.csail.mit.edu/papers/debruijn.pdf
     function _lookupDeBruijn(uint256 x) internal pure returns (uint256 y) {
         assembly {
             // Hash table associating the first 256 powers of 2 to their log
@@ -77,9 +78,7 @@ library Math {
     }
 
     /// @dev Returns the floor of log2(x) and returns 0 on input 0.
-    /// @dev This computation makes use of De Bruijn sequences, their usage for computing log2 is referenced here: http://supertech.csail.mit.edu/papers/debruijn.pdf
-    function log2(uint256 x) internal pure returns (uint256 y) {
-        x = _roundDownToPowerOf2(x);
-        y = _lookupDeBruijn(x);
+    function log2(uint256 x) internal pure returns (uint256) {
+        return _lookupDeBruijn(_roundDownToPowerOf2(x));
     }
 }
