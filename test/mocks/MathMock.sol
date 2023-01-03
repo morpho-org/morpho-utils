@@ -24,7 +24,11 @@ contract MathMock {
         return Math._roundDownToPowerOf2(x);
     }
 
-    function lookupDeBruijn(uint256 x) public pure returns (uint256 deBruijnSeq, uint256 y) {
+    function deBruijnSeq() public pure returns (uint256) {
+        return Math.deBruijnSeq;
+    }
+
+    function lookupDeBruijn(uint256 x) public pure returns (uint256 y) {
         return Math._lookupDeBruijn(x);
     }
 

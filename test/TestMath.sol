@@ -68,14 +68,14 @@ contract TestMath is Test {
     }
 
     function testDeBruijnSequence() public {
-        (uint256 deBruijnSeq, ) = mock.lookupDeBruijn(1);
+        uint256 deBruijnSeq = mock.deBruijnSeq();
         assertTrue(DeBruijn.isDeBruijnSequence(deBruijnSeq));
     }
 
     function testHashTable() public {
         for (uint256 i; i < 256; i++) {
             uint256 x = 2**i;
-            (, uint256 value) = mock.lookupDeBruijn(x);
+            uint256 value = mock.lookupDeBruijn(x);
             assertEq(value, i, "wrong value in lookup table");
         }
     }
