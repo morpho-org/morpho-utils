@@ -8,15 +8,20 @@ pragma solidity ^0.8.0;
 library WadRayMath {
     /// CONSTANTS ///
 
+    // Only direct number constants and references to such constants are supported by inline assembly.
     uint256 internal constant WAD = 1e18;
     uint256 internal constant HALF_WAD = 0.5e18;
+    uint256 internal constant WAD_MINUS_ONE = 1e18 - 1;
     uint256 internal constant RAY = 1e27;
     uint256 internal constant HALF_RAY = 0.5e27;
+    uint256 internal constant RAY_MINUS_ONE = 1e27 - 1;
     uint256 internal constant RAY_WAD_RATIO = 1e9;
     uint256 internal constant HALF_RAY_WAD_RATIO = 0.5e9;
-    uint256 internal constant MAX_UINT256 = 2 ** 256 - 1; // Not possible to use type(uint256).max in yul.
+    uint256 internal constant MAX_UINT256 = 2 ** 256 - 1;
     uint256 internal constant MAX_UINT256_MINUS_HALF_WAD = 2 ** 256 - 1 - 0.5e18;
     uint256 internal constant MAX_UINT256_MINUS_HALF_RAY = 2 ** 256 - 1 - 0.5e27;
+    uint256 internal constant MAX_UINT256_MINUS_WAD_MINUS_ONE = 2 ** 256 - 1 - (1e18 - 1);
+    uint256 internal constant MAX_UINT256_MINUS_RAY_MINUS_ONE = 2 ** 256 - 1 - (1e27 - 1);
 
     /// INTERNAL ///
 
@@ -33,6 +38,37 @@ library WadRayMath {
             if mul(y, gt(x, div(MAX_UINT256_MINUS_HALF_WAD, y))) { revert(0, 0) }
 
             z := div(add(mul(x, y), HALF_WAD), WAD)
+        }
+    }
+
+    /// @dev Executes the wad-based multiplication of 2 numbers, rounded down.
+    /// @param x Wad.
+    /// @param y Wad.
+    /// @return z The result of x * y, in wad.
+    function wadMulDown(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        // Overflow if
+        //     x * y > type(uint256).max
+        // <=> y > 0 and x > type(uint256).max / y
+        assembly {
+            if mul(y, gt(x, div(MAX_UINT256, y))) { revert(0, 0) }
+
+            z := div(mul(x, y), WAD)
+        }
+    }
+
+    /// @dev Executes the wad-based multiplication of 2 numbers, rounded up.
+    /// @param x Wad.
+    /// @param y Wad.
+    /// @return z The result of x * y, in wad.
+    function wadMulUp(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        // Overflow if
+        //     x * y + WAD_MINUS_ONE > type(uint256).max
+        // <=> x * y > type(uint256).max - WAD_MINUS_ONE
+        // <=> y > 0 and x > (type(uint256).max - WAD_MINUS_ONE) / y
+        assembly {
+            if mul(y, gt(x, div(MAX_UINT256_MINUS_WAD_MINUS_ONE, y))) { revert(0, 0) }
+
+            z := div(add(mul(x, y), WAD_MINUS_ONE), WAD)
         }
     }
 
@@ -56,6 +92,43 @@ library WadRayMath {
         }
     }
 
+    /// @dev Executes wad-based division of 2 numbers, rounded down.
+    /// @param x Wad.
+    /// @param y Wad.
+    /// @return z The result of x / y, in wad.
+    function wadDivDown(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        // 1. Division by 0 if
+        //        y == 0
+        // 2. Overflow if
+        //        x * WAD > type(uint256).max
+        //    <=> x > type(uint256).max / WAD
+        assembly {
+            if iszero(mul(y, iszero(gt(x, div(MAX_UINT256, WAD))))) { revert(0, 0) }
+
+            z := div(mul(WAD, x), y)
+        }
+    }
+
+    /// @dev Executes wad-based division of 2 numbers, rounded up.
+    /// @param x Wad.
+    /// @param y Wad.
+    /// @return z The result of x / y, in wad.
+    function wadDivUp(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        // 1. Division by 0 if
+        //        y == 0
+        // 2. Overflow if
+        //        x * WAD + (y - 1) > type(uint256).max
+        //    <=> x * WAD > type(uint256).max - (y - 1)
+        //    <=> x > (type(uint256).max - (y - 1)) / WAD
+        assembly {
+            z := sub(y, 1) // Temporary assignment to save gas.
+
+            if iszero(mul(y, iszero(gt(x, div(sub(MAX_UINT256, z), WAD))))) { revert(0, 0) }
+
+            z := div(add(mul(WAD, x), z), y)
+        }
+    }
+
     /// @dev Executes the ray-based multiplication of 2 numbers, rounded half up.
     /// @param x Ray.
     /// @param y Ray.
@@ -72,6 +145,37 @@ library WadRayMath {
         }
     }
 
+    /// @dev Executes the ray-based multiplication of 2 numbers, rounded down.
+    /// @param x Ray.
+    /// @param y Ray.
+    /// @return z The result of x * y, in ray.
+    function rayMulDown(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        // Overflow if
+        //     x * y > type(uint256).max
+        // <=> y > 0 and x > type(uint256).max / y
+        assembly {
+            if mul(y, gt(x, div(MAX_UINT256, y))) { revert(0, 0) }
+
+            z := div(mul(x, y), RAY)
+        }
+    }
+
+    /// @dev Executes the ray-based multiplication of 2 numbers, rounded up.
+    /// @param x Ray.
+    /// @param y Wad.
+    /// @return z The result of x * y, in ray.
+    function rayMulUp(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        // Overflow if
+        //     x * y + RAY_MINUS_ONE > type(uint256).max
+        // <=> x * y > type(uint256).max - RAY_MINUS_ONE
+        // <=> y > 0 and x > (type(uint256).max - RAY_MINUS_ONE) / y
+        assembly {
+            if mul(y, gt(x, div(MAX_UINT256_MINUS_RAY_MINUS_ONE, y))) { revert(0, 0) }
+
+            z := div(add(mul(x, y), RAY_MINUS_ONE), RAY)
+        }
+    }
+
     /// @dev Executes the ray-based division of 2 numbers, rounded half up.
     /// @param x Ray.
     /// @param y Ray.
@@ -85,6 +189,43 @@ library WadRayMath {
         //    <=> x > (type(uint256).max - y / 2) / RAY
         assembly {
             z := div(y, 2) // Temporary assignment to save gas.
+
+            if iszero(mul(y, iszero(gt(x, div(sub(MAX_UINT256, z), RAY))))) { revert(0, 0) }
+
+            z := div(add(mul(RAY, x), z), y)
+        }
+    }
+
+    /// @dev Executes the ray-based multiplication of 2 numbers, rounded down.
+    /// @param x Wad.
+    /// @param y Wad.
+    /// @return z The result of x / y, in ray.
+    function rayDivDown(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        // 1. Division by 0 if
+        //        y == 0
+        // 2. Overflow if
+        //        x * RAY > type(uint256).max
+        //    <=> x > type(uint256).max / RAY
+        assembly {
+            if iszero(mul(y, iszero(gt(x, div(MAX_UINT256, RAY))))) { revert(0, 0) }
+
+            z := div(mul(RAY, x), y)
+        }
+    }
+
+    /// @dev Executes the ray-based multiplication of 2 numbers, rounded up.
+    /// @param x Wad.
+    /// @param y Wad.
+    /// @return z The result of x / y, in ray.
+    function rayDivUp(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        // 1. Division by 0 if
+        //        y == 0
+        // 2. Overflow if
+        //        x * RAY + (y - 1) > type(uint256).max
+        //    <=> x * RAY > type(uint256).max - (y - 1)
+        //    <=> x > (type(uint256).max - (y - 1)) / RAY
+        assembly {
+            z := sub(y, 1) // Temporary assignment to save gas.
 
             if iszero(mul(y, iszero(gt(x, div(sub(MAX_UINT256, z), RAY))))) { revert(0, 0) }
 

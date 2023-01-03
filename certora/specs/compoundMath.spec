@@ -3,7 +3,7 @@ methods {
     div(uint256, uint256)   returns (uint256)   envfree
 }
 
-definition WAD()        returns uint = 10^18;
+definition WAD()  returns uint = 10^18;
 
 /// mul ///
 
