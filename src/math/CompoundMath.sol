@@ -9,8 +9,8 @@ library CompoundMath {
     /// CONSTANTS ///
 
     // Only direct number constants and references to such constants are supported by inline assembly.
+    uint256 internal constant WAD = 1e18;
     uint256 internal constant MAX_UINT256 = 2 ** 256 - 1;
-    uint256 public constant WAD = 1e18;
 
     /// INTERNAL ///
 
@@ -28,7 +28,7 @@ library CompoundMath {
         assembly {
             // Revert if x * WAD > type(uint256).max or y == 0
             // <=> x > type(uint256).max / WAD or y == 0
-            if iszero(mul(y, iszero(gt(x, div(MAX_UINT256, WAD))))) { revert(0, 0) }
+            if iszero(mul(y, lt(x, add(div(MAX_UINT256, WAD), 1)))) { revert(0, 0) }
 
             z := div(mul(WAD, x), y)
         }
