@@ -35,9 +35,7 @@ library Math {
     /// @dev Returns the floor of log2(x) and returns 0 on input 0.
     function log2(uint256 x) internal pure returns (uint256 y) {
         assembly {
-            let z
-
-            z := shl(7, gt(x, 0xffffffffffffffffffffffffffffffff))
+            let z := shl(7, gt(x, 0xffffffffffffffffffffffffffffffff))
             y := z
             x := shr(z, x)
 
