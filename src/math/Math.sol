@@ -32,13 +32,18 @@ library Math {
         }
     }
 
-    /// @dev Returns the floor of log2(x) and returns 0 on input 0.
+    /// @dev Returns the floor of log2(x) and returns 0 when x = 0.
+    /// @dev Uses a method by dichotomy to find the highest bit set of x.
     function log2(uint256 x) internal pure returns (uint256 y) {
         assembly {
+            // Finds if x has a 1 on the first 128 bits. If not then do nothing.
+            // If that is the case then the result is more than 128.
             let z := shl(7, gt(x, 0xffffffffffffffffffffffffffffffff))
             y := z
             x := shr(z, x)
 
+            // Using y as an accumulator, we can now focus on the last 128 bits of x.
+            // Repeat this process to divide the number of bits to handle by 2 every time.
             z := shl(6, gt(x, 0xffffffffffffffff))
             y := add(y, z)
             x := shr(z, x)
