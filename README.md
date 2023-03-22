@@ -1,4 +1,12 @@
-# morpho-utils
+# Morpho Utils
+
+[![Foundry Tests](https://github.com/morpho-dao/morpho-utils/actions/workflows/foundry-gas-diff.yml/badge.svg)](https://github.com/morpho-dao/morpho-utils/actions/workflows/foundry-gas-diff.yml)
+[![Certora Tests](https://github.com/morpho-dao/morpho-utils/actions/workflows/certora.yml/badge.svg)](https://github.com/morpho-dao/morpho-utils/actions/workflows/certora.yml)
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://i.imgur.com/uLq5V14.png">
+  <img alt="" src="https://i.imgur.com/ZiL1Lr2.png">
+</picture>
 
 Repository gathering useful libraries and contracts.
 

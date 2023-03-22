@@ -12,9 +12,9 @@ library PercentageMath {
     uint256 internal constant PERCENTAGE_FACTOR = 100_00;
     uint256 internal constant HALF_PERCENTAGE_FACTOR = 50_00;
     uint256 internal constant PERCENTAGE_FACTOR_MINUS_ONE = 100_00 - 1;
-    uint256 internal constant MAX_UINT256 = 2**256 - 1;
-    uint256 internal constant MAX_UINT256_MINUS_HALF_PERCENTAGE_FACTOR = 2**256 - 1 - 50_00;
-    uint256 internal constant MAX_UINT256_MINUS_PERCENTAGE_FACTOR_MINUS_ONE = 2**256 - 1 - (100_00 - 1);
+    uint256 internal constant MAX_UINT256 = 2 ** 256 - 1;
+    uint256 internal constant MAX_UINT256_MINUS_HALF_PERCENTAGE_FACTOR = 2 ** 256 - 1 - 50_00;
+    uint256 internal constant MAX_UINT256_MINUS_PERCENTAGE_FACTOR_MINUS_ONE = 2 ** 256 - 1 - (100_00 - 1);
 
     /* INTERNAL */
 
@@ -35,9 +35,7 @@ library PercentageMath {
             if or(
                 gt(percentage, sub(MAX_UINT256, PERCENTAGE_FACTOR)),
                 gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE_FACTOR, y))
-            ) {
-                revert(0, 0)
-            }
+            ) { revert(0, 0) }
 
             y := div(add(mul(x, y), HALF_PERCENTAGE_FACTOR), PERCENTAGE_FACTOR)
         }
@@ -73,9 +71,7 @@ library PercentageMath {
         //     x * percentage + HALF_PERCENTAGE_FACTOR > type(uint256).max
         // <=> percentage > 0 and x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage
         assembly {
-            if mul(percentage, gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE_FACTOR, percentage))) {
-                revert(0, 0)
-            }
+            if mul(percentage, gt(x, div(MAX_UINT256_MINUS_HALF_PERCENTAGE_FACTOR, percentage))) { revert(0, 0) }
 
             y := div(add(mul(x, percentage), HALF_PERCENTAGE_FACTOR), PERCENTAGE_FACTOR)
         }
@@ -90,9 +86,7 @@ library PercentageMath {
         //     x * percentage > type(uint256).max
         // <=> percentage > 0 and x > type(uint256).max / percentage
         assembly {
-            if mul(percentage, gt(x, div(MAX_UINT256, percentage))) {
-                revert(0, 0)
-            }
+            if mul(percentage, gt(x, div(MAX_UINT256, percentage))) { revert(0, 0) }
 
             y := div(mul(x, percentage), PERCENTAGE_FACTOR)
         }
@@ -107,9 +101,7 @@ library PercentageMath {
         //     x * percentage + PERCENTAGE_FACTOR_MINUS_ONE > type(uint256).max
         // <=> percentage > 0 and x > (type(uint256).max - PERCENTAGE_FACTOR_MINUS_ONE) / percentage
         assembly {
-            if mul(percentage, gt(x, div(MAX_UINT256_MINUS_PERCENTAGE_FACTOR_MINUS_ONE, percentage))) {
-                revert(0, 0)
-            }
+            if mul(percentage, gt(x, div(MAX_UINT256_MINUS_PERCENTAGE_FACTOR_MINUS_ONE, percentage))) { revert(0, 0) }
 
             y := div(add(mul(x, percentage), PERCENTAGE_FACTOR_MINUS_ONE), PERCENTAGE_FACTOR)
         }
@@ -128,9 +120,7 @@ library PercentageMath {
         assembly {
             y := div(percentage, 2) // Temporary assignment to save gas.
 
-            if iszero(mul(percentage, iszero(gt(x, div(sub(MAX_UINT256, y), PERCENTAGE_FACTOR))))) {
-                revert(0, 0)
-            }
+            if iszero(mul(percentage, iszero(gt(x, div(sub(MAX_UINT256, y), PERCENTAGE_FACTOR))))) { revert(0, 0) }
 
             y := div(add(mul(PERCENTAGE_FACTOR, x), y), percentage)
         }
@@ -147,9 +137,7 @@ library PercentageMath {
         //        x * PERCENTAGE_FACTOR > type(uint256).max
         //    <=> x > type(uint256).max / PERCENTAGE_FACTOR
         assembly {
-            if iszero(mul(percentage, lt(x, add(div(MAX_UINT256, PERCENTAGE_FACTOR), 1)))) {
-                revert(0, 0)
-            }
+            if iszero(mul(percentage, lt(x, add(div(MAX_UINT256, PERCENTAGE_FACTOR), 1)))) { revert(0, 0) }
 
             y := div(mul(PERCENTAGE_FACTOR, x), percentage)
         }
@@ -168,9 +156,7 @@ library PercentageMath {
         assembly {
             y := sub(percentage, 1) // Temporary assignment to save gas.
 
-            if iszero(mul(percentage, iszero(gt(x, div(sub(MAX_UINT256, y), PERCENTAGE_FACTOR))))) {
-                revert(0, 0)
-            }
+            if iszero(mul(percentage, iszero(gt(x, div(sub(MAX_UINT256, y), PERCENTAGE_FACTOR))))) { revert(0, 0) }
 
             y := div(add(mul(PERCENTAGE_FACTOR, x), y), percentage)
         }
@@ -181,11 +167,7 @@ library PercentageMath {
     /// @param y The second value, with a weight of percentage.
     /// @param percentage The weight of y, and complement of the weight of x (in bps).
     /// @return z The result of the bps-based weighted average.
-    function weightedAvg(
-        uint256 x,
-        uint256 y,
-        uint256 percentage
-    ) internal pure returns (uint256 z) {
+    function weightedAvg(uint256 x, uint256 y, uint256 percentage) internal pure returns (uint256 z) {
         // 1. Underflow if
         //        percentage > PERCENTAGE_FACTOR
         // 2. Overflow if
@@ -204,9 +186,7 @@ library PercentageMath {
                     mul(percentage, gt(y, div(MAX_UINT256_MINUS_HALF_PERCENTAGE_FACTOR, percentage))),
                     mul(z, gt(x, div(sub(MAX_UINT256_MINUS_HALF_PERCENTAGE_FACTOR, mul(y, percentage)), z)))
                 )
-            ) {
-                revert(0, 0)
-            }
+            ) { revert(0, 0) }
 
             z := div(add(add(mul(x, z), mul(y, percentage)), HALF_PERCENTAGE_FACTOR), PERCENTAGE_FACTOR)
         }
