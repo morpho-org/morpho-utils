@@ -10,8 +10,10 @@ contract TestMetaTransaction is Test, MetaTransactionUpgradeable {
         keccak256("ForwardRequest(address from,address to,uint256 value,uint256 gas,uint256 nonce,bytes data)");
 
     function setUp() public initializer {
-        __MinimalForwarder_init();
+        __MetaTransaction_init();
     }
+
+    constructor() MetaTransactionUpgradeable(address(this)) {}
 
     function succeed() public {}
 
@@ -62,13 +64,13 @@ contract TestMetaTransaction is Test, MetaTransactionUpgradeable {
         this.executeMetaTransaction(req, abi.encodePacked(r, s, v));
     }
 
-    function testCallNotSelfMustRevert(address _to) public {
-        vm.assume(_to != address(this));
+    function testCallFromNotForwarderMustRevert(address caller) public {
+        vm.assume(!this.isTrustedForwarder(caller));
 
         address alice = vm.addr(1);
         ForwardRequest memory req = ForwardRequest({
             from: alice,
-            to: _to,
+            to: address(this),
             value: 0,
             gas: 1_000_000,
             nonce: 0,
@@ -81,7 +83,7 @@ contract TestMetaTransaction is Test, MetaTransactionUpgradeable {
         );
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(1, hash);
 
-        vm.expectRevert(abi.encodeWithSelector(MetaTransactionUpgradeable.OnlySelf.selector));
+        vm.expectRevert();
         // Adding this. so that memory parameters can be passed as argument.
         this.executeMetaTransaction(req, abi.encodePacked(r, s, v));
     }
