@@ -6,7 +6,7 @@ pragma solidity ^0.8.0;
 /// @custom:contact security@morpho.xyz
 /// @notice Optimized version of Aave V3 math library WadRayMath to conduct wad and ray manipulations: https://github.com/aave/aave-v3-core/blob/master/contracts/protocol/libraries/math/WadRayMath.sol
 library WadRayMath {
-    /// CONSTANTS ///
+    /* CONSTANTS */
 
     // Only direct number constants and references to such constants are supported by inline assembly.
     uint256 internal constant WAD = 1e18;
@@ -17,13 +17,13 @@ library WadRayMath {
     uint256 internal constant RAY_MINUS_ONE = 1e27 - 1;
     uint256 internal constant RAY_WAD_RATIO = 1e9;
     uint256 internal constant HALF_RAY_WAD_RATIO = 0.5e9;
-    uint256 internal constant MAX_UINT256 = 2 ** 256 - 1;
-    uint256 internal constant MAX_UINT256_MINUS_HALF_WAD = 2 ** 256 - 1 - 0.5e18;
-    uint256 internal constant MAX_UINT256_MINUS_HALF_RAY = 2 ** 256 - 1 - 0.5e27;
-    uint256 internal constant MAX_UINT256_MINUS_WAD_MINUS_ONE = 2 ** 256 - 1 - (1e18 - 1);
-    uint256 internal constant MAX_UINT256_MINUS_RAY_MINUS_ONE = 2 ** 256 - 1 - (1e27 - 1);
+    uint256 internal constant MAX_UINT256 = 2**256 - 1;
+    uint256 internal constant MAX_UINT256_MINUS_HALF_WAD = 2**256 - 1 - 0.5e18;
+    uint256 internal constant MAX_UINT256_MINUS_HALF_RAY = 2**256 - 1 - 0.5e27;
+    uint256 internal constant MAX_UINT256_MINUS_WAD_MINUS_ONE = 2**256 - 1 - (1e18 - 1);
+    uint256 internal constant MAX_UINT256_MINUS_RAY_MINUS_ONE = 2**256 - 1 - (1e27 - 1);
 
-    /// INTERNAL ///
+    /* INTERNAL */
 
     /// @dev Executes the wad-based multiplication of 2 numbers, rounded half up.
     /// @param x Wad.
@@ -35,7 +35,9 @@ library WadRayMath {
         // <=> x * y > type(uint256).max - HALF_WAD
         // <=> y > 0 and x > (type(uint256).max - HALF_WAD) / y
         assembly {
-            if mul(y, gt(x, div(MAX_UINT256_MINUS_HALF_WAD, y))) { revert(0, 0) }
+            if mul(y, gt(x, div(MAX_UINT256_MINUS_HALF_WAD, y))) {
+                revert(0, 0)
+            }
 
             z := div(add(mul(x, y), HALF_WAD), WAD)
         }
@@ -50,7 +52,9 @@ library WadRayMath {
         //     x * y > type(uint256).max
         // <=> y > 0 and x > type(uint256).max / y
         assembly {
-            if mul(y, gt(x, div(MAX_UINT256, y))) { revert(0, 0) }
+            if mul(y, gt(x, div(MAX_UINT256, y))) {
+                revert(0, 0)
+            }
 
             z := div(mul(x, y), WAD)
         }
@@ -66,7 +70,9 @@ library WadRayMath {
         // <=> x * y > type(uint256).max - WAD_MINUS_ONE
         // <=> y > 0 and x > (type(uint256).max - WAD_MINUS_ONE) / y
         assembly {
-            if mul(y, gt(x, div(MAX_UINT256_MINUS_WAD_MINUS_ONE, y))) { revert(0, 0) }
+            if mul(y, gt(x, div(MAX_UINT256_MINUS_WAD_MINUS_ONE, y))) {
+                revert(0, 0)
+            }
 
             z := div(add(mul(x, y), WAD_MINUS_ONE), WAD)
         }
@@ -86,7 +92,9 @@ library WadRayMath {
         assembly {
             z := div(y, 2) // Temporary assignment to save gas.
 
-            if iszero(mul(y, iszero(gt(x, div(sub(MAX_UINT256, z), WAD))))) { revert(0, 0) }
+            if iszero(mul(y, iszero(gt(x, div(sub(MAX_UINT256, z), WAD))))) {
+                revert(0, 0)
+            }
 
             z := div(add(mul(WAD, x), z), y)
         }
@@ -103,7 +111,9 @@ library WadRayMath {
         //        x * WAD > type(uint256).max
         //    <=> x > type(uint256).max / WAD
         assembly {
-            if iszero(mul(y, lt(x, add(div(MAX_UINT256, WAD), 1)))) { revert(0, 0) }
+            if iszero(mul(y, lt(x, add(div(MAX_UINT256, WAD), 1)))) {
+                revert(0, 0)
+            }
 
             z := div(mul(WAD, x), y)
         }
@@ -123,7 +133,9 @@ library WadRayMath {
         assembly {
             z := sub(y, 1) // Temporary assignment to save gas.
 
-            if iszero(mul(y, iszero(gt(x, div(sub(MAX_UINT256, z), WAD))))) { revert(0, 0) }
+            if iszero(mul(y, iszero(gt(x, div(sub(MAX_UINT256, z), WAD))))) {
+                revert(0, 0)
+            }
 
             z := div(add(mul(WAD, x), z), y)
         }
@@ -139,7 +151,9 @@ library WadRayMath {
         // <=> x * y > type(uint256).max - HALF_RAY
         // <=> y > 0 and x > (type(uint256).max - HALF_RAY) / y
         assembly {
-            if mul(y, gt(x, div(MAX_UINT256_MINUS_HALF_RAY, y))) { revert(0, 0) }
+            if mul(y, gt(x, div(MAX_UINT256_MINUS_HALF_RAY, y))) {
+                revert(0, 0)
+            }
 
             z := div(add(mul(x, y), HALF_RAY), RAY)
         }
@@ -154,7 +168,9 @@ library WadRayMath {
         //     x * y > type(uint256).max
         // <=> y > 0 and x > type(uint256).max / y
         assembly {
-            if mul(y, gt(x, div(MAX_UINT256, y))) { revert(0, 0) }
+            if mul(y, gt(x, div(MAX_UINT256, y))) {
+                revert(0, 0)
+            }
 
             z := div(mul(x, y), RAY)
         }
@@ -170,7 +186,9 @@ library WadRayMath {
         // <=> x * y > type(uint256).max - RAY_MINUS_ONE
         // <=> y > 0 and x > (type(uint256).max - RAY_MINUS_ONE) / y
         assembly {
-            if mul(y, gt(x, div(MAX_UINT256_MINUS_RAY_MINUS_ONE, y))) { revert(0, 0) }
+            if mul(y, gt(x, div(MAX_UINT256_MINUS_RAY_MINUS_ONE, y))) {
+                revert(0, 0)
+            }
 
             z := div(add(mul(x, y), RAY_MINUS_ONE), RAY)
         }
@@ -190,7 +208,9 @@ library WadRayMath {
         assembly {
             z := div(y, 2) // Temporary assignment to save gas.
 
-            if iszero(mul(y, iszero(gt(x, div(sub(MAX_UINT256, z), RAY))))) { revert(0, 0) }
+            if iszero(mul(y, iszero(gt(x, div(sub(MAX_UINT256, z), RAY))))) {
+                revert(0, 0)
+            }
 
             z := div(add(mul(RAY, x), z), y)
         }
@@ -207,7 +227,9 @@ library WadRayMath {
         //        x * RAY > type(uint256).max
         //    <=> x > type(uint256).max / RAY
         assembly {
-            if iszero(mul(y, lt(x, add(div(MAX_UINT256, RAY), 1)))) { revert(0, 0) }
+            if iszero(mul(y, lt(x, add(div(MAX_UINT256, RAY), 1)))) {
+                revert(0, 0)
+            }
 
             z := div(mul(RAY, x), y)
         }
@@ -227,7 +249,9 @@ library WadRayMath {
         assembly {
             z := sub(y, 1) // Temporary assignment to save gas.
 
-            if iszero(mul(y, iszero(gt(x, div(sub(MAX_UINT256, z), RAY))))) { revert(0, 0) }
+            if iszero(mul(y, iszero(gt(x, div(sub(MAX_UINT256, z), RAY))))) {
+                revert(0, 0)
+            }
 
             z := div(add(mul(RAY, x), z), y)
         }
@@ -251,7 +275,9 @@ library WadRayMath {
         //     x * RAY_WAD_RATIO > type(uint256).max
         // <=> x > type(uint256).max / RAY_WAD_RATIO
         assembly {
-            if gt(x, div(MAX_UINT256, RAY_WAD_RATIO)) { revert(0, 0) }
+            if gt(x, div(MAX_UINT256, RAY_WAD_RATIO)) {
+                revert(0, 0)
+            }
 
             y := mul(x, RAY_WAD_RATIO)
         }
@@ -262,7 +288,11 @@ library WadRayMath {
     /// @param y The second value, with a weight of weight.
     /// @param weight The weight of y, and complement of the weight of x (in wad).
     /// @return z The result of the wad-based weighted average.
-    function wadWeightedAvg(uint256 x, uint256 y, uint256 weight) internal pure returns (uint256 z) {
+    function wadWeightedAvg(
+        uint256 x,
+        uint256 y,
+        uint256 weight
+    ) internal pure returns (uint256 z) {
         // 1. Underflow if
         //        weight > WAD
         // 2. Overflow if
@@ -281,7 +311,9 @@ library WadRayMath {
                     mul(weight, gt(y, div(MAX_UINT256_MINUS_HALF_WAD, weight))),
                     mul(z, gt(x, div(sub(MAX_UINT256_MINUS_HALF_WAD, mul(y, weight)), z)))
                 )
-            ) { revert(0, 0) }
+            ) {
+                revert(0, 0)
+            }
 
             z := div(add(add(mul(x, z), mul(y, weight)), HALF_WAD), WAD)
         }
@@ -292,7 +324,11 @@ library WadRayMath {
     /// @param y The second value, with a weight of weight.
     /// @param weight The weight of y, and complement of the weight of x (in ray).
     /// @return z The result of the ray-based weighted average.
-    function rayWeightedAvg(uint256 x, uint256 y, uint256 weight) internal pure returns (uint256 z) {
+    function rayWeightedAvg(
+        uint256 x,
+        uint256 y,
+        uint256 weight
+    ) internal pure returns (uint256 z) {
         // 1. Underflow if
         //        weight > RAY
         // 2. Overflow if
@@ -311,7 +347,9 @@ library WadRayMath {
                     mul(weight, gt(y, div(MAX_UINT256_MINUS_HALF_RAY, weight))),
                     mul(z, gt(x, div(sub(MAX_UINT256_MINUS_HALF_RAY, mul(y, weight)), z)))
                 )
-            ) { revert(0, 0) }
+            ) {
+                revert(0, 0)
+            }
 
             z := div(add(add(mul(x, z), mul(y, weight)), HALF_RAY), RAY)
         }
