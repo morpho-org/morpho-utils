@@ -6,7 +6,7 @@ pragma solidity ^0.8.0;
 /// @custom:contact security@morpho.xyz
 /// @notice Optimized version of Aave V3 math library PercentageMath to conduct percentage manipulations: https://github.com/aave/aave-v3-core/blob/master/contracts/protocol/libraries/math/PercentageMath.sol
 library PercentageMath {
-    ///	CONSTANTS ///
+    /* CONSTANTS */
 
     // Only direct number constants and references to such constants are supported by inline assembly.
     uint256 internal constant PERCENTAGE_FACTOR = 100_00;
@@ -16,7 +16,7 @@ library PercentageMath {
     uint256 internal constant MAX_UINT256_MINUS_HALF_PERCENTAGE_FACTOR = 2 ** 256 - 1 - 50_00;
     uint256 internal constant MAX_UINT256_MINUS_PERCENTAGE_FACTOR_MINUS_ONE = 2 ** 256 - 1 - (100_00 - 1);
 
-    /// INTERNAL ///
+    /* INTERNAL */
 
     /// @notice Executes the bps-based percentage addition (x * (1 + p)), rounded half up.
     /// @param x The value to which to add the percentage.

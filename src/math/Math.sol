@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
+/// @title Math Library.
+/// @author Morpho Labs.
+/// @custom:contact security@morpho.xyz
+/// @dev Library to perform simple math manipulations.
 library Math {
     function min(uint256 x, uint256 y) internal pure returns (uint256 z) {
         assembly {

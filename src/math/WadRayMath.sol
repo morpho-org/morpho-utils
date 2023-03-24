@@ -6,7 +6,7 @@ pragma solidity ^0.8.0;
 /// @custom:contact security@morpho.xyz
 /// @notice Optimized version of Aave V3 math library WadRayMath to conduct wad and ray manipulations: https://github.com/aave/aave-v3-core/blob/master/contracts/protocol/libraries/math/WadRayMath.sol
 library WadRayMath {
-    /// CONSTANTS ///
+    /* CONSTANTS */
 
     // Only direct number constants and references to such constants are supported by inline assembly.
     uint256 internal constant WAD = 1e18;
@@ -23,7 +23,7 @@ library WadRayMath {
     uint256 internal constant MAX_UINT256_MINUS_WAD_MINUS_ONE = 2 ** 256 - 1 - (1e18 - 1);
     uint256 internal constant MAX_UINT256_MINUS_RAY_MINUS_ONE = 2 ** 256 - 1 - (1e27 - 1);
 
-    /// INTERNAL ///
+    /* INTERNAL */
 
     /// @dev Executes the wad-based multiplication of 2 numbers, rounded half up.
     /// @param x Wad.

@@ -6,14 +6,17 @@ pragma solidity ^0.8.0;
 /// @custom:contact security@morpho.xyz
 /// @dev Low-level YUL delegate call library.
 library DelegateCall {
-    /// ERRORS ///
+    /* ERRORS */
 
     /// @notice Thrown when a low delegate call has failed without error message.
     error LowLevelDelegateCallFailed();
 
-    bytes4 constant LowLevelDelegateCallFailedError = 0x06f7035e; // bytes4(keccak256("LowLevelDelegateCallFailed()"))
+    /* CONSTANTS */
 
-    /// INTERNAL ///
+    /// @notice The signature of the `LowLevelDelegateCallFailed` error ie bytes4(keccak256("LowLevelDelegateCallFailed()")).
+    bytes4 constant LowLevelDelegateCallFailedError = 0x06f7035e;
+
+    /* INTERNAL */
 
     /// @dev Performs a low-level delegate call to the `_target` contract.
     /// @dev Note: Unlike the OZ's library this function does not check if the `_target` is a contract. It is the responsibility of the caller to ensure that the `_target` is a contract.
