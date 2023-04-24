@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "forge-std/Vm.sol";
 import "forge-std/Test.sol";
 import "src/DelegateCall.sol";
-import "openzeppelin-contracts/contracts/utils/Address.sol";
+import "openzeppelin-contracts/utils/Address.sol";
 
 contract Caller {
     using DelegateCall for address;
