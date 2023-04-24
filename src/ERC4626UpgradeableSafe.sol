@@ -5,7 +5,7 @@ import {
     ERC4626Upgradeable,
     ERC20Upgradeable,
     IERC20MetadataUpgradeable
-} from "openzeppelin-upgradeable/contracts/token/ERC20/extensions/ERC4626Upgradeable.sol";
+} from "openzeppelin-upgradeable/token/ERC20/extensions/ERC4626Upgradeable.sol";
 
 /// @title ERC4626UpgradeableSafe.
 /// @author Morpho Labs.
