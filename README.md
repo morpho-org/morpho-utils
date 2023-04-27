@@ -28,6 +28,12 @@ You're good to go! Just import libraries with `@morpho-utils/math/Math.sol` for 
 
 ---
 
+## Known Issues
+
+Please be aware that some [known issues](./ISSUES.md) are inherent to the way some libraries work in this repository.
+
+---
+
 ## Development
 
 After cloning this repository, run:
