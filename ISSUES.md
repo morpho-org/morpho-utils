@@ -22,6 +22,14 @@ $\forall x,y, \forall \mu,\nu, (x.mul(\mu) + y.mul(\nu)).div(\mu + \nu) = x.mul(
 for values:
 $x < 10^{18}, \mu < 10^{18 - \log10(x)}$ and $y < 10^{18}, \nu < 10^{18 - \log10(y)}$
 
+### Example
+
+$x = 10, y = 10, \mu = 10^{16}, \nu = 10^{16}$
+
+$(x.mul(\mu) + y.mul(\nu)).div(\mu + \nu) = 0 + 0 = 0$
+
+$x.mul(\mu.div(\mu + \nu)) + y.mul(\nu.div(\mu + \nu)) = 10.mul(0.5e18) + 10.mul(0.5e18) = 5 + 5 = 10$
+
 ### Proof
 
 Because $x \times \mu < 10^{18}$ and $y \times \nu < 10^{18}$ which leads the operation `mul` to truncate to 0
