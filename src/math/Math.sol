@@ -6,6 +6,10 @@ pragma solidity ^0.8.0;
 /// @custom:contact security@morpho.xyz
 /// @dev Library to perform simple math manipulations.
 library Math {
+    function abs(int256 x) internal pure returns (int256) {
+        return x >= 0 ? x : (x == -2 ** 255 ? type(int256).max : -x);
+    }
+
     function min(uint256 x, uint256 y) internal pure returns (uint256 z) {
         assembly {
             z := xor(x, mul(xor(x, y), lt(y, x)))

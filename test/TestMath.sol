@@ -16,6 +16,10 @@ contract TestMath is Test {
 
     /// TESTS ///
 
+    function testAbs(int256 x) public {
+        assertEq(mock.abs(x), ref.abs(x));
+    }
+
     function testMin(uint256 x, uint256 y) public {
         assertEq(mock.min(x, y), ref.min(x, y));
     }
