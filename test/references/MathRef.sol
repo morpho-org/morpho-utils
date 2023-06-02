@@ -6,6 +6,12 @@ contract MathRef {
         return x >= 0 ? x : (x == -2 ** 255 ? type(int256).max : -x);
     }
 
+    function safeAbs(int256 x) external pure returns (int256) {
+        require(x != -2 ** 255);
+
+        return x >= 0 ? x : -x;
+    }
+
     function min(uint256 x, uint256 y) external pure returns (uint256) {
         return x < y ? x : y;
     }

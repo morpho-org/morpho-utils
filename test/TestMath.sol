@@ -20,6 +20,17 @@ contract TestMath is Test {
         assertEq(mock.abs(x), ref.abs(x));
     }
 
+    function testSafeAbs(int256 x) public {
+        vm.assume(x != type(int256).min);
+
+        assertEq(mock.safeAbs(x), ref.safeAbs(x));
+    }
+
+    function testSafeAbsMinInt256() public {
+        vm.expectRevert();
+        mock.safeAbs(type(int256).min);
+    }
+
     function testMin(uint256 x, uint256 y) public {
         assertEq(mock.min(x, y), ref.min(x, y));
     }
