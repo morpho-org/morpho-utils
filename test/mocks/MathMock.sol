@@ -4,6 +4,14 @@ pragma solidity ^0.8.0;
 import {Math} from "src/math/Math.sol";
 
 contract MathMock {
+    function minInt() public pure returns (int256) {
+        return -2 ** 255;
+    }
+
+    function maxInt() public pure returns (int256) {
+        return 2 ** 255 - 1;
+    }
+
     function abs(int256 x) public pure returns (int256) {
         return Math.abs(x);
     }
