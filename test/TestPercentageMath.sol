@@ -46,6 +46,10 @@ contract TestPercentageMath is Test {
         assertEq(mock.percentSub(x, p), ref.percentSub(x, p));
     }
 
+    function testFuzzFindingPercentSub() public {
+        testPercentSub(115792089237316195423570985008687907853269984665640564039457584007913129639904, 9999);
+    }
+
     function testPercentSubZero(uint256 x) public {
         vm.assume(x <= type(uint256).max / PERCENTAGE_FACTOR);
 
