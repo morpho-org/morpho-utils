@@ -1,6 +1,6 @@
 methods {
-    mul(uint256, uint256)   returns (uint256)   envfree
-    div(uint256, uint256)   returns (uint256)   envfree
+    function mul(uint256, uint256)   external returns (uint256)   envfree;
+    function div(uint256, uint256)   external returns (uint256)   envfree;
 }
 
 definition WAD()  returns uint = 10^18;
@@ -10,7 +10,7 @@ definition WAD()  returns uint = 10^18;
 rule mulSafety(uint256 x, uint256 y) {
     uint res = mul(x, y);
 
-    assert res == x * y / WAD(); 
+    assert to_mathint(res) == x * y / WAD();
 }
 
 rule mulLiveness(uint256 x, uint256 y) {
@@ -24,7 +24,7 @@ rule mulLiveness(uint256 x, uint256 y) {
 rule divSafety(uint256 x, uint256 y) {
     uint res = div(x, y);
 
-    assert res == x * WAD() / y; 
+    assert to_mathint(res) == x * WAD() / y;
 }
 
 rule divLiveness(uint256 x, uint256 y) {

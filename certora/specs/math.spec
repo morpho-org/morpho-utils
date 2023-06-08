@@ -1,9 +1,9 @@
 
 methods {
-    min(uint256, uint256)           returns (uint256)       envfree
-    max(uint256, uint256)           returns (uint256)       envfree
-    zeroFloorSub(uint256, uint256)  returns (uint256)       envfree
-    divUp(uint256, uint256)         returns (uint256)       envfree
+    function min(uint256, uint256)           external returns (uint256)       envfree;
+    function max(uint256, uint256)           external returns (uint256)       envfree;
+    function zeroFloorSub(uint256, uint256)  external returns (uint256)       envfree;
+    function divUp(uint256, uint256)         external returns (uint256)       envfree;
 }
 
 /// min ///
@@ -41,7 +41,7 @@ rule maxLiveness(uint256 a, uint256 b) {
 rule zeroFloorSubSafety(uint256 a, uint256 b) {
     uint res = zeroFloorSub(a, b);
 
-    assert a >= b => res == a - b;
+    assert a >= b => to_mathint(res) == a - b;
     assert a < b => res == 0;
 }
 
@@ -56,12 +56,12 @@ rule zeroFloorSubLiveness(uint256 a, uint256 b) {
 rule divUpSafety(uint256 a, uint256 b) {
     uint res = divUp(a, b);
 
-    assert a % b == 0 => res == a / b;
-    assert a % b != 0 => res == a / b + 1;
+    assert a % b == 0 => to_mathint(res) == a / b;
+    assert a % b != 0 => to_mathint(res) == a / b + 1;
 }
 
 rule divUpLiveness(uint256 a, uint256 b) {
     divUp@withrevert(a, b);
-    
+
     assert lastReverted <=> b == 0;
 }
