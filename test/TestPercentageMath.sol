@@ -9,6 +9,9 @@ contract TestPercentageMath is Test {
     uint256 internal constant PERCENTAGE_FACTOR = 100_00;
     uint256 internal constant HALF_PERCENTAGE_FACTOR = 50_00;
 
+    uint256 internal constant MAX_UINT256_PERCENT_UP = type(uint256).max - PERCENTAGE_FACTOR - 1;
+    uint256 internal constant MAX_UINT256_PERCENT_HALF_UP = type(uint256).max - HALF_PERCENTAGE_FACTOR;
+
     PercentageMathMock mock;
     PercentageMathRef ref;
 
@@ -21,19 +24,19 @@ contract TestPercentageMath is Test {
 
     function testPercentAdd(uint256 x, uint256 p) public {
         vm.assume(p <= type(uint256).max - PERCENTAGE_FACTOR);
-        vm.assume(x <= type(uint256).max / (PERCENTAGE_FACTOR + p));
+        vm.assume(x <= MAX_UINT256_PERCENT_HALF_UP / (PERCENTAGE_FACTOR + p));
 
         assertEq(mock.percentAdd(x, p), ref.percentAdd(x, p));
     }
 
     function testPercentAddZero(uint256 x) public {
-        vm.assume(x <= type(uint256).max / PERCENTAGE_FACTOR);
+        vm.assume(x <= MAX_UINT256_PERCENT_HALF_UP / PERCENTAGE_FACTOR);
 
         assertEq(mock.percentAdd(x, 0), x);
     }
 
     function testPercentAddOverflow(uint256 x, uint256 p) public {
-        vm.assume(p > type(uint256).max - PERCENTAGE_FACTOR);
+        vm.assume(p > type(uint256).max - PERCENTAGE_FACTOR || x > MAX_UINT256_PERCENT_HALF_UP);
 
         vm.expectRevert();
         mock.percentAdd(x, p);
@@ -41,13 +44,13 @@ contract TestPercentageMath is Test {
 
     function testPercentSub(uint256 x, uint256 p) public {
         vm.assume(p <= PERCENTAGE_FACTOR);
-        vm.assume(p == PERCENTAGE_FACTOR || x <= type(uint256).max / (PERCENTAGE_FACTOR - p));
+        vm.assume(p == PERCENTAGE_FACTOR || x <= MAX_UINT256_PERCENT_HALF_UP / (PERCENTAGE_FACTOR - p));
 
         assertEq(mock.percentSub(x, p), ref.percentSub(x, p));
     }
 
     function testPercentSubZero(uint256 x) public {
-        vm.assume(x <= type(uint256).max / PERCENTAGE_FACTOR);
+        vm.assume(x <= MAX_UINT256_PERCENT_HALF_UP / PERCENTAGE_FACTOR);
 
         assertEq(mock.percentSub(x, 0), x);
     }
@@ -65,20 +68,20 @@ contract TestPercentageMath is Test {
 
     function testPercentSubOverflow(uint256 x, uint256 p) public {
         vm.assume(p <= PERCENTAGE_FACTOR);
-        vm.assume(p != PERCENTAGE_FACTOR && x > type(uint256).max / (PERCENTAGE_FACTOR - p));
+        vm.assume(p != PERCENTAGE_FACTOR && x > MAX_UINT256_PERCENT_HALF_UP / (PERCENTAGE_FACTOR - p));
 
         vm.expectRevert();
         mock.percentSub(x, p);
     }
 
     function testPercentMul(uint256 x, uint256 p) public {
-        vm.assume(p == 0 || x <= (type(uint256).max - HALF_PERCENTAGE_FACTOR) / p);
+        vm.assume(p == 0 || x <= MAX_UINT256_PERCENT_HALF_UP / p);
 
         assertEq(mock.percentMul(x, p), ref.percentMul(x, p));
     }
 
     function testPercentMulOverflow(uint256 x, uint256 p) public {
-        vm.assume(p > 0 && x > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / p);
+        vm.assume(p > 0 && x > MAX_UINT256_PERCENT_HALF_UP / p);
 
         vm.expectRevert();
         mock.percentMul(x, p);
@@ -106,13 +109,13 @@ contract TestPercentageMath is Test {
     }
 
     function testPercentMulUpRef(uint256 x, uint256 y) public {
-        vm.assume(y == 0 || x <= (type(uint256).max - PERCENTAGE_FACTOR - 1) / y);
+        vm.assume(y == 0 || x <= MAX_UINT256_PERCENT_UP / y);
 
         assertEq(mock.percentMulUp(x, y), ref.percentMulUp(x, y));
     }
 
     function testPercentMulUpOverflow(uint256 x, uint256 y) public {
-        vm.assume(y > 0 && x > (type(uint256).max - PERCENTAGE_FACTOR - 1) / y);
+        vm.assume(y > 0 && x > MAX_UINT256_PERCENT_UP / y);
 
         vm.expectRevert();
         mock.percentMulUp(x, y);
@@ -182,7 +185,7 @@ contract TestPercentageMath is Test {
 
     function testWeightedAvg(uint256 x, uint256 y, uint16 percentage) public {
         vm.assume(percentage <= PERCENTAGE_FACTOR);
-        vm.assume(percentage == 0 || y <= (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage);
+        vm.assume(percentage == 0 || y <= MAX_UINT256_PERCENT_HALF_UP / percentage);
         vm.assume(
             PERCENTAGE_FACTOR - percentage == 0
                 || x <= (type(uint256).max - y * percentage - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
@@ -194,7 +197,7 @@ contract TestPercentageMath is Test {
     function testWeightedAvgOverflow(uint256 x, uint256 y, uint256 percentage) public {
         vm.assume(percentage <= PERCENTAGE_FACTOR);
         vm.assume(
-            (percentage != 0 && y > (type(uint256).max - HALF_PERCENTAGE_FACTOR) / percentage)
+            (percentage != 0 && y > MAX_UINT256_PERCENT_HALF_UP / percentage)
                 || (
                     (PERCENTAGE_FACTOR - percentage) != 0
                         && x > (type(uint256).max - y * percentage - HALF_PERCENTAGE_FACTOR) / (PERCENTAGE_FACTOR - percentage)
