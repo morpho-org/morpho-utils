@@ -21,6 +21,7 @@ abstract contract ERC4626UpgradeableSafe is ERC4626Upgradeable {
 
     /* INITIALIZER */
 
+    /// @dev Initializes the ERC4626 vault with the given name, symbol and decimals and mints `initialDeposit` shares to the given recipient.
     function __ERC4626UpgradeableSafe_init(IERC20MetadataUpgradeable asset, uint256 initialDeposit, address recipient)
         internal
         onlyInitializing
@@ -29,6 +30,7 @@ abstract contract ERC4626UpgradeableSafe is ERC4626Upgradeable {
         __ERC4626UpgradeableSafe_init_unchained(initialDeposit, recipient);
     }
 
+    /// @dev Mints `initialDeposit` shares to recipient, to prevent inflation attacks.
     function __ERC4626UpgradeableSafe_init_unchained(uint256 initialDeposit, address recipient)
         internal
         onlyInitializing
