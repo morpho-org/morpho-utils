@@ -1,7 +1,5 @@
 
 methods {
-    function minInt() external returns (int256) envfree;
-    function maxInt() external returns (int256) envfree;
     function abs(int256) external returns (int256) envfree;
     function safeAbs(int256) external returns (int256) envfree;
     function min(uint256, uint256) external returns (uint256) envfree;
@@ -11,13 +9,15 @@ methods {
 }
 
 /// abs ///
+definition MIN_INT256() returns int256 = -2^255;
+definition MAX_INT256() returns int256 = 2^255-1;
 
 rule absSafety(int256 a) {
     int256 res = abs(a);
 
     assert a >= 0 => res == a;
-    assert a < 0 && a > minInt() => to_mathint(res) == -a;
-    assert a == minInt() => res == maxInt();
+    assert a < 0 && a > MIN_INT256() => to_mathint(res) == -a;
+    assert a == MIN_INT256() => res == MAX_INT256();
 }
 
 rule absLiveness(int256 a) {
@@ -38,7 +38,7 @@ rule safeAbsSafety(int256 a) {
 rule safeAbsLiveness(int256 a) {
     safeAbs@withrevert(a);
 
-    assert lastReverted <=> a == minInt();
+    assert lastReverted <=> a == MIN_INT256();
 }
 
 /// min ///
