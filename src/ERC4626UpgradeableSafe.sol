@@ -21,20 +21,25 @@ abstract contract ERC4626UpgradeableSafe is ERC4626Upgradeable {
 
     /* INITIALIZER */
 
-    function __ERC4626UpgradeableSafe_init(IERC20MetadataUpgradeable asset, uint256 initialDeposit)
+    /// @dev Initializes the ERC4626 vault with the given name, symbol and decimals and mints `initialDeposit` shares to the given recipient.
+    function __ERC4626UpgradeableSafe_init(IERC20MetadataUpgradeable asset, uint256 initialDeposit, address recipient)
         internal
         onlyInitializing
     {
         __ERC4626_init_unchained(asset);
-        __ERC4626UpgradeableSafe_init_unchained(initialDeposit);
+        __ERC4626UpgradeableSafe_init_unchained(initialDeposit, recipient);
     }
 
-    function __ERC4626UpgradeableSafe_init_unchained(uint256 initialDeposit) internal onlyInitializing {
+    /// @dev Mints `initialDeposit` shares to recipient, to prevent inflation attacks.
+    function __ERC4626UpgradeableSafe_init_unchained(uint256 initialDeposit, address recipient)
+        internal
+        onlyInitializing
+    {
         // Sacrifice an initial seed of shares to ensure a healthy amount of precision in minting shares.
         // Set to 0 at your own risk.
         // Caller must have approved the asset to this contract's address.
         // See: https://github.com/Rari-Capital/solmate/issues/178
-        if (initialDeposit > 0) deposit(initialDeposit, address(this));
+        if (initialDeposit > 0) deposit(initialDeposit, recipient);
     }
 
     /// @dev This empty reserved space is put in place to allow future versions to add new

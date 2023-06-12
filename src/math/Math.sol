@@ -6,14 +6,19 @@ pragma solidity ^0.8.0;
 /// @custom:contact security@morpho.xyz
 /// @dev Library to perform simple math manipulations.
 library Math {
-    function abs(int256 x) internal pure returns (int256 y) {
-        if (x == type(int256).min) return type(int256).max;
+    /* CONSTANTS */
+    // Only direct number constants and references to such constants are supported by inline assembly.
 
+    int256 internal constant MIN_INT256 = -2 ** 255;
+
+    function abs(int256 x) internal pure returns (int256 y) {
         assembly {
             let mask := sar(255, x)
-            y := xor(add(x, mask), mask)
+            y := xor(add(x, mask), mul(mask, iszero(eq(x, MIN_INT256))))
         }
     }
+
+    /* INTERNAL */
 
     function safeAbs(int256 x) internal pure returns (int256 y) {
         require(x != type(int256).min);

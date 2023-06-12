@@ -5,4 +5,3 @@ certoraRun \
     --verify WadRayMathMock:certora/specs/wadRayMath.spec \
     --msg "WadRayMath" \
     $@
-
