@@ -7,8 +7,8 @@ pragma solidity ^0.8.0;
 /// @dev Library to perform Compound's multiplication and division in an efficient way.
 library CompoundMath {
     /* CONSTANTS */
-
     // Only direct number constants and references to such constants are supported by inline assembly.
+
     uint256 internal constant WAD = 1e18;
     uint256 internal constant MAX_UINT256 = 2 ** 256 - 1;
 

@@ -7,8 +7,8 @@ pragma solidity ^0.8.0;
 /// @dev Library to perform simple math manipulations.
 library Math {
     /* CONSTANTS */
-
     // Only direct number constants and references to such constants are supported by inline assembly.
+
     int256 internal constant MIN_INT256 = -2 ** 255;
 
     function abs(int256 x) internal pure returns (int256 y) {
@@ -17,6 +17,8 @@ library Math {
             y := xor(add(x, mask), mul(mask, iszero(eq(x, MIN_INT256))))
         }
     }
+
+    /* INTERNAL */
 
     function safeAbs(int256 x) internal pure returns (int256 y) {
         require(x != type(int256).min);

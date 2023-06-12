@@ -7,8 +7,8 @@ pragma solidity ^0.8.0;
 /// @notice Optimized version of Aave V3 math library WadRayMath to conduct wad and ray manipulations: https://github.com/aave/aave-v3-core/blob/master/contracts/protocol/libraries/math/WadRayMath.sol
 library WadRayMath {
     /* CONSTANTS */
-
     // Only direct number constants and references to such constants are supported by inline assembly.
+
     uint256 internal constant WAD = 1e18;
     uint256 internal constant HALF_WAD = 0.5e18;
     uint256 internal constant WAD_MINUS_ONE = 1e18 - 1;
