@@ -1,19 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
+import "./MathConstants.sol";
+
 /// @title Compound Math Library.
 /// @author Morpho Labs.
 /// @custom:contact security@morpho.xyz
 /// @dev Library to perform Compound's multiplication and division in an efficient way.
 library CompoundMath {
-    /* CONSTANTS */
-    // Only direct number constants and references to such constants are supported by inline assembly.
-
-    uint256 internal constant WAD = 1e18;
-    uint256 internal constant MAX_UINT256 = 2 ** 256 - 1;
-
-    /* INTERNAL */
-
     function mul(uint256 x, uint256 y) internal pure returns (uint256 z) {
         assembly {
             // Revert if x * y > type(uint256).max

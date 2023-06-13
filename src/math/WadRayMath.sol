@@ -1,30 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
+import "./MathConstants.sol";
+
 /// @title WadRayMath.
 /// @author Morpho Labs.
 /// @custom:contact security@morpho.xyz
 /// @notice Optimized version of Aave V3 math library WadRayMath to conduct wad and ray manipulations: https://github.com/aave/aave-v3-core/blob/master/contracts/protocol/libraries/math/WadRayMath.sol
 library WadRayMath {
-    /* CONSTANTS */
-    // Only direct number constants and references to such constants are supported by inline assembly.
-
-    uint256 internal constant WAD = 1e18;
-    uint256 internal constant HALF_WAD = 0.5e18;
-    uint256 internal constant WAD_MINUS_ONE = 1e18 - 1;
-    uint256 internal constant RAY = 1e27;
-    uint256 internal constant HALF_RAY = 0.5e27;
-    uint256 internal constant RAY_MINUS_ONE = 1e27 - 1;
-    uint256 internal constant RAY_WAD_RATIO = 1e9;
-    uint256 internal constant HALF_RAY_WAD_RATIO = 0.5e9;
-    uint256 internal constant MAX_UINT256 = 2 ** 256 - 1;
-    uint256 internal constant MAX_UINT256_MINUS_HALF_WAD = 2 ** 256 - 1 - 0.5e18;
-    uint256 internal constant MAX_UINT256_MINUS_HALF_RAY = 2 ** 256 - 1 - 0.5e27;
-    uint256 internal constant MAX_UINT256_MINUS_WAD_MINUS_ONE = 2 ** 256 - 1 - (1e18 - 1);
-    uint256 internal constant MAX_UINT256_MINUS_RAY_MINUS_ONE = 2 ** 256 - 1 - (1e27 - 1);
-
-    /* INTERNAL */
-
     /// @dev Executes the wad-based multiplication of 2 numbers, rounded half up.
     /// @param x Wad.
     /// @param y Wad.

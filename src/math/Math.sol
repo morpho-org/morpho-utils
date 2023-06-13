@@ -1,18 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
+import "./MathConstants.sol";
+
 /// @title Math Library.
 /// @author Morpho Labs.
 /// @custom:contact security@morpho.xyz
 /// @dev Library to perform simple math manipulations.
 library Math {
-    /* CONSTANTS */
-    // Only direct number constants and references to such constants are supported by inline assembly.
-
-    int256 internal constant MIN_INT256 = -2 ** 255;
-
-    /* INTERNAL */
-
     function abs(int256 x) internal pure returns (int256 y) {
         assembly {
             let mask := sar(255, x)
