@@ -11,14 +11,14 @@ library Math {
 
     int256 internal constant MIN_INT256 = -2 ** 255;
 
+    /* INTERNAL */
+
     function abs(int256 x) internal pure returns (int256 y) {
         assembly {
             let mask := sar(255, x)
             y := xor(add(x, mask), mul(mask, iszero(eq(x, MIN_INT256))))
         }
     }
-
-    /* INTERNAL */
 
     function safeAbs(int256 x) internal pure returns (int256 y) {
         require(x != type(int256).min);
