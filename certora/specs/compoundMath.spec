@@ -1,9 +1,9 @@
 methods {
-    function mul(uint256, uint256)   external returns (uint256)   envfree;
-    function div(uint256, uint256)   external returns (uint256)   envfree;
+    function mul(uint256, uint256) external returns (uint256) envfree;
+    function div(uint256, uint256) external returns (uint256) envfree;
 }
 
-definition WAD()  returns uint = 10^18;
+definition WAD() returns uint = 10^18;
 definition UINT_LIMIT() returns mathint = 2 ^ 255 * 2;
 
 /// mul ///
