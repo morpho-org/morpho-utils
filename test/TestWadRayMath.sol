@@ -76,6 +76,11 @@ contract TestWadRayMath is Test {
         mock.wadMulUp(x, y);
     }
 
+    function testWadMulUpOverflowBound() public {
+        vm.expectRevert();
+        mock.wadMulUp(MAX_UINT256_WAD_UP + 1, 1);
+    }
+
     function testWadDivRef(uint256 x, uint256 y) public {
         vm.assume(y > 0 && x <= (type(uint256).max - y / 2) / WAD);
 
@@ -183,6 +188,11 @@ contract TestWadRayMath is Test {
 
         vm.expectRevert();
         mock.rayMulUp(x, y);
+    }
+
+    function testRayMulUpOverflowBound() public {
+        vm.expectRevert();
+        mock.rayMulUp(MAX_UINT256_RAY_UP + 1, 1);
     }
 
     function testRayDivRef(uint256 x, uint256 y) public {

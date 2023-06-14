@@ -121,6 +121,11 @@ contract TestPercentageMath is Test {
         mock.percentMulUp(x, y);
     }
 
+    function testPercentMulUpOverflowBound() public {
+        vm.expectRevert();
+        mock.percentMulUp(MAX_UINT256_PERCENT_UP + 1, 1);
+    }
+
     function testPercentDiv(uint256 x, uint256 p) public {
         vm.assume(p > 0 && x <= (type(uint256).max - p / 2) / PERCENTAGE_FACTOR);
 
