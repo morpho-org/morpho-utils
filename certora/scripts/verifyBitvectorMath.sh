@@ -2,7 +2,7 @@
 
 certoraRun \
     test/mocks/MathMock.sol \
-    --verify MathMock:certora/specs/math.spec \
+    --verify MathMock:certora/specs/bitvectorMath.spec \
     --settings -useBitVectorTheory \
     --msg "Math" \
     $@
