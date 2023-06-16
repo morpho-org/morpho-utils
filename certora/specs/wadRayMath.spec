@@ -215,7 +215,7 @@ rule wadToRaySafety(uint256 a) {
 rule wadToRayLiveness(uint256 a) {
     wadToRay@withrevert(a);
 
-    assert lastReverted <=> a * WADTORAY() > UINT_LIMIT();
+    assert lastReverted <=> a * WADTORAY() >= UINT_LIMIT();
 }
 
 /// wadWeightedAvg ///
