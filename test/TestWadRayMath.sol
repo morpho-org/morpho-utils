@@ -13,10 +13,10 @@ contract TestWadRayMath is Test {
     uint256 internal constant RAY_WAD_RATIO = RAY / WAD;
     uint256 internal constant HALF_RAY_WAD_RATIO = RAY_WAD_RATIO / 2;
 
-    uint256 internal constant MAX_UINT256_WAD_UP = type(uint256).max - WAD - 1;
+    uint256 internal constant MAX_UINT256_WAD_UP = type(uint256).max - (WAD - 1);
     uint256 internal constant MAX_UINT256_WAD_HALF_UP = type(uint256).max - HALF_WAD;
 
-    uint256 internal constant MAX_UINT256_RAY_UP = type(uint256).max - RAY - 1;
+    uint256 internal constant MAX_UINT256_RAY_UP = type(uint256).max - (RAY - 1);
     uint256 internal constant MAX_UINT256_RAY_HALF_UP = type(uint256).max - HALF_RAY;
 
     WadRayMathMock mock;
@@ -74,6 +74,11 @@ contract TestWadRayMath is Test {
 
         vm.expectRevert();
         mock.wadMulUp(x, y);
+    }
+
+    function testWadMulUpOverflowBound() public {
+        vm.expectRevert();
+        mock.wadMulUp(MAX_UINT256_WAD_UP + 1, 1);
     }
 
     function testWadDivRef(uint256 x, uint256 y) public {
@@ -183,6 +188,11 @@ contract TestWadRayMath is Test {
 
         vm.expectRevert();
         mock.rayMulUp(x, y);
+    }
+
+    function testRayMulUpOverflowBound() public {
+        vm.expectRevert();
+        mock.rayMulUp(MAX_UINT256_RAY_UP + 1, 1);
     }
 
     function testRayDivRef(uint256 x, uint256 y) public {

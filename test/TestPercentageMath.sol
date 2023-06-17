@@ -9,7 +9,7 @@ contract TestPercentageMath is Test {
     uint256 internal constant PERCENTAGE_FACTOR = 100_00;
     uint256 internal constant HALF_PERCENTAGE_FACTOR = 50_00;
 
-    uint256 internal constant MAX_UINT256_PERCENT_UP = type(uint256).max - PERCENTAGE_FACTOR - 1;
+    uint256 internal constant MAX_UINT256_PERCENT_UP = type(uint256).max - (PERCENTAGE_FACTOR - 1);
     uint256 internal constant MAX_UINT256_PERCENT_HALF_UP = type(uint256).max - HALF_PERCENTAGE_FACTOR;
 
     PercentageMathMock mock;
@@ -119,6 +119,11 @@ contract TestPercentageMath is Test {
 
         vm.expectRevert();
         mock.percentMulUp(x, y);
+    }
+
+    function testPercentMulUpOverflowBound() public {
+        vm.expectRevert();
+        mock.percentMulUp(MAX_UINT256_PERCENT_UP + 1, 1);
     }
 
     function testPercentDiv(uint256 x, uint256 p) public {
