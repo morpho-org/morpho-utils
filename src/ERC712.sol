@@ -1,22 +1,22 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
-import {IEIP712} from "src/interfaces/IEIP712.sol";
+import {IERC712} from "src/interfaces/IERC712.sol";
 
 /// @dev The prefix used for EIP-712 signature.
-string constant EIP712_MSG_PREFIX = "\x19\x01";
+string constant ERC712_MSG_PREFIX = "\x19\x01";
 
 /// @dev The domain typehash used for the EIP-712 signature.
-bytes32 constant EIP712_DOMAIN_TYPEHASH =
-    keccak256("EIP712Domain(string name,uint256 chainId,address verifyingContract)");
+bytes32 constant ERC712_DOMAIN_TYPEHASH =
+    keccak256("ERC712Domain(string name,uint256 chainId,address verifyingContract)");
 
 /// @dev The highest valid value for s in an ECDSA signature pair (0 < s < secp256k1n ÷ 2 + 1).
 uint256 constant MAX_VALID_ECDSA_S = 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5D576E7357A4501DDFE92F46681B20A0;
 
-/// @notice EIP712 helpers.
+/// @notice ERC712 helpers.
 /// @dev Maintains cross-chain replay protection in the event of a fork.
-/// @dev Reference: https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/cryptography/EIP712.sol
-contract EIP712 is IEIP712 {
+/// @dev Reference: https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/cryptography/ERC712.sol
+contract ERC712 is IERC712 {
     /// @dev The reference chainid. Used to check whether the chain forked and offer replay protection.
     uint256 private immutable _CACHED_CHAIN_ID;
 
@@ -38,12 +38,12 @@ contract EIP712 is IEIP712 {
 
     /* PUBLIC */
 
-    /// @inheritdoc IEIP712
+    /// @inheritdoc IERC712
     function DOMAIN_SEPARATOR() public view virtual returns (bytes32) {
         return block.chainid == _CACHED_CHAIN_ID ? _CACHED_DOMAIN_SEPARATOR : _buildDomainSeparator();
     }
 
-    /// @inheritdoc IEIP712
+    /// @inheritdoc IERC712
     function nonce(address user) public view virtual returns (uint256) {
         return _nonces[user];
     }
@@ -52,7 +52,7 @@ contract EIP712 is IEIP712 {
 
     /// @dev Verifies a signature components against the provided data hash, nonce, deadline and signer.
     /// @param signature The signature to verify.
-    /// @param dataHash The EIP712 message hash the signature should correspond to.
+    /// @param dataHash The ERC712 message hash the signature should correspond to.
     /// @param signedNonce The nonce used along with the provided signature. Must not be an end-user input and must be proven to be signed by the signer.
     /// @param deadline The signature's maximum valid timestamp. Must not be an end-user input and must be proven to be signed by the signer.
     /// @param signer The expected signature's signer.
@@ -88,11 +88,11 @@ contract EIP712 is IEIP712 {
 
     /// @notice Builds a domain separator using the current chainId and contract address.
     function _buildDomainSeparator() private view returns (bytes32) {
-        return keccak256(abi.encode(EIP712_DOMAIN_TYPEHASH, _NAMEHASH, block.chainid, address(this)));
+        return keccak256(abi.encode(ERC712_DOMAIN_TYPEHASH, _NAMEHASH, block.chainid, address(this)));
     }
 
     /// @notice Creates an EIP-712 typed data hash
     function _hashTypedData(bytes32 dataHash) private view returns (bytes32) {
-        return keccak256(abi.encodePacked(EIP712_MSG_PREFIX, DOMAIN_SEPARATOR(), dataHash));
+        return keccak256(abi.encodePacked(ERC712_MSG_PREFIX, DOMAIN_SEPARATOR(), dataHash));
     }
 }

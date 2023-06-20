@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
-interface IEIP712 {
+interface IERC712 {
     /* STRUCTS */
 
     struct Signature {
@@ -38,6 +38,6 @@ interface IEIP712 {
     /// @dev Uses cached version if chainid and address are unchanged from construction.
     function DOMAIN_SEPARATOR() external view returns (bytes32);
 
-    /// @notice Returns the given signer's nonce to be used in the next EIP712 signature.
+    /// @notice Returns the given signer's nonce to be used in the next ERC712 signature.
     function nonce(address signer) external view returns (uint256);
 }
