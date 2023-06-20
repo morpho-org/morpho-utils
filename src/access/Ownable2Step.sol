@@ -7,21 +7,20 @@ import {Ownable} from "src/access/Ownable.sol";
 
 /// @notice Gas-optimized Ownable2Step helpers.
 /// @dev Reference: https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable2Step.sol
-abstract contract Ownable2Step is IOwnable2Step, Ownable {
+contract Ownable2Step is IOwnable2Step, Ownable {
     address private _pendingOwner;
+
+    /// @dev Initializes the contract setting the deployer as the initial owner.
+    constructor(address initialOwner) Ownable(initialOwner) {}
 
     /* PUBLIC */
 
-    /**
-     * @dev Returns the address of the pending owner.
-     */
+    /// @inheritdoc IOwnable2Step
     function pendingOwner() public view virtual returns (address) {
         return _pendingOwner;
     }
 
-    /**
-     * @dev The new owner accepts the ownership transfer.
-     */
+    /// @inheritdoc IOwnable2Step
     function acceptOwnership() public virtual {
         address sender = msg.sender;
 
@@ -31,11 +30,8 @@ abstract contract Ownable2Step is IOwnable2Step, Ownable {
         _transferOwnership(sender);
     }
 
-    /**
-     * @dev Starts the ownership transfer of the contract to a new account. Replaces the pending transfer if there is one.
-     * Can only be called by the current owner.
-     */
-    function transferOwnership(address newOwner) public virtual override onlyOwner {
+    /// @inheritdoc IOwnable2Step
+    function transferOwnership(address newOwner) public virtual override(IOwnable2Step, Ownable) onlyOwner {
         _pendingOwner = newOwner;
 
         emit OwnershipTransferStarted(owner(), newOwner);
@@ -43,10 +39,7 @@ abstract contract Ownable2Step is IOwnable2Step, Ownable {
 
     /* INTERNAL */
 
-    /**
-     * @dev Transfers ownership of the contract to a new account (`newOwner`) and deletes any pending owner.
-     * Internal function without access restriction.
-     */
+    /// @dev Transfers ownership of the contract to a new account (`newOwner`) and deletes any pending owner. Internal function without access restriction.
     function _transferOwnership(address newOwner) internal virtual override {
         delete _pendingOwner;
 

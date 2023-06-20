@@ -29,5 +29,7 @@ interface IEIP712 {
 
     /* FUNCTIONS */
 
+    /// @notice Returns the domain separator for the current chain.
+    /// @dev Uses cached version if chainid and address are unchanged from construction.
     function DOMAIN_SEPARATOR() external view returns (bytes32);
 }
