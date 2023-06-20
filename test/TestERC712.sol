@@ -25,7 +25,7 @@ contract TestERC712 is Test {
         vm.chainId(chainId);
 
         assertEq(
-            IERC712(mock).DOMAIN_SEPARATOR(),
+            mock.DOMAIN_SEPARATOR(),
             keccak256(abi.encode(ERC712_DOMAIN_TYPEHASH, keccak256(bytes(NAME)), chainId, address(mock)))
         );
     }
