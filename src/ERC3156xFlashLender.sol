@@ -25,7 +25,7 @@ contract ERC3156xFlashLender is IERC3156xFlashLender {
     }
 
     /// @inheritdoc IERC3156xFlashLender
-    function flashLoan(IERC3156FlashBorrower receiver, address token, uint256 amount, bytes calldata data)
+    function flashLoan(IERC3156xFlashBorrower receiver, address token, uint256 amount, bytes calldata data)
         public
         virtual
         returns (bytes memory returnData)
@@ -39,7 +39,7 @@ contract ERC3156xFlashLender is IERC3156xFlashLender {
 
         bytes32 successHash;
         (successHash, returnData) = receiver.onFlashLoan(msg.sender, token, amount, fee, data);
-        if (successHash != FLASH_BORROWER_SUCCESS_HASH) revert InvalidFlashData(flashData);
+        if (successHash != FLASH_BORROWER_SUCCESS_HASH) revert InvalidSuccessHash(successHash);
 
         _accrueFee(token, amount, fee);
 
