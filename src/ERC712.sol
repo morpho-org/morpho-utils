@@ -68,13 +68,13 @@ contract ERC712 is IERC712 {
         // v ∈ {27, 28} (source: https://ethereum.github.io/yellowpaper/paper.pdf #308)
         if (signature.v != 27 && signature.v != 28) revert InvalidValueV();
 
-        uint256 usedNonce = _useNonce(signer);
-        if (signedNonce != usedNonce) revert InvalidNonce(usedNonce);
-
         bytes32 digest = _hashTypedData(dataHash);
         address recovered = ecrecover(digest, signature.v, signature.r, signature.s);
 
         if (recovered == address(0) || signer != recovered) revert InvalidSignature(recovered);
+
+        uint256 usedNonce = _useNonce(signer);
+        if (signedNonce != usedNonce) revert InvalidNonce(usedNonce);
     }
 
     /// @dev Increments and returns the nonce that should have been used in the corresponding signature.
