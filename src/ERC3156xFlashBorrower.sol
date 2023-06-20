@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import {IERC3156xFlashLender} from "src/interfaces/IERC3156xFlashLender.sol";
 import {IERC3156xFlashBorrower} from "src/interfaces/IERC3156xFlashBorrower.sol";
 
-import {SafeTransferLib, ERC20} from "solmate/utils/SafeTransferLib.sol";
+import {SafeTransferLib, ERC20} from "@solmate/utils/SafeTransferLib.sol";
 
 import {FLASH_BORROWER_SUCCESS_HASH} from "src/ERC3156xFlashLender.sol";
 

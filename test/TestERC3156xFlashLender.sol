@@ -5,7 +5,7 @@ import {IERC3156xFlashLender} from "src/interfaces/IERC3156xFlashLender.sol";
 import {IERC3156xFlashBorrower} from "src/interfaces/IERC3156xFlashBorrower.sol";
 
 import {FLASH_BORROWER_SUCCESS_HASH} from "src/ERC3156xFlashLender.sol";
-import {SafeTransferLib, ERC20} from "solmate/utils/SafeTransferLib.sol";
+import {SafeTransferLib, ERC20} from "@solmate/utils/SafeTransferLib.sol";
 
 import {ERC20Mock} from "test/mocks/ERC20Mock.sol";
 import {ERC3156xFlashLenderMock} from "test/mocks/ERC3156xFlashLenderMock.sol";
