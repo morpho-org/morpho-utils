@@ -10,6 +10,11 @@ interface IEIP712 {
         bytes32 s;
     }
 
+    /* EVENTS */
+
+    /// @dev Emitted when a signer's nonce is incremented.
+    event NonceUsed(address indexed caller, address indexed signer, uint256 usedNonce);
+
     /* ERRORS */
 
     /// @notice Thrown when the s part of the ECDSA signature is invalid.
@@ -19,10 +24,10 @@ interface IEIP712 {
     error InvalidValueV();
 
     /// @notice Thrown when the signer of the ECDSA signature is invalid.
-    error InvalidSignature();
+    error InvalidSignature(address recovered);
 
     /// @notice Thrown when the nonce is invalid.
-    error InvalidNonce();
+    error InvalidNonce(uint256 nonce);
 
     /// @notice Thrown when the signature deadline is expired.
     error SignatureExpired();
@@ -32,4 +37,7 @@ interface IEIP712 {
     /// @notice Returns the domain separator for the current chain.
     /// @dev Uses cached version if chainid and address are unchanged from construction.
     function DOMAIN_SEPARATOR() external view returns (bytes32);
+
+    /// @notice Returns the given signer's nonce to be used in the next EIP712 signature.
+    function nonce(address signer) external view returns (uint256);
 }

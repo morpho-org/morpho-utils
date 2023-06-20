@@ -26,39 +26,69 @@ contract EIP712 is IEIP712 {
     /// @dev The name used for EIP-712 signature.
     bytes32 private immutable _NAMEHASH;
 
+    /// @dev The nonce used inside by signers to offer signature replay protection.
+    mapping(address => uint256) private _nonces;
+
     constructor(string memory name) {
-        _NAMEHASH = keccak256(abi.encodePacked(name));
+        _NAMEHASH = keccak256(bytes(name));
 
         _CACHED_CHAIN_ID = block.chainid;
-        _CACHED_DOMAIN_SEPARATOR = _buildDomainSeparator(EIP712_DOMAIN_TYPEHASH, _NAMEHASH);
+        _CACHED_DOMAIN_SEPARATOR = _buildDomainSeparator();
+    }
+
+    /* PUBLIC */
+
+    /// @inheritdoc IEIP712
+    function DOMAIN_SEPARATOR() public view virtual returns (bytes32) {
+        return block.chainid == _CACHED_CHAIN_ID ? _CACHED_DOMAIN_SEPARATOR : _buildDomainSeparator();
     }
 
     /// @inheritdoc IEIP712
-    function DOMAIN_SEPARATOR() public view returns (bytes32) {
-        return block.chainid == _CACHED_CHAIN_ID
-            ? _CACHED_DOMAIN_SEPARATOR
-            : _buildDomainSeparator(EIP712_DOMAIN_TYPEHASH, _NAMEHASH);
+    function nonce(address user) public view virtual returns (uint256) {
+        return _nonces[user];
     }
 
     /* INTERNAL */
 
-    function _verify(Signature calldata signature, bytes32 dataHash, uint256 deadline, address signer) internal view {
-        if (block.timestamp >= deadline) revert SignatureExpired();
+    /// @dev Verifies a signature components against the provided data hash, nonce, deadline and signer.
+    /// @param signature The signature to verify.
+    /// @param dataHash The EIP712 message hash the signature should correspond to.
+    /// @param signedNonce The nonce used along with the provided signature. Must not be an end-user input and must be proven to be signed by the signer.
+    /// @param deadline The signature's maximum valid timestamp. Must not be an end-user input and must be proven to be signed by the signer.
+    /// @param signer The expected signature's signer.
+    function _verify(
+        Signature calldata signature,
+        bytes32 dataHash,
+        uint256 signedNonce,
+        uint256 deadline,
+        address signer
+    ) internal virtual {
+        if (block.timestamp > deadline) revert SignatureExpired();
         if (uint256(signature.s) > MAX_VALID_ECDSA_S) revert InvalidValueS();
         // v ∈ {27, 28} (source: https://ethereum.github.io/yellowpaper/paper.pdf #308)
         if (signature.v != 27 && signature.v != 28) revert InvalidValueV();
 
+        uint256 usedNonce = _useNonce(signer);
+        if (signedNonce != usedNonce) revert InvalidNonce(usedNonce);
+
         bytes32 digest = _hashTypedData(dataHash);
         address recovered = ecrecover(digest, signature.v, signature.r, signature.s);
 
-        if (recovered == address(0) || signer != recovered) revert InvalidSignature();
+        if (recovered == address(0) || signer != recovered) revert InvalidSignature(recovered);
+    }
+
+    /// @dev Increments and returns the nonce that should have been used in the corresponding signature.
+    function _useNonce(address signer) internal virtual returns (uint256 usedNonce) {
+        usedNonce = _nonces[signer]++;
+
+        emit NonceUsed(msg.sender, signer, usedNonce);
     }
 
     /* PRIVATE */
 
     /// @notice Builds a domain separator using the current chainId and contract address.
-    function _buildDomainSeparator(bytes32 typeHash, bytes32 nameHash) private view returns (bytes32) {
-        return keccak256(abi.encode(typeHash, nameHash, block.chainid, address(this)));
+    function _buildDomainSeparator() private view returns (bytes32) {
+        return keccak256(abi.encode(EIP712_DOMAIN_TYPEHASH, _NAMEHASH, block.chainid, address(this)));
     }
 
     /// @notice Creates an EIP-712 typed data hash
