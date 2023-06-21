@@ -1,16 +1,16 @@
 methods {
-    function percentAdd(uint256, uint256)            external returns (uint256)   envfree;
-    function percentSub(uint256, uint256)            external returns (uint256)   envfree;
-    function percentMul(uint256, uint256)            external returns (uint256)   envfree;
-    function percentMulDown(uint256, uint256)        external returns (uint256)   envfree;
-    function percentMulUp(uint256, uint256)          external returns (uint256)   envfree;
-    function percentDiv(uint256, uint256)            external returns (uint256)   envfree;
-    function percentDivDown(uint256, uint256)        external returns (uint256)   envfree;
-    function percentDivUp(uint256, uint256)          external returns (uint256)   envfree;
-    function weightedAvg(uint256, uint256, uint256)  external returns (uint256)   envfree;
+    function percentAdd(uint256, uint256) external returns (uint256) envfree;
+    function percentSub(uint256, uint256) external returns (uint256) envfree;
+    function percentMul(uint256, uint256) external returns (uint256) envfree;
+    function percentMulDown(uint256, uint256) external returns (uint256) envfree;
+    function percentMulUp(uint256, uint256) external returns (uint256) envfree;
+    function percentDiv(uint256, uint256) external returns (uint256) envfree;
+    function percentDivDown(uint256, uint256) external returns (uint256) envfree;
+    function percentDivUp(uint256, uint256) external returns (uint256) envfree;
+    function weightedAvg(uint256, uint256, uint256) external returns (uint256) envfree;
 }
 
-definition PERCENTAGE_FACTOR()  returns uint = 10^4;
+definition PERCENTAGE_FACTOR() returns uint = 10^4;
 definition UINT_LIMIT() returns mathint = 2 ^ 255 * 2;
 
 /// percentAdd ///

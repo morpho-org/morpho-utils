@@ -1,25 +1,25 @@
 methods {
-    function wadMul(uint256, uint256)                   external returns (uint256)       envfree;
-    function wadMulDown(uint256, uint256)               external returns (uint256)       envfree;
-    function wadMulUp(uint256, uint256)                 external returns (uint256)       envfree;
-    function wadDiv(uint256, uint256)                   external returns (uint256)       envfree;
-    function wadDivDown(uint256, uint256)               external returns (uint256)       envfree;
-    function wadDivUp(uint256, uint256)                 external returns (uint256)       envfree;
-    function rayMul(uint256, uint256)                   external returns (uint256)       envfree;
-    function rayMulDown(uint256, uint256)               external returns (uint256)       envfree;
-    function rayMulUp(uint256, uint256)                 external returns (uint256)       envfree;
-    function rayDiv(uint256, uint256)                   external returns (uint256)       envfree;
-    function rayDivDown(uint256, uint256)               external returns (uint256)       envfree;
-    function rayDivUp(uint256, uint256)                 external returns (uint256)       envfree;
-    function rayToWad(uint256)                          external returns (uint256)       envfree;
-    function wadToRay(uint256)                          external returns (uint256)       envfree;
-    function wadWeightedAvg(uint256, uint256, uint256)  external returns (uint256)       envfree;
-    function rayWeightedAvg(uint256, uint256, uint256)  external returns (uint256)       envfree;
+    function wadMul(uint256, uint256) external returns (uint256) envfree;
+    function wadMulDown(uint256, uint256) external returns (uint256) envfree;
+    function wadMulUp(uint256, uint256) external returns (uint256) envfree;
+    function wadDiv(uint256, uint256) external returns (uint256) envfree;
+    function wadDivDown(uint256, uint256) external returns (uint256) envfree;
+    function wadDivUp(uint256, uint256) external returns (uint256) envfree;
+    function rayMul(uint256, uint256) external returns (uint256) envfree;
+    function rayMulDown(uint256, uint256) external returns (uint256) envfree;
+    function rayMulUp(uint256, uint256) external returns (uint256) envfree;
+    function rayDiv(uint256, uint256) external returns (uint256) envfree;
+    function rayDivDown(uint256, uint256) external returns (uint256) envfree;
+    function rayDivUp(uint256, uint256) external returns (uint256) envfree;
+    function rayToWad(uint256) external returns (uint256) envfree;
+    function wadToRay(uint256) external returns (uint256) envfree;
+    function wadWeightedAvg(uint256, uint256, uint256) external returns (uint256) envfree;
+    function rayWeightedAvg(uint256, uint256, uint256) external returns (uint256) envfree;
 }
 
-definition WAD()       returns uint = 10^18;
-definition RAY()       returns uint = 10^27;
-definition WADTORAY()  returns uint = 10^9;
+definition WAD() returns uint = 10^18;
+definition RAY() returns uint = 10^27;
+definition WADTORAY() returns uint = 10^9;
 definition UINT_LIMIT() returns mathint = 2 ^ 255 * 2;
 
 /// wadMul ///
