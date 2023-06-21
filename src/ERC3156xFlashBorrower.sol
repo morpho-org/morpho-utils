@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
-import {IERC3156xFlashLender} from "src/interfaces/IERC3156xFlashLender.sol";
-import {IERC3156xFlashBorrower} from "src/interfaces/IERC3156xFlashBorrower.sol";
+import {IERC3156xFlashLender} from "./interfaces/IERC3156xFlashLender.sol";
+import {IERC3156xFlashBorrower} from "./interfaces/IERC3156xFlashBorrower.sol";
 
 import {SafeTransferLib, ERC20} from "@solmate/utils/SafeTransferLib.sol";
 
-import {FLASH_BORROWER_SUCCESS_HASH} from "src/ERC3156xFlashLender.sol";
+import {FLASH_BORROWER_SUCCESS_HASH} from "./ERC3156xFlashLender.sol";
 
 contract ERC3156xFlashBorrower is IERC3156xFlashBorrower {
     using SafeTransferLib for ERC20;

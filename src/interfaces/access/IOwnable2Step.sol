@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
-import {IOwnable} from "src/interfaces/access/IOwnable.sol";
+import {IOwnable} from "./IOwnable.sol";
 
 interface IOwnable2Step is IOwnable {
     /* EVENTS */

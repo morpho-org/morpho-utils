@@ -20,7 +20,7 @@ interface IERC3156xFlashBorrower {
     /// @param amount The amount of tokens lent.
     /// @param fee The additional amount of tokens to repay.
     /// @param data Arbitrary data structure, intended to contain user-defined parameters.
-    /// @return The keccak256 hash of "IERC3156FlashBorrower.onFlashLoan" and any additional arbitrary data.
+    /// @return The keccak256 hash of "IERC3156xFlashBorrower.onFlashLoan" and any additional arbitrary data.
     function onFlashLoan(address initiator, address token, uint256 amount, uint256 fee, bytes calldata data)
         external
         returns (bytes32, bytes memory);

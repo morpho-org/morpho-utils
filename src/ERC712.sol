@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
-import {IERC712} from "src/interfaces/IERC712.sol";
+import {IERC712} from "./interfaces/IERC712.sol";
 
 /// @dev The prefix used for EIP-712 signature.
 string constant ERC712_MSG_PREFIX = "\x19\x01";

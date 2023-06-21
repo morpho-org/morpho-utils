@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
-import {IOwnable2Step} from "src/interfaces/access/IOwnable2Step.sol";
+import {IOwnable2Step} from "../interfaces/access/IOwnable2Step.sol";
 
-import {Ownable} from "src/access/Ownable.sol";
+import {Ownable} from "./Ownable.sol";
 
 /// @notice Gas-optimized Ownable2Step helpers.
 /// @dev Reference: https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable2Step.sol

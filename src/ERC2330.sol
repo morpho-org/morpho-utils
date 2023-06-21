@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
-import {IERC2330} from "src/interfaces/IERC2330.sol";
+import {IERC2330} from "./interfaces/IERC2330.sol";
 
 /// @dev Gas-optimized extsload getters to allow anyone to read storage from this contract.
 ///      Enables the benefit of https://eips.ethereum.org/EIPS/eip-2330 without requiring changes to the execution layer.
