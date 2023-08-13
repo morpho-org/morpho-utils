@@ -3,6 +3,6 @@
 certoraRun \
     test/mocks/MathMock.sol \
     --verify MathMock:certora/specs/bitvectorMath.spec \
-    --settings -useBitVectorTheory \
+    --prover_args "-useBitVectorTheory" \
     --msg "Math" \
-    $@
+    "$@"

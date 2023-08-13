@@ -11,7 +11,6 @@ methods {
 }
 
 definition PERCENTAGE_FACTOR() returns uint = 10^4;
-definition UINT_LIMIT() returns mathint = 2 ^ 255 * 2;
 
 /// percentAdd ///
 
@@ -25,7 +24,7 @@ rule percentAddLiveness(uint256 x, uint256 p) {
     percentAdd@withrevert(x, p);
 
     // The first condition does not imply the second one because x can be zero.
-    assert lastReverted <=> PERCENTAGE_FACTOR() + p >= UINT_LIMIT() || x * (PERCENTAGE_FACTOR() + p) + PERCENTAGE_FACTOR() / 2 >= UINT_LIMIT();
+    assert lastReverted <=> PERCENTAGE_FACTOR() + p >= 2^256 || x * (PERCENTAGE_FACTOR() + p) + PERCENTAGE_FACTOR() / 2 >= 2^256;
 }
 
 /// percentSub ///
@@ -39,7 +38,7 @@ rule percentSubSafety(uint256 x, uint256 p) {
 rule percentSubLiveness(uint256 x, uint256 p) {
     percentSub@withrevert(x, p);
 
-    assert lastReverted <=> x * (PERCENTAGE_FACTOR() - p) + PERCENTAGE_FACTOR() / 2 >= UINT_LIMIT() || p > PERCENTAGE_FACTOR();
+    assert lastReverted <=> x * (PERCENTAGE_FACTOR() - p) + PERCENTAGE_FACTOR() / 2 >= 2^256 || p > PERCENTAGE_FACTOR();
 }
 
 /// percentMul ///
@@ -53,7 +52,7 @@ rule percentMulSafety(uint256 x, uint256 p) {
 rule percentMulLiveness(uint256 x, uint256 p) {
     percentMul@withrevert(x, p);
 
-    assert lastReverted <=> x * p + PERCENTAGE_FACTOR() / 2 >= UINT_LIMIT();
+    assert lastReverted <=> x * p + PERCENTAGE_FACTOR() / 2 >= 2^256;
 }
 
 /// percentMulDown ///
@@ -67,7 +66,7 @@ rule percentMulDownSafety(uint256 a, uint256 p) {
 rule percentMulDownLiveness(uint256 a, uint256 p) {
     percentMulDown@withrevert(a, p);
 
-    assert lastReverted <=> a * p >= UINT_LIMIT();
+    assert lastReverted <=> a * p >= 2^256;
 }
 
 /// percentMulUp ///
@@ -81,7 +80,7 @@ rule percentMulUpSafety(uint256 a, uint256 p) {
 rule percentMulUpLiveness(uint256 a, uint256 p) {
     percentMulUp@withrevert(a, p);
 
-    assert lastReverted <=> a * p + PERCENTAGE_FACTOR() - 1 >= UINT_LIMIT();
+    assert lastReverted <=> a * p + PERCENTAGE_FACTOR() - 1 >= 2^256;
 }
 
 /// percentDiv ///
@@ -95,7 +94,7 @@ rule percentDivSafety(uint256 x, uint256 p) {
 rule percentDivLiveness(uint256 x, uint256 p) {
     percentDiv@withrevert(x, p);
 
-    assert lastReverted <=> x * PERCENTAGE_FACTOR() + p / 2 >= UINT_LIMIT() || p == 0;
+    assert lastReverted <=> x * PERCENTAGE_FACTOR() + p / 2 >= 2^256 || p == 0;
 }
 
 /// percentDivDown ///
@@ -109,7 +108,7 @@ rule percentDivDownSafety(uint256 a, uint256 p) {
 rule percentDivDownLiveness(uint256 a, uint256 p) {
     percentDivDown@withrevert(a, p);
 
-    assert lastReverted <=> a * PERCENTAGE_FACTOR() >= UINT_LIMIT() || p == 0;
+    assert lastReverted <=> a * PERCENTAGE_FACTOR() >= 2^256 || p == 0;
 }
 
 /// percentDivUp ///
@@ -123,7 +122,7 @@ rule percentDivUpSafety(uint256 a, uint256 p) {
 rule percentDivUpLiveness(uint256 a, uint256 p) {
     percentDivUp@withrevert(a, p);
 
-    assert lastReverted <=> a * PERCENTAGE_FACTOR() + (p - 1) >= UINT_LIMIT() || p == 0;
+    assert lastReverted <=> a * PERCENTAGE_FACTOR() + (p - 1) >= 2^256 || p == 0;
 }
 
 /// weightedAvg ///
@@ -137,5 +136,5 @@ rule weightedAvgSafety(uint256 x, uint256 y, uint256 p) {
 rule weightedAvgLiveness(uint256 x, uint256 y, uint256 p) {
     weightedAvg@withrevert(x, y, p);
 
-    assert lastReverted <=> x * (PERCENTAGE_FACTOR() - p) + y * p + PERCENTAGE_FACTOR() / 2 >= UINT_LIMIT() || p > PERCENTAGE_FACTOR();
+    assert lastReverted <=> x * (PERCENTAGE_FACTOR() - p) + y * p + PERCENTAGE_FACTOR() / 2 >= 2^256 || p > PERCENTAGE_FACTOR();
 }

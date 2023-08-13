@@ -20,7 +20,6 @@ methods {
 definition WAD() returns uint = 10^18;
 definition RAY() returns uint = 10^27;
 definition WADTORAY() returns uint = 10^9;
-definition UINT_LIMIT() returns mathint = 2 ^ 255 * 2;
 
 /// wadMul ///
 
@@ -33,7 +32,7 @@ rule wadMulSafety(uint256 a, uint256 b) {
 rule wadMulLiveness(uint256 a, uint256 b) {
     wadMul@withrevert(a, b);
 
-    assert lastReverted <=> a * b + WAD() / 2 >= UINT_LIMIT();
+    assert lastReverted <=> a * b + WAD() / 2 >= 2^256;
 }
 
 /// wadMulDown ///
@@ -47,7 +46,7 @@ rule wadMulDownSafety(uint256 a, uint256 b) {
 rule wadMulDownLiveness(uint256 a, uint256 b) {
     wadMulDown@withrevert(a, b);
 
-    assert lastReverted <=> a * b >= UINT_LIMIT();
+    assert lastReverted <=> a * b >= 2^256;
 }
 
 /// wadMulUp ///
@@ -61,7 +60,7 @@ rule wadMulUpSafety(uint256 a, uint256 b) {
 rule wadMulUpLiveness(uint256 a, uint256 b) {
     wadMulUp@withrevert(a, b);
 
-    assert lastReverted <=> a * b + WAD() - 1 >= UINT_LIMIT();
+    assert lastReverted <=> a * b + WAD() - 1 >= 2^256;
 }
 
 /// wadDiv ///
@@ -75,7 +74,7 @@ rule wadDivSafety(uint256 a, uint256 b) {
 rule wadDivLiveness(uint256 a, uint256 b) {
     wadDiv@withrevert(a, b);
 
-    assert lastReverted <=> a * WAD() + b / 2 >= UINT_LIMIT() || b == 0;
+    assert lastReverted <=> a * WAD() + b / 2 >= 2^256 || b == 0;
 }
 
 /// wadDivDown ///
@@ -89,7 +88,7 @@ rule wadDivDownSafety(uint256 a, uint256 b) {
 rule wadDivDownLiveness(uint256 a, uint256 b) {
     wadDivDown@withrevert(a, b);
 
-    assert lastReverted <=> a * WAD() >= UINT_LIMIT() || b == 0;
+    assert lastReverted <=> a * WAD() >= 2^256 || b == 0;
 }
 
 /// wadDivUp ///
@@ -103,7 +102,7 @@ rule wadDivUpSafety(uint256 a, uint256 b) {
 rule wadDivUpLiveness(uint256 a, uint256 b) {
     wadDivUp@withrevert(a, b);
 
-    assert lastReverted <=> a * WAD() + (b - 1) >= UINT_LIMIT() || b == 0;
+    assert lastReverted <=> a * WAD() + (b - 1) >= 2^256 || b == 0;
 }
 
 /// rayMul ///
@@ -117,7 +116,7 @@ rule rayMulSafety(uint256 a, uint256 b) {
 rule rayMulLiveness(uint256 a, uint256 b) {
     rayMul@withrevert(a, b);
 
-    assert lastReverted <=> a * b + RAY() / 2 >= UINT_LIMIT();
+    assert lastReverted <=> a * b + RAY() / 2 >= 2^256;
 }
 
 /// rayMulDown ///
@@ -131,7 +130,7 @@ rule rayMulDownSafety(uint256 a, uint256 b) {
 rule rayMulDownLiveness(uint256 a, uint256 b) {
     rayMulDown@withrevert(a, b);
 
-    assert lastReverted <=> a * b >= UINT_LIMIT();
+    assert lastReverted <=> a * b >= 2^256;
 }
 
 /// rayMulUp ///
@@ -145,7 +144,7 @@ rule rayMulUpSafety(uint256 a, uint256 b) {
 rule rayMulUpLiveness(uint256 a, uint256 b) {
     rayMulUp@withrevert(a, b);
 
-    assert lastReverted <=> a * b + RAY() - 1 >= UINT_LIMIT();
+    assert lastReverted <=> a * b + RAY() - 1 >= 2^256;
 }
 
 /// rayDiv ///
@@ -159,7 +158,7 @@ rule rayDivSafety(uint256 a, uint256 b) {
 rule rayDivLiveness(uint256 a, uint256 b) {
     rayDiv@withrevert(a, b);
 
-    assert lastReverted <=> a * RAY() + b / 2 >= UINT_LIMIT() || b == 0;
+    assert lastReverted <=> a * RAY() + b / 2 >= 2^256 || b == 0;
 }
 
 /// rayDivDown ///
@@ -173,7 +172,7 @@ rule rayDivDownSafety(uint256 a, uint256 b) {
 rule rayDivDownLiveness(uint256 a, uint256 b) {
     rayDivDown@withrevert(a, b);
 
-    assert lastReverted <=> a * RAY() >= UINT_LIMIT() || b == 0;
+    assert lastReverted <=> a * RAY() >= 2^256 || b == 0;
 }
 
 /// rayDivUp ///
@@ -187,7 +186,7 @@ rule rayDivUpSafety(uint256 a, uint256 b) {
 rule rayDivUpLiveness(uint256 a, uint256 b) {
     rayDivUp@withrevert(a, b);
 
-    assert lastReverted <=> a * RAY() + (b - 1) >= UINT_LIMIT() || b == 0;
+    assert lastReverted <=> a * RAY() + (b - 1) >= 2^256 || b == 0;
 }
 
 /// rayToWad ///
@@ -215,7 +214,7 @@ rule wadToRaySafety(uint256 a) {
 rule wadToRayLiveness(uint256 a) {
     wadToRay@withrevert(a);
 
-    assert lastReverted <=> a * WADTORAY() >= UINT_LIMIT();
+    assert lastReverted <=> a * WADTORAY() >= 2^256;
 }
 
 /// wadWeightedAvg ///
@@ -229,7 +228,7 @@ rule wadWeightedAvgSafety(uint256 x, uint256 y, uint256 w) {
 rule wadWeightedAvgLiveness(uint256 x, uint256 y, uint256 w) {
     wadWeightedAvg@withrevert(x, y, w);
 
-    assert lastReverted <=> x * (WAD() - w) + y * w + WAD() / 2 >= UINT_LIMIT() || w > WAD();
+    assert lastReverted <=> x * (WAD() - w) + y * w + WAD() / 2 >= 2^256 || w > WAD();
 }
 
 /// rayWeightedAvg ///
@@ -243,5 +242,5 @@ rule rayWeightedAvgSafety(uint256 x, uint256 y, uint256 w) {
 rule rayWeightedAvgLiveness(uint256 x, uint256 y, uint256 w) {
     rayWeightedAvg@withrevert(x, y, w);
 
-    assert lastReverted <=> x * (RAY() - w) + y * w + RAY() / 2 >= UINT_LIMIT() || w > RAY();
+    assert lastReverted <=> x * (RAY() - w) + y * w + RAY() / 2 >= 2^256 || w > RAY();
 }
